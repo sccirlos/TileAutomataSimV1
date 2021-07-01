@@ -1,3 +1,3 @@
 # TileAutomataSimV1
 
-flutter with unity for ASARG team
+Tile Automata Simulator 2021
