@@ -52,10 +52,7 @@ class Assembly:
             elif(i == 1 and not len(self.tiles) > 2): 
                print("Ind 1: ", i, "Type: ", self.tiles[i].state_type, " Num: ", self.tiles[i].state_number)
                self.walk_forward()
-            elif(i == 1):
-                if(self.tiles[i].state_number == self.tiles[i + 1].state_number):
-                    self.tiles[i].state_number = self.tiles[i + 1].state_number + 1
-                                
+              
             elif(i >= 2):
                 if(self.tiles[i].state_number == self.tiles[i - 1].state_number): 
                     self.tiles[i - 1].state_number += 1
@@ -96,7 +93,10 @@ def main():
     a.add_back_state()
     a.add_back_state()
     a.add_back_state()
-   
+    a.add_back_state()
+    a.add_back_state()
+    a.add_back_state()
+    a.add_back_state()
     
     print(len(a.tiles))
     display_assembly(a)        
