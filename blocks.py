@@ -1,5 +1,6 @@
 import tkinter as tk
 
+
 class Tile:
     state_type = None
     tile_num = 0     
@@ -12,6 +13,12 @@ class SeedTile(Tile):
     def __init__(self, st):
         self.tile_num = 0
         self.state_type = st
+
+class ReseedTile(Tile):
+    def __init__(self, st, num, stop):
+        self.tile_num = num
+        self.state_type = st
+        self.stop_num = stop        
         
 class NumberedTile(Tile):
       state_number = None
@@ -38,6 +45,7 @@ class Assembly:
         print("Seed Added")
 
     def make_assembly(self):
+        
         for i in range(0, self.quit_num):
             self.add_back_state()
                 
@@ -45,20 +53,20 @@ class Assembly:
         back_tile = NumberedTile("B", 0)
         self.tiles.append(back_tile)
         self.num_tiles += 1
-        print("Back Added")
+        #print("Back Added")
         self.walk_back()
             
 
     def walk_back(self):
         for i in range(len(self.tiles)-1, 0, -1):
             if(i == 0):
-               print("Seed Back")
+               #print("Seed Back")
                self.walk_forward(i)
                return
            
             elif(i == 1 and not len(self.tiles) > 2):
                self.tiles[i].state_type == "B"
-               print("Ind 1: ", i, "Type: ", self.tiles[i].state_type, " Num: ", self.tiles[i].state_number)
+               #print("Ind 1: ", i, "Type: ", self.tiles[i].state_type, " Num: ", self.tiles[i].state_number)
                self.walk_forward(i) 
                return
               
@@ -66,7 +74,7 @@ class Assembly:
                 if(self.tiles[i].state_number == self.tiles[i - 1].state_number): 
                     self.tiles[i - 1].state_number += 1
                     self.tiles[i - 1].state_type = "B"
-                    print("Changed: ", i, "Type: ", self.tiles[i].state_type, " Num: ", self.tiles[i].state_number)
+                    #print("Changed: ", i, "Type: ", self.tiles[i].state_type, " Num: ", self.tiles[i].state_number)
                 elif(self.tiles[i].state_number > self.tiles[i - 1].state_number):
                      self.tiles[i - 1].state_number = self.tiles[i].state_number
                 elif self.tiles[i].state_number < self.tiles[i - 1].state_number:
@@ -75,7 +83,7 @@ class Assembly:
             else:
                 self.walk_forward(i) 
                 return  
-        display_assembly(self)            
+        #display_assembly(self)            
                     
 
     def walk_forward(self, index_walking_from):
@@ -88,11 +96,13 @@ class Assembly:
                self.tiles[i+1].state_number = self.tiles[i].state_number 
                self.tiles[i].state_type = "F"
             elif(i == 1 and len(self.tiles) <= 2): 
-               print("Ind 1: ", i, "Type: ", self.tiles[i].state_type, " Num: ", self.tiles[i].state_number)
+               #print("Ind 1: ", i, "Type: ", self.tiles[i].state_type, " Num: ", self.tiles[i].state_number)
                self.tiles[i].state_type = "F"
-            display_assembly(self)      
+            #display_assembly(self)      
             
-                   
+    def num_states(self):
+        print("Seed State: 1")
+        print("Forward States: ", self.quit_num.bit_length())               
                  
 def display_assembly(assembly):
         print("Display:")
@@ -103,8 +113,13 @@ def display_assembly(assembly):
                 print("Index:", i, "Found:", assembly.tiles[i].state_type, "Num:", assembly.tiles[i].state_number)         
 
 def main():
-    a = Assembly(5)
-    print("Length: ", len(a.tiles) - 1)
-    display_assembly(a)        
-
+    quit_num = 1250
+    if(quit_num < 30):
+        a = Assembly(quit_num)
+        print("Length: ", len(a.tiles) - 1)
+        display_assembly(a)        
+    print("Length: ", quit_num)
+    #print("Bit Length: ", quit_num.bit_length())
+    print("Total number of states: ", quit_num.bit_length()*2 + 1)
+    
 main()    
