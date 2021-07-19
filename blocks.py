@@ -90,7 +90,7 @@ class Assembly:
             elif(i == 1 and len(self.tiles) <= 2): 
                print("Ind 1: ", i, "Type: ", self.tiles[i].state_type, " Num: ", self.tiles[i].state_number)
                self.tiles[i].state_type = "F"
-        display_assembly(self)      
+            display_assembly(self)      
             
                    
                  
@@ -104,7 +104,7 @@ def display_assembly(assembly):
 
 def main():
     a = Assembly(5)
-    print(len(a.tiles))
+    print("Length: ", len(a.tiles) - 1)
     display_assembly(a)        
 
 main()    
