@@ -46,24 +46,31 @@ class Assembly:
 
     def walk_back(self):
         for i in range(len(self.tiles)-1, 0, -1):
-            
             if(i == 0):
                print("Seed Back")
-               
+               self.walk_forward()
             elif(i == 1 and not len(self.tiles) > 2): 
-               print("Ind 1: ", i, "Type: ", self.tiles[i].state_type, " Num: ", self.tiles[i].state_number)         
-            if(i >= 2):
+               print("Ind 1: ", i, "Type: ", self.tiles[i].state_type, " Num: ", self.tiles[i].state_number)
+               self.walk_forward()
+            elif(i == 1):
+                if(self.tiles[i].state_number == self.tiles[i + 1].state_number):
+                    self.tiles[i].state_number = self.tiles[i + 1].state_number + 1
+                                
+            elif(i >= 2):
                 if(self.tiles[i].state_number == self.tiles[i - 1].state_number): 
                     self.tiles[i - 1].state_number += 1
                     print("Changed: ", i, "Type: ", self.tiles[i].state_type, " Num: ", self.tiles[i].state_number)
+                elif(self.tiles[i].state_number > self.tiles[i - 1].state_number):
+                     self.tiles[i - 1].state_number = self.tiles[i].state_number  
+        self.walk_forward()        
         display_assembly(self)            
-        self.walk_forward()            
+                    
 
     def walk_forward(self):
         for i in range(0, len(self.tiles)):
             if(i == 0):
                 continue
-            if(i == len(self.tiles)-1):
+            elif(i == len(self.tiles)-1):
                 self.tiles[i].state_type = "F"
             if(i < len(self.tiles) - 1):
                self.tiles[i+1].state_number = self.tiles[i].state_number 
