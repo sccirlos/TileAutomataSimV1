@@ -113,7 +113,7 @@ def display_assembly(assembly):
                 print("Index:", i, "Found:", assembly.tiles[i].state_type, "Num:", assembly.tiles[i].state_number)         
 
 def main():
-    quit_num = 1250
+    quit_num = 15250
     if(quit_num < 30):
         a = Assembly(quit_num)
         print("Length: ", len(a.tiles) - 1)
