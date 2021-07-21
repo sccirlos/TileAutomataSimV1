@@ -41,12 +41,14 @@ class Ui_MainWindow(QMainWindow, TAFileWindow.Ui_MainWindow):
         err_flag = False
         self.error_label1.setText("")
         self.error_label2.setText("")
+        self.error_label3.setText("")
+        self.error_label4.setText("")
 
-        if(Config.spreadsheet1 == ""):
+        if(self.lineEdit.text == ""):
             self.error_label1.setText("Please enter a spreadsheet")
             print("Please enter a spreadsheet")
             err_flag = True
-        if(Config.spreadsheet2 == ""):
+        if(self.lineEdit_2.text == ""):
             self.error_label2.setText("Please enter a spreadsheet")
             print("Please enter a spreadsheet")
             err_flag = True
@@ -63,6 +65,10 @@ class Ui_MainWindow(QMainWindow, TAFileWindow.Ui_MainWindow):
                     self.lineEdit.setText(file[0])
                 elif id == -3:
                     self.lineEdit_2.setText(file[0])
+                elif id == -4:
+                    self.lineEdit_3.setText(file[0])
+                elif id == -5:
+                    self.lineEdit_4.setText(file[0])
 
 
 
