@@ -19,6 +19,25 @@
     #Step button
     #Keep growing until their are no more rules that apply
 
+# class Tile 
+class Tile:
+    # label
+    # # changes or list of changes (start num)
+    # maybe list of affinities pairs (state, direction)
+    # boolean can_change
+    
+    def __init__(self, l):
+        self.label = l
 
+    def __str__(self):
+        return self.label    
+
+class Assembly:
+    def __init__(self):
+        self.label = ""
+        self.tiles = []
+    
+        
+     
 # Step 1: Command Line with File Select 
 #         
