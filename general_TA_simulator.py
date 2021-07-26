@@ -34,9 +34,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
 
-        self.actionLoad.triggered.connect(self.Click_FileSearch)
+        self.actionLoad.triggered.connect(self.Click_FileSearch) #this is "Load" on the "File" menu
         
-        self.pushButton.clicked.connect(self.Click_Run_Simulation) #Button 5 executes the simulation. Afterwards the window updates to show results
+        self.pushButton.clicked.connect(self.Click_Run_Simulation) #this button executes the simulation. Afterwards the window updates to show results
 
     def Click_Run_Simulation(self): # Run application if everythings good
         err_flag = False
@@ -48,7 +48,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
     def Click_FileSearch(self, id):
         file = QFileDialog.getOpenFileName(self,"Select XML Document", "","XML Files (*.xml)")
-        #print(file)
         LoadFile.readxml(file[0])       
 
 
