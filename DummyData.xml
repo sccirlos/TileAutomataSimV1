@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<System>
+  <Tile Label ="A">
+    <Affinity>
+      <right>"B"</right>
+      <left>"C"</left>
+    </Affinity>
+    <color>cc0000</color>
+  </Tile>
+  <Tile Label ="B">
+    <Affinity>
+      <left>"A"</left>
+    </Affinity>
+    <color>002db3</color>
+  </Tile>
+  <Tile Label ="C">
+    <Affinity>
+      <right>"A"</right>
+    </Affinity>
+    <color>ffff00</color>
+  </Tile>
+</System>

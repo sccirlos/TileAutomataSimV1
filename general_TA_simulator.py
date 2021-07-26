@@ -2,6 +2,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog 
 
 import TAMainWindow
+import LoadFile
 
 import sys
 #General Seeded TA Simulator 
@@ -47,7 +48,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
     def Click_FileSearch(self, id):
         file = QFileDialog.getOpenFileName(self,"Select XML Document", "","XML Files (*.xml)")
-                
+        #print(file)
+        LoadFile.readxml(file[0])       
 
 
 
