@@ -96,7 +96,7 @@ class System:
     def get_states(self):
         return self.states  
 
-    def set_temp(self, s):
+    def set_states(self, s):
         self.states = s
 
     def get_initial_states(self):
