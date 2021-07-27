@@ -43,7 +43,11 @@ class Assembly:
     def __init__(self):
         self.label = ""
         self.tiles = [] #tuple of (label, x, y)
-        
+    def get_tiles(self):
+        return self.tiles
+    # Sonya on attachments
+
+    #Elise on transitions    
     
 class System:
     # Horizontal Hash Rules
