@@ -180,6 +180,11 @@ if __name__ == "__main__":
     assembly = Assembly()
     assembly.set_label("Dummy")
     assembly.set_tiles(tiles)
+    st = ["S", "A", "B", "C", "D", "E", "W", "X", "Y", "V", "Z"]
+    intst = ["S", "A", "B", "C", "D", "E"]
+    
+    # still needs transition rules and affinities
+    system = System(temp=1, states=st, seed_assembly=assembly, initial_states=intst)
     
     #App Stuff
     app = QApplication(sys.argv)
