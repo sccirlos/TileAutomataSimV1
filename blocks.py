@@ -118,7 +118,7 @@ def main():
         print("Length: ", len(a.tiles) - 1)
         display_assembly(a)        
     print("Length: ", quit_num)
-    #print("Bit Length: ", quit_num.bit_length())
+    print("Bit Length: ", quit_num.bit_length())
     print("Total number of states: ", quit_num.bit_length()*2 + 1)
     
 main()    

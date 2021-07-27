@@ -1,6 +1,6 @@
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog 
-
+from random import randrange
 import TAMainWindow
 import LoadFile
 
@@ -57,12 +57,32 @@ class Assembly:
 
     #Elise on transitions    
     def get_transitions(self, sy): #takes in a system
-        sys_h_transition_rules = sy.get_horizontal_transition_rules
-        sys_v_transition_rules = sy.get_vertical_transition_rules
-        for tile in self.tiles:
-            pass
+        transitions_list = []
+        sys_h_transition_rules = sy.get_horizontal_transition_rules()
+        # sys_v_transition_rules = sy.get_vertical_transition_rules
+        for i in range(1, len(self.tiles)-1):
+            t1 = (self.tiles[i-1][0])
+            t2 = (self.tiles[i][0])
+            ttc = (i-1, i)
+            ttl = (t1, t2)
+            print(ttl)
+            if ttl in sys_h_transition_rules:
+                transitions_list.append((ttc, ttl, sys_h_transition_rules[ttl]))
+        return transitions_list      
+
+    def set_transition(self, trans): # tuple of ((coord pair), (current labels), (transition labels))
+        a = Assembly()
+        a.label = self.label + "T "+ trans[2][0] + trans[2][1]
+        a.tiles = self.tiles
+        change = trans[0][0]
+        print(a.tiles[change][0])
+        print(trans[2][1])
+        print(trans[0])
+        #a.tiles[change] = trans[2][1]
+        print("New Assembly Tiles: ", a.tiles)
+        return a
 class System:
-    # Horizontal Hash Rules
+    # Horizontal Hash Rule
     # Vertical Hash Rules
     # Horizontal Transition Rules
     # Vertical Transition Rules
@@ -180,12 +200,36 @@ if __name__ == "__main__":
     assembly = Assembly()
     assembly.set_label("Dummy")
     assembly.set_tiles(tiles)
-    st = ["S", "A", "B", "C", "D", "E", "W", "X", "Y", "V", "Z"]
+    st = ["S", "A", "B", "C", "D", "E", "V", "W", "X", "Y", "Z"]
     intst = ["S", "A", "B", "C", "D", "E"]
     
     # still needs transition rules and affinities
     system = System(temp=1, states=st, seed_assembly=assembly, initial_states=intst)
-    
+
+    #add transition rules
+    ht_rules = {} #
+    SA = ("S", "A")
+    AB = ("A", "B")
+    BC = ("B", "C")
+    CD = ("C", "D")
+    DE = ("D", "E")
+    SV = ("S", "V")
+    AW = ("A", "W")
+    BX = ("B", "X")
+    CY = ("C", "Y")
+    DZ = ("D", "Z")
+    ht_rules[AB] = AW
+    ht_rules[BC] = BX
+    ht_rules[CD] = CY
+    ht_rules[DE] = DZ
+    print("Horizontal Transition Rules: ", ht_rules)
+    system.set_horizontal_transition_rules(ht_rules)
+    tr_list = assembly.get_transitions(system)
+    print("Transitions List: ", tr_list)
+    ind = randrange(len(tr_list) -1)
+    pickedt = tr_list[ind]
+    print(pickedt)
+    a1 = assembly.set_transition(pickedt)
     #App Stuff
     app = QApplication(sys.argv)
     w = Ui_MainWindow()
