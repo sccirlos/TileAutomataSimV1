@@ -1,4 +1,4 @@
-def incrementString(stri):
+def increment_string(stri):
     strings = ""
     num = ""
     inc = 0
@@ -28,6 +28,6 @@ def make_prime(stri):
     return fin
     
 strg = "A'10"   
-incrementString(strg)
+increment_string(strg)
 stri = "B5"
 make_prime(stri)
