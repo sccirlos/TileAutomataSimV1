@@ -35,7 +35,8 @@ class Tile:
 class Assembly:
     def __init__(self):
         self.label = ""
-        self.tiles = []
+        self.tiles = [] #tuple of (label, x, y)
+        
     
 class System:
     # Horizontal Hash Rules
@@ -101,7 +102,19 @@ class System:
         return self.seed_assembly
 
     def set_seed_assembly(self, s):
-        self.seed_assembly = s       
+        self.seed_assembly = s
+
+    def add_transition_rule(self, tr, direct):
+        if direct == "v":
+            self.vertical_transition_rules.append(tr)
+        else:
+            self.horizontal_transition_rules.append(tr)
+
+    def add_affinity(self, a, direct):
+        if direct == "v":
+            self.vertical_affinities.append(a)
+        else:
+            self.horizontal_affinities.append(a)                     
 # Step 1: Command Line with File Select 
 # 
 
