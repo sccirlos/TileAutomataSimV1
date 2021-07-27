@@ -1,6 +1,5 @@
 import tkinter as tk
 
-
 class Tile:
     state_type = None
     tile_num = 0     
