@@ -43,12 +43,24 @@ class Assembly:
     def __init__(self):
         self.label = ""
         self.tiles = [] #tuple of (label, x, y)
+    def get_label(self):
+        return self.label
+    def set_label(self, l):
+        self.label = l
+            
     def get_tiles(self):
         return self.tiles
+
+    def set_tiles(self, t):
+        self.tiles = t
     # Sonya on attachments
 
     #Elise on transitions    
-    
+    def get_transitions(self, sy): #takes in a system
+        sys_h_transition_rules = sy.get_horizontal_transition_rules
+        sys_v_transition_rules = sy.get_vertical_transition_rules
+        for tile in self.tiles:
+            pass
 class System:
     # Horizontal Hash Rules
     # Vertical Hash Rules
@@ -152,9 +164,29 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
 
 if __name__ == "__main__":
+    #Basic Dummy Data for Assembly
+    tiles = []
+    S_tile = ("S", 0, 0)
+    tiles.append(S_tile)
+    A_tile = ("A", 1, 0)
+    tiles.append(A_tile)
+    B_tile = ("B", 2, 0)
+    tiles.append(B_tile)
+    C_tile = ("C", 3, 0)
+    tiles.append(C_tile)
+    D_tile = ("D", 4, 0)
+    tiles.append(D_tile)
+    
+    assembly = Assembly()
+    assembly.set_label("Dummy")
+    assembly.set_tiles(tiles)
+    
+    #App Stuff
     app = QApplication(sys.argv)
     w = Ui_MainWindow()
     w.show()
+    
+    
     sys.exit(app.exec_())
 # 
 
