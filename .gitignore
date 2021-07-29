@@ -1,2 +1,3 @@
 # ignore .history files
 .history
+__pycache__/
