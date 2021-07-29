@@ -2,10 +2,10 @@ import tkinter as tk
 
 class Tile:
     state_type = None
-    tile_num = 0     
+    tile_num = None     
         
-    def __init__(self, type):
-      self.state_type = type
+    def __init__(self, t):
+      self.state_type = t
             
 class SeedTile(Tile):
     
@@ -15,15 +15,15 @@ class SeedTile(Tile):
 
 class ReseedTile(Tile):
     def __init__(self, st, num, stop):
-        self.tile_num = num
-        self.state_type = st
+        super().__init__(st)
+        self.reseed_num = num
         self.stop_num = stop        
         
 class NumberedTile(Tile):
       state_number = None
       
-      def __init__(self, type, num):
-        self.state_type = type
+      def __init__(self, st, num):
+        super().__init__(st)  
         self.state_number = num
 
        
