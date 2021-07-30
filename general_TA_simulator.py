@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog
 
 import TAMainWindow
 import LoadFile
+import Temp_Assemble
 
 import sys
 #General Seeded TA Simulator 
@@ -135,11 +136,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
     def Click_Run_Simulation(self): # Run application if everythings good
         err_flag = False
-        
-            
         if(err_flag == False):
-            print("all good")
-            #display results
+            Temp_Assemble.Main()
 
     def Click_FileSearch(self, id):
         file = QFileDialog.getOpenFileName(self,"Select XML Document", "","XML Files (*.xml)")
