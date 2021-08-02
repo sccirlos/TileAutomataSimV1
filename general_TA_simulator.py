@@ -81,6 +81,7 @@ class Assembly:
         #a.tiles[change] = trans[2][1]
         print("New Assembly Tiles: ", a.tiles)
         return a
+    
 class System:
     # Horizontal Hash Rule
     # Vertical Hash Rules
