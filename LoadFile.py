@@ -1,19 +1,14 @@
 from PyQt5.QtWidgets import QFileDialog 
 import xml.etree.ElementTree as ET
 
-class Tile:
-    def __init__(self, label,x, y, color):
-        self.label = label #The tile's label
-        self.x = x #The tile's starting x-position; Can be used as an int
-        self.y = y #The tile's starting y-position; Can be used as an int
-        self.color = color
-        #NOTE: These attributes could be added directly into the simulation portion rather than the load portion here.
-        self.left = "None" #The tile's left neighbor; L&R will be used later to track the tiles.
-        self.right = "None" #The tile's right neighbor
-        self.relevantAffinities = [] #Which elements from the AffinityRules list directly involve this tile?
-        self.relevantTranstitions = [] #Which elements from the TransitionRules list directly involve this tile?
-    def displayBasic(self): #Displays the basic information
-        print("Label: "+self.label+"; Spawning X-Coordinate: "+self.x+"; Spawning Y-Coordinate: "+self.y+"; Color: "+self.color)
+class BaseState:
+    def __init__(self, label, color):
+        self.label = label #The base state's label
+        self.color = color #The base state's color
+        self.relevantAffinities = [] #Which elements from the AffinityRules list directly involve this state?
+        self.relevantTranstitions = [] #Which elements from the TransitionRules list directly involve this state?
+    def displayBasic(self): #Displays the state's basic information
+        print("Label: "+self.label+"; Color: "+self.color)
 
 class AffinityRule:
     def __init__(self, origin, dir, destination):
@@ -40,20 +35,18 @@ def readxml(file):
     tree = ET.parse(file)
     treeroot = tree.getroot()
     
-    TileSet = [] #Collection of Available Tiles
+    BaseStateSet = [] #Collection of Available Tiles
     AffinityRules = [] #Collection of Affinity Rules
     TransitionRules = [] #Collection of Transition Rules
 
     #Main: Setting TileSet
     for tile_tag in treeroot.findall('TileTypes/Tile'):
         label = tile_tag.get('Label')
-        xPosition = tile_tag.find('x').text
-        yPosition = tile_tag.find('y').text
         color = tile_tag.find('color').text
-        tempTile = Tile(label, xPosition, yPosition, color)
-        TileSet.append(tempTile)
-    print("Inital Tile Set:")
-    for element in TileSet:
+        tempState = BaseState(label, color)
+        BaseStateSet.append(tempState)
+    print("Base State Set:")
+    for element in BaseStateSet:
         element.displayBasic()
 
     #Main: Setting System Rules

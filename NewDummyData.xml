@@ -2,18 +2,12 @@
 <Root>
     <TileTypes>
         <Tile Label="A"> <!-- Label -->
-            <x>25</x> <!-- If inital tile, starting X-position -->
-            <y>25</y> <!-- If inital tile, starting Y-position -->
             <color>cc0000</color> <!-- Color of tile type-->
         </Tile>
         <Tile Label="B">
-            <x>26</x>
-            <y>25</y>
             <color>002db3</color>
         </Tile>
         <Tile Label="C">
-            <x>24</x>
-            <y>25</y>
             <color>ffff00</color>
         </Tile>
     </TileTypes>
