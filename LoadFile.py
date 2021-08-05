@@ -1,12 +1,23 @@
 from PyQt5.QtWidgets import QFileDialog 
 import xml.etree.ElementTree as ET
 
+BaseStateSet = [] #Collection of Available Base States
 class BaseState:
     def __init__(self, label, color):
         self.label = label #The base state's label
         self.color = color #The base state's color
         self.relevantAffinities = [] #Which elements from the AffinityRules list directly involve this state?
         self.relevantTranstitions = [] #Which elements from the TransitionRules list directly involve this state?
+    #Getters
+    def returnLabel(self):
+        return self.label
+    def returnColor(self):
+        return self.color
+    def returnRelevantAffinities(self):
+        return self.relevantAffinities
+    def returnRelevantTransitions(self):
+        return self.relevantTranstitions
+    #Displayers
     def displayBasic(self): #Displays the state's basic information
         print("Label: "+self.label+"; Color: "+self.color)
 
@@ -35,7 +46,6 @@ def readxml(file):
     tree = ET.parse(file)
     treeroot = tree.getroot()
     
-    BaseStateSet = [] #Collection of Available Tiles
     AffinityRules = [] #Collection of Affinity Rules
     TransitionRules = [] #Collection of Transition Rules
 
@@ -58,9 +68,6 @@ def readxml(file):
             destination = direction.text.replace("\"", "")
             tempRule = AffinityRule(origin, dir, destination)
             AffinityRules.append(tempRule)
-    print("\nAffinity Rules:")
-    for element in AffinityRules:
-        element.displayRule()
 
     #Sub: Setting Transition Rules
     for rule_tag in treeroot.findall('System/TransitionRules/Rule'):
@@ -70,6 +77,11 @@ def readxml(file):
         finalRight = rule_tag.find('right').text.replace("\"", "")
         tempRule = TransitionRule(originalLeft, originalRight, finalLeft, finalRight)
         TransitionRules.append(tempRule)
+
+    #Main: Displaying Relevant Rules for Each Base State
+    print("\nAffinity Rules:")
+    for element in AffinityRules:
+        element.displayRule()
     print("\nTransition Rules:")
     for element in TransitionRules:
         element.displayRule()
