@@ -3,8 +3,7 @@
 
 ## Our research team created a Tile Automata simulator 🥇 
 
-### About Tile Automata model
-> should we add a quick summary?
+### [About Tile Automata model](http://self-assembly.net/wiki/index.php?title=Tile_Automata)
 
 
 
