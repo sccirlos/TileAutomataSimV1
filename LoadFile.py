@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QFileDialog
 import xml.etree.ElementTree as ET
 
 BaseStateSet = [] #Collection of Available Base States
+
 class BaseState:
     def __init__(self, label, color):
         self.label = label #The base state's label
@@ -20,12 +21,25 @@ class BaseState:
     #Displayers
     def displayBasic(self): #Displays the state's basic information
         print("Label: "+self.label+"; Color: "+self.color)
+    #Appenders
+    def appendAffinity(self, rule):
+        self.relevantAffinities.append(rule)
+    def appendTransition(self, rule):
+        self.relevantTranstitions.append(rule)
 
 class AffinityRule:
     def __init__(self, origin, dir, destination):
         self.origin = origin #Which label will get a new neighbor?
         self.dir = dir #Which direction will the new neighbor be placed?
         self.destination = destination #Who's the new neighbor?
+    #Getters
+    def returnOrigin(self):
+        return self.origin
+    def returnDir(self):
+        return self.dir
+    def returnDestination(self):
+        return self.destination
+    #Displayer
     def displayRule(self):
         if(self.dir == "left"):
             print(self.destination+" connects to the left of "+self.origin+" -> ["+self.destination+","+self.origin+"]")
@@ -38,6 +52,16 @@ class TransitionRule:
         self.originalRight = originalRight
         self.finalLeft = finalLeft
         self.finalRight = finalRight
+    #Getters
+    def returnOriginalLeft(self):
+        return self.originalLeft
+    def returnOriginalRight(self):
+        return self.originalRight
+    def returnFinalLeft(self):
+        return self.finalLeft
+    def returnFinalRight(self):
+        return self.finalRight
+    #Displayer
     def displayRule(self):
         print("["+self.originalLeft+","+self.originalRight+"] -> ["+self.finalLeft+","+self.finalRight+"]")
         
@@ -85,3 +109,13 @@ def readxml(file):
     print("\nTransition Rules:")
     for element in TransitionRules:
         element.displayRule()
+
+    #Main: Assigning Each Tile's Relevant Rules
+    for base_state in BaseStateSet:
+        tempLabel = base_state.returnLabel()
+        for rule in AffinityRules:
+            if(tempLabel == rule.returnOrigin()):
+                base_state.appendAffinity(rule)
+        for rule in TransitionRules:
+            if(tempLabel == rule.returnOriginalLeft() or tempLabel == rule.returnOriginalRight()):
+                base_state.appendTransition(rule)
