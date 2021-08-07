@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Root>
+    <TileTypes>
+        <Tile Label="A"> <!-- Label -->
+            <color>cc0000</color> <!-- Color of tile type-->
+        </Tile>
+        <Tile Label="B">
+            <color>002db3</color>
+        </Tile>
+        <Tile Label="C">
+            <color>ffff00</color>
+        </Tile>
+    </TileTypes>
+    <System>
+        <AffinityRules> <!-- Affinity Rules -->
+            <Rule Tile="A"> <!-- Affinity Rules for A-Type tiles -->
+                <left>"C"</left> <!-- Leftward Affinity Ex. C-A -->
+                <right>"B"</right> <!-- Rightward Affinity Ex. A-B-->
+            </Rule>
+            <Rule Tile="B">
+                <left>"A"</left>
+            </Rule>
+            <Rule Tile="C">
+                <right>"A"</right>
+            </Rule>
+        </AffinityRules>
+        <TransitionRules> <!-- Transition Rules-->
+        </TransitionRules>
+    </System>
+</Root>
