@@ -15,12 +15,14 @@ class ActiveTile:  # Tiles based on the Base States
         # New Attributes for Active Tiles for Positional Tracking
         self.left = None  # Left Neighbor (Tile)
         self.right = None  # Right Neighbor (Tile)
+        self.up = None  # Neighbor from above (Tile)
+        self. down = None  # Neighbor from below (Tile)
         self.x = x  # X-coordinate in the grid (Int)
         self.y = y  # Y-coordinate in the grid (Int)
         self.ID = ActiveTile.ID
         ActiveTile.ID += 1
-    # Getters
 
+    # Getters
     def returnCoordinates(self):
         return (str(self.x)+", "+str(self.y))
 
@@ -39,6 +41,12 @@ class ActiveTile:  # Tiles based on the Base States
     def returnRight(self):
         return self.right
 
+    def returnUp(self):
+        return self.up
+
+    def returnDown(self):
+        return self.down
+
     def returnLabel(self):
         return self.label
 
@@ -47,8 +55,8 @@ class ActiveTile:  # Tiles based on the Base States
 
     def returnY(self):
         return self.y
-    # Setters
 
+    # Setters
     def setLabel(self, label):  # Will need to change this later because this only allows for a superficial transition (aka, just the label changes)
         self.label = label
 
@@ -57,6 +65,12 @@ class ActiveTile:  # Tiles based on the Base States
 
     def setRight(self, neighbor):
         self.right = neighbor
+
+    def setUp(self, neighbor):
+        self.up = neighbor
+
+    def setDown(self, neighbor):
+        self.down = neighbor
 
     def setX(self, x):
         self.x = x
@@ -72,8 +86,8 @@ class ActiveTile:  # Tiles based on the Base States
 
     def setRelevantTransitions(self, transitions):
         self.relevantTranstitions = transitions
-    # Displayers
 
+    # Displayers
     def displayBasicInfo(self):
         print("\t-Label: "+self.label+"; X-Coordinate: "+str(self.x) +
               "; Y-Coordinate: "+str(self.y)+"; Color: "+self.color)
@@ -194,6 +208,8 @@ def PlacingSecondTile(AssemblyHistory, BaseStates):
             tileLabel = tile.returnLabel()
             tileLeftNeighbor = tile.returnLeft()
             tileRightNeighbor = tile.returnRight()
+            tileUpNeighbor = tile.returnUp()
+            tileDownNeighbor = tile.returnDown()
             tileAffinities = tile.returnRelevantAffinities()
             tileTransitions = tile.returnRelevantTransitions()
             # Check through the current tile's affinity rules...
@@ -202,8 +218,8 @@ def PlacingSecondTile(AssemblyHistory, BaseStates):
                 ruleDir = rule.returnDir()
                 ruleDestination = rule.returnDestination()
 
-                # If the tile's left and right sides are occupied, skip the entire affinity check
-                if(tileLeftNeighbor != None and tileRightNeighbor != None):
+                # If all sides of a tile are occupied, skip the entire affinity check
+                if(tileLeftNeighbor != None and tileRightNeighbor != None and tileUpNeighbor != None and tileDownNeighbor != None):
                     break
                 else:
                     # If we have a leftward affinity, and the left side is open...
@@ -217,6 +233,18 @@ def PlacingSecondTile(AssemblyHistory, BaseStates):
                         tempMove = AvailableAffinity(
                             ruleOrigin, ruleDir, ruleDestination, tileID)
                         AvailableMoves.append(tempMove)
+                    # Same thing if we have an upward affinity and we have open space above us...
+                    if(ruleDir == 'up' and tileUpNeighbor == None):
+                        tempMove = AvailableAffinity(
+                            ruleOrigin, ruleDir, ruleDestination, tileID)
+                        AvailableMoves.append(tempMove)
+                    # Lastly, same thing with downward affinity...
+                    if(ruleDir == 'down' and tileDownNeighbor == None):
+                        tempMove = AvailableAffinity(
+                            ruleOrigin, ruleDir, ruleDestination, tileID)
+                        AvailableMoves.append(tempMove)
+            # ---------------------------------------- WIP ---------------------
+            # Note: This feature is doodoo; revising how I can work with it while in a giant loop and in 2D. -Armando
             # Then check the current tile's transition rules...
             for rule in tileTransitions:
                 ruleOriginalLeft = rule.returnOriginalLeft()
@@ -243,6 +271,7 @@ def PlacingSecondTile(AssemblyHistory, BaseStates):
                         tempMove = AvailableTransition(
                             ruleOriginalLeft, ruleOriginalRight, ruleFinalLeft, ruleFinalRight, tileID, tileLeftNeighborID)
                         AvailableMoves.append(tempMove)
+            # -------------------------- WIP -------------------
         # Main: The exit for the move-search is if there is no available moves at this point. If we can't find any moves, then we must be in the terminal assembly.
         if(AvailableMoves == []):
             break
@@ -288,7 +317,7 @@ def PlacingSecondTile(AssemblyHistory, BaseStates):
                         # Update both tiles' neighbor-statuses
                         originTile.setLeft(destinationTile)
                         destinationTile.setRight(originTile)
-                else:  # If moveDir == "right"
+                elif(moveDir == "right"):  # If moveDir == "right"
                     for base_tile in BaseStates:
                         baseLabel = base_tile.returnLabel()
 
@@ -310,6 +339,50 @@ def PlacingSecondTile(AssemblyHistory, BaseStates):
                         # Update both tiles' neighbor-statuses
                         originTile.setRight(destinationTile)
                         destinationTile.setLeft(originTile)
+                elif(moveDir == "up"):
+                    for base_tile in BaseStates:
+                        baseLabel = base_tile.returnLabel()
+
+                        # Note: Add an exception branch if the new label isn't from the BaseStates
+                        if(baseLabel == moveDestinationLabel):
+                            baseColor = base_tile.returnColor()
+                            baseAffinities = base_tile.returnRelevantAffinities()
+                            baseTransitions = base_tile.returnRelevantTransitions()
+
+                            destinationTile.setLabel(baseLabel)
+                            destinationTile.setColor(baseColor)
+                            destinationTile.setRelevantAffinities(
+                                baseAffinities)
+                            destinationTile.setRelevantTransitions(
+                                baseTransitions)
+                        # Establish the new tile's coordinates
+                        destinationTile.setX(originX)
+                        destinationTile.setY(originY + 1)
+                        # Update both tiles' neighbor-statuses
+                        originTile.setUp(destinationTile)
+                        destinationTile.setDown(originTile)
+                elif(moveDir == "down"):
+                    for base_tile in BaseStates:
+                        baseLabel = base_tile.returnLabel()
+
+                        # Note: Add an exception branch if the new label isn't from the BaseStates
+                        if(baseLabel == moveDestinationLabel):
+                            baseColor = base_tile.returnColor()
+                            baseAffinities = base_tile.returnRelevantAffinities()
+                            baseTransitions = base_tile.returnRelevantTransitions()
+
+                            destinationTile.setLabel(baseLabel)
+                            destinationTile.setColor(baseColor)
+                            destinationTile.setRelevantAffinities(
+                                baseAffinities)
+                            destinationTile.setRelevantTransitions(
+                                baseTransitions)
+                        # Establish the new tile's coordinates
+                        destinationTile.setX(originX)
+                        destinationTile.setY(originY - 1)
+                        # Update both tiles' neighbor-statuses
+                        originTile.setDown(destinationTile)
+                        destinationTile.setUp(originTile)
                 # Append the new tile to the assembly
                 AssemblyHistory.append(destinationTile)
             # Note: An else-statement for Transition Rules would go here, but the execution of transition rules are causing a lot of urt.

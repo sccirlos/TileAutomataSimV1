@@ -58,10 +58,16 @@ class AffinityRule:
     def displayRule(self):
         if(self.dir == "left"):
             print(self.destination+" connects to the left of " +
-                  self.origin+" -> ["+self.destination+","+self.origin+"]")
-        else:
+                  self.origin+" -> ["+self.destination+"|"+self.origin+"]")
+        elif(self.dir == "right"):
             print(self.destination+" connects to the right of " +
-                  self.origin+" ->["+self.origin+","+self.destination+"]")
+                  self.origin+" ->["+self.origin+"|"+self.destination+"]")
+        elif(self.dir == "up"):
+            print(self.destination+" connects to the top of " +
+                  self.origin+"->["+self.destination+"/"+self.origin+"]")
+        else:
+            print(self.destination+" connects to the bottom of " +
+                  self.origin+"->["+self.origin+"/"+self.destination+"]")
 
 
 class TransitionRule:

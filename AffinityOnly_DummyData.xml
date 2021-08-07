@@ -10,18 +10,32 @@
         <Tile Label="C">
             <color>ffff00</color>
         </Tile>
+        <Tile Label="D">
+            <color>ff2222</color>
+        </Tile>
+        <Tile Label="E">
+            <color>ff00aaaa</color>
+        </Tile>
     </TileTypes>
     <System>
         <AffinityRules> <!-- Affinity Rules -->
             <Rule Tile="A"> <!-- Affinity Rules for A-Type tiles -->
-                <left>"C"</left> <!-- Leftward Affinity Ex. C-A -->
                 <right>"B"</right> <!-- Rightward Affinity Ex. A-B-->
+                <left>"C"</left> <!-- Leftward Affinity Ex. C-A -->
+                <up>"D"</up>
+                <down>"E"</down>
             </Rule>
             <Rule Tile="B">
                 <left>"A"</left>
             </Rule>
             <Rule Tile="C">
                 <right>"A"</right>
+            </Rule>
+            <Rule Tile="D">
+                <down>"A"</down>
+            </Rule>
+            <Rule Tile="E">
+                <up>"A"</up>
             </Rule>
         </AffinityRules>
         <TransitionRules> <!-- Transition Rules-->
