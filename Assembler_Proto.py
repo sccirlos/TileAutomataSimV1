@@ -184,130 +184,139 @@ def PlacingFirstTile(AssemblyHistory, BaseStates):
 
 
 def PlacingSecondTile(AssemblyHistory, BaseStates):
-    finalAssembly = False  # Is the current assembly the final assembly?
-    # Main: Find out what are our available moves.
-    AvailableMoves = []
-    # Checking each tile individually...
-    for tile in AssemblyHistory:
-        tileID = tile.returnID()
-        tileLabel = tile.returnLabel()
-        tileLeftNeighbor = tile.returnLeft()
-        tileRightNeighbor = tile.returnRight()
-        tileAffinities = tile.returnRelevantAffinities()
-        tileTransitions = tile.returnRelevantTransitions()
-        # Check through the current tile's affinity rules...
-        for rule in tileAffinities:
-            ruleOrigin = rule.returnOrigin()
-            ruleDir = rule.returnDir()
-            ruleDestination = rule.returnDestination()
 
-            # If the tile's left and right sides are occupied, skip the entire affinity check
-            if(tileLeftNeighbor != None and tileRightNeighbor != None):
-                break
-            else:
-                # If we have a leftward affinity, and the left side is open...
-                if(ruleDir == 'left' and tileLeftNeighbor == None):
-                    # Pick the rule and attach it to AvailableMoves[]
-                    tempMove = AvailableAffinity(
-                        ruleOrigin, ruleDir, ruleDestination, tileID)
-                    AvailableMoves.append(tempMove)
-                # Same thing if we have a rightward affinity and the right side is open...
-                if(ruleDir == 'right' and tileRightNeighbor == None):
-                    tempMove = AvailableAffinity(
-                        ruleOrigin, ruleDir, ruleDestination, tileID)
-                    AvailableMoves.append(tempMove)
-        # Then check the current tile's transition rules...
-        for rule in tileTransitions:
-            ruleOriginalLeft = rule.returnOriginalLeft()
-            ruleOriginalRight = rule.returnOriginalRight()
-            ruleFinalLeft = rule.returnFinalLeft()
-            ruleFinalRight = rule.returnFinalRight()
-            # If the tile has no neighbors, then there's no way to make a transition, so skip the entire transition check
-            if(tileLeftNeighbor == None and tileRightNeighbor == None):
-                break
-            else:
-                # Note: This part doesn't account for a missing neighbor
-                tileLeftNeighborLabel = tileLeftNeighbor.returnLabel()
-                tileLeftNeighborID = tileLeftNeighbor.returnID()
-                tileRightNeighborLabel = tileRightNeighbor.returnLabel()
-                tileRightNeighborID = tileRightNeighbor.returnID()
+    while(True):
+        # Main: Find out what are our available moves.
+        AvailableMoves = []
+        # Checking each tile individually...
+        for tile in AssemblyHistory:
+            tileID = tile.returnID()
+            tileLabel = tile.returnLabel()
+            tileLeftNeighbor = tile.returnLeft()
+            tileRightNeighbor = tile.returnRight()
+            tileAffinities = tile.returnRelevantAffinities()
+            tileTransitions = tile.returnRelevantTransitions()
+            # Check through the current tile's affinity rules...
+            for rule in tileAffinities:
+                ruleOrigin = rule.returnOrigin()
+                ruleDir = rule.returnDir()
+                ruleDestination = rule.returnDestination()
 
-                # If the current tile is the 'left' tile, then we must check the 'right'. If everything is correct, add the transition rule to AvailableMoves[].
-                if(tileLabel == ruleOriginalLeft and tileRightNeighborLabel == ruleOriginalRight):
-                    tempMove = AvailableTransition(
-                        ruleOriginalLeft, ruleOriginalRight, ruleFinalLeft, ruleFinalRight, tileID, tileRightNeighborID)
-                    AvailableMoves.append(tempMove)
-                # Same thing as before: if the current tile is the 'right' tile, then we must check the 'left'...
-                if(tileLabel == ruleOriginalRight and tileLeftNeighborLabel == ruleOriginalLeft):
-                    tempMove = AvailableTransition(
-                        ruleOriginalLeft, ruleOriginalRight, ruleFinalLeft, ruleFinalRight, tileID, tileLeftNeighborID)
-                    AvailableMoves.append(tempMove)
+                # If the tile's left and right sides are occupied, skip the entire affinity check
+                if(tileLeftNeighbor != None and tileRightNeighbor != None):
+                    break
+                else:
+                    # If we have a leftward affinity, and the left side is open...
+                    if(ruleDir == 'left' and tileLeftNeighbor == None):
+                        # Pick the rule and attach it to AvailableMoves[]
+                        tempMove = AvailableAffinity(
+                            ruleOrigin, ruleDir, ruleDestination, tileID)
+                        AvailableMoves.append(tempMove)
+                    # Same thing if we have a rightward affinity and the right side is open...
+                    if(ruleDir == 'right' and tileRightNeighbor == None):
+                        tempMove = AvailableAffinity(
+                            ruleOrigin, ruleDir, ruleDestination, tileID)
+                        AvailableMoves.append(tempMove)
+            # Then check the current tile's transition rules...
+            for rule in tileTransitions:
+                ruleOriginalLeft = rule.returnOriginalLeft()
+                ruleOriginalRight = rule.returnOriginalRight()
+                ruleFinalLeft = rule.returnFinalLeft()
+                ruleFinalRight = rule.returnFinalRight()
+                # If the tile has no neighbors, then there's no way to make a transition, so skip the entire transition check
+                if(tileLeftNeighbor == None and tileRightNeighbor == None):
+                    break
+                else:
+                    # Note: This part doesn't account for a missing neighbor
+                    tileLeftNeighborLabel = tileLeftNeighbor.returnLabel()
+                    tileLeftNeighborID = tileLeftNeighbor.returnID()
+                    tileRightNeighborLabel = tileRightNeighbor.returnLabel()
+                    tileRightNeighborID = tileRightNeighbor.returnID()
 
-    # Main: Execute a Random Available Move
-    elementNum = randrange(0, len(AvailableMoves))  # Pick a number
-    # Pick the corresponding available move from that number
-    activeMove = AvailableMoves[elementNum]
-    # Determine what kind of rule we're executing.
-    moveType = activeMove.returnRuleType()
-    # If it's an affinity rule:
-    if(moveType == "Affinity"):
-        # Gather Move's Data
-        originID = activeMove.returnID()
-        originTile = AssemblyHistory[originID]  # The entire origin tile
-        originX = originTile.returnX()
-        originY = originTile.returnY()
-        moveDir = activeMove.returnDir()
-        moveDestinationLabel = activeMove.returnDestination()
-        # Dummy Data to Prevent Future Errors
-        destinationTile = ActiveTile(BaseStates[0], 0, 0)
+                    # If the current tile is the 'left' tile, then we must check the 'right'. If everything is correct, add the transition rule to AvailableMoves[].
+                    if(tileLabel == ruleOriginalLeft and tileRightNeighborLabel == ruleOriginalRight):
+                        tempMove = AvailableTransition(
+                            ruleOriginalLeft, ruleOriginalRight, ruleFinalLeft, ruleFinalRight, tileID, tileRightNeighborID)
+                        AvailableMoves.append(tempMove)
+                    # Same thing as before: if the current tile is the 'right' tile, then we must check the 'left'...
+                    if(tileLabel == ruleOriginalRight and tileLeftNeighborLabel == ruleOriginalLeft):
+                        tempMove = AvailableTransition(
+                            ruleOriginalLeft, ruleOriginalRight, ruleFinalLeft, ruleFinalRight, tileID, tileLeftNeighborID)
+                        AvailableMoves.append(tempMove)
+        # Main: The exit for the move-search is if there is no available moves at this point. If we can't find any moves, then we must be in the terminal assembly.
+        if(AvailableMoves == []):
+            break
+        else:
+            # Main: Execute a Random Available Move
+            elementNum = randrange(0, len(AvailableMoves))  # Pick a number
+            # Pick the corresponding available move from that number
+            activeMove = AvailableMoves[elementNum]
+            # Determine what kind of rule we're executing.
+            moveType = activeMove.returnRuleType()
+            # If it's an affinity rule:
+            if(moveType == "Affinity"):
+                # Gather Move's Data
+                originID = activeMove.returnID()
+                # The entire origin tile
+                originTile = AssemblyHistory[originID]
+                originX = originTile.returnX()
+                originY = originTile.returnY()
+                moveDir = activeMove.returnDir()
+                moveDestinationLabel = activeMove.returnDestination()
+                # Dummy Data to Prevent Future Errors
+                destinationTile = ActiveTile(BaseStates[0], 0, 0)
 
-        if(moveDir == "left"):
-            for base_tile in BaseStates:
-                baseLabel = base_tile.returnLabel()
+                if(moveDir == "left"):
+                    for base_tile in BaseStates:
+                        baseLabel = base_tile.returnLabel()
 
-                # Note: Add an exception branch if the new label isn't from the BaseStates
-                if(baseLabel == moveDestinationLabel):
-                    baseColor = base_tile.returnColor()
-                    baseAffinities = base_tile.returnRelevantAffinities()
-                    baseTransitions = base_tile.returnRelevantTransitions()
+                        # Note: Add an exception branch if the new label isn't from the BaseStates
+                        if(baseLabel == moveDestinationLabel):
+                            baseColor = base_tile.returnColor()
+                            baseAffinities = base_tile.returnRelevantAffinities()
+                            baseTransitions = base_tile.returnRelevantTransitions()
 
-                    destinationTile.setLabel(baseLabel)
-                    destinationTile.setColor(baseColor)
-                    destinationTile.setRelevantAffinities(baseAffinities)
-                    destinationTile.setRelevantTransitions(baseTransitions)
-                # Establish the new tile's coordinates
-                destinationTile.setX(originX - 1)
-                destinationTile.setY(originY)
-                # Update both tiles' neighbor-statuses
-                originTile.setLeft(destinationTile)
-                destinationTile.setRight(originTile)
-        else:  # If moveDir == "right"
-            for base_tile in BaseStates:
-                baseLabel = base_tile.returnLabel()
+                            destinationTile.setLabel(baseLabel)
+                            destinationTile.setColor(baseColor)
+                            destinationTile.setRelevantAffinities(
+                                baseAffinities)
+                            destinationTile.setRelevantTransitions(
+                                baseTransitions)
+                        # Establish the new tile's coordinates
+                        destinationTile.setX(originX - 1)
+                        destinationTile.setY(originY)
+                        # Update both tiles' neighbor-statuses
+                        originTile.setLeft(destinationTile)
+                        destinationTile.setRight(originTile)
+                else:  # If moveDir == "right"
+                    for base_tile in BaseStates:
+                        baseLabel = base_tile.returnLabel()
 
-                # Note: Add an exception branch if the new label isn't from the BaseStates
-                if(baseLabel == moveDestinationLabel):
-                    baseColor = base_tile.returnColor()
-                    baseAffinities = base_tile.returnRelevantAffinities()
-                    baseTransitions = base_tile.returnRelevantTransitions()
+                        # Note: Add an exception branch if the new label isn't from the BaseStates
+                        if(baseLabel == moveDestinationLabel):
+                            baseColor = base_tile.returnColor()
+                            baseAffinities = base_tile.returnRelevantAffinities()
+                            baseTransitions = base_tile.returnRelevantTransitions()
 
-                    destinationTile.setLabel(baseLabel)
-                    destinationTile.setColor(baseColor)
-                    destinationTile.setRelevantAffinities(baseAffinities)
-                    destinationTile.setRelevantTransitions(baseTransitions)
-                # Establish the new tile's coordinates
-                destinationTile.setX(originX + 1)
-                destinationTile.setY(originY)
-                # Update both tiles' neighbor-statuses
-                originTile.setRight(destinationTile)
-                destinationTile.setLeft(originTile)
-        # Append the new tile to the assembly
-        AssemblyHistory.append(destinationTile)
-    # Note: An else-statement for Transition Rules would go here, but the execution of transition rules are causing a lot of urt.
-    print("New Assembly:")
-    # Main: Print resulting assembly
-    for element in AssemblyHistory:
-        element.displayBasicInfo()
+                            destinationTile.setLabel(baseLabel)
+                            destinationTile.setColor(baseColor)
+                            destinationTile.setRelevantAffinities(
+                                baseAffinities)
+                            destinationTile.setRelevantTransitions(
+                                baseTransitions)
+                        # Establish the new tile's coordinates
+                        destinationTile.setX(originX + 1)
+                        destinationTile.setY(originY)
+                        # Update both tiles' neighbor-statuses
+                        originTile.setRight(destinationTile)
+                        destinationTile.setLeft(originTile)
+                # Append the new tile to the assembly
+                AssemblyHistory.append(destinationTile)
+            # Note: An else-statement for Transition Rules would go here, but the execution of transition rules are causing a lot of urt.
+        print("New Assembly:")
+        # Main: Print resulting assembly
+        for element in AssemblyHistory:
+            element.displayBasicInfo()
 
 
 def Main():
