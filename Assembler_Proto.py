@@ -12,12 +12,12 @@ class ActiveTile:  # Tiles based on the Base States
             self.label = "?"
             self.color = "ff0000"
             self.relevantAffinities = []
-            self.relevantTranstitions = []
+            self.relevantTransitions = []
         else:
             self.label = base_state.returnLabel()
             self.color = base_state.returnColor()
             self.relevantAffinities = base_state.returnRelevantAffinities()
-            self.relevantTranstitions = base_state.returnRelevantTransitions()
+            self.relevantTransitions = base_state.returnRelevantTransitions()
         # New Attributes for Active Tiles for Positional Tracking
         self.left = None  # Left Neighbor (Tile)
         self.right = None  # Right Neighbor (Tile)
@@ -36,7 +36,7 @@ class ActiveTile:  # Tiles based on the Base States
         return self.relevantAffinities
 
     def returnRelevantTransitions(self):
-        return self.relevantTranstitions
+        return self.relevantTransitions
 
     def returnID(self):
         return self.ID
@@ -91,7 +91,7 @@ class ActiveTile:  # Tiles based on the Base States
         self.relevantAffinities = affinities
 
     def setRelevantTransitions(self, transitions):
-        self.relevantTranstitions = transitions
+        self.relevantTransitions = transitions
 
     # Displayers
     def displayBasicInfo(self):
@@ -125,14 +125,14 @@ class AvailableAffinity:
 
 
 class AvailableTransition:
-    def __init__(self, origin, neighbor, bondDir, finalOrigin, finalNeighbor, ID, ruleType):
+    def __init__(self, origin, neighbor, bondDir, finalOrigin, finalNeighbor, ID):
         self.origin = origin
         self.neighbor = neighbor
         self.bondDir = bondDir
         self.finalOrigin = finalOrigin
         self.finalNeighbor = finalNeighbor
         self.ID = ID
-        self.ruleType = ruleType
+        self.ruleType = "Transition"
 
     # Getters
     def returnOrigin(self):
@@ -162,7 +162,7 @@ def PlacingFirstTile(AssemblyHistory, BaseStates):
     # Create an instance of the 1st active tile
     tempActiveTile = ActiveTile(0, 0, BaseStates[elementNum])
     AssemblyHistory.append(tempActiveTile)
-    print("Current Assembly:")
+    print("Initial Assembly:")
     for element in AssemblyHistory:
         element.displayBasicInfo()
 
@@ -171,11 +171,11 @@ def PlacingSecondTile(AssemblyHistory, CompleteStatesSet):
 
     while(True):
         # Main: Find out what are our available moves.
+        # AvailableMoves is placed in here to reset it at the start of every search for moves
         AvailableMoves = []
         # Checking each tile individually...
         for tile in AssemblyHistory:
             tileID = tile.returnID()
-            tileLabel = tile.returnLabel()
             tileLeftNeighbor = tile.returnLeft()
             tileRightNeighbor = tile.returnRight()
             tileUpNeighbor = tile.returnUp()
@@ -213,12 +213,54 @@ def PlacingSecondTile(AssemblyHistory, CompleteStatesSet):
                         tempMove = AvailableAffinity(
                             ruleOrigin, ruleDir, ruleDestination, tileID)
                         AvailableMoves.append(tempMove)
-            # ---------------------------------------- WIP ---------------------
-            # Note: This feature is doodoo; revising how I can work with it while in a giant loop and in 2D. -Armando
+
             # Then check the current tile's transition rules...
             for rule in tileTransitions:
-                pass
-            # -------------------------- WIP -------------------
+                ruleOrigin = rule.returnOrigin()  # It's the origin's label
+                ruleDir = rule.returnDir()
+                ruleNeighbor = rule.returnNeighbor()  # It's the neighbor's label
+                ruleFinalOrigin = rule.returnFinalOrigin()  # Label
+                ruleFinalNeighbor = rule.returnFinalNeighbor()  # Label
+
+                # If all sides of a tile are empty, skip the entire transition check.
+                if(tileLeftNeighbor == None and tileRightNeighbor == None and tileUpNeighbor == None and tileDownNeighbor == None):
+                    break
+                else:
+                    # Initiate labels as None for exception-handling
+                    tileLeftNeighborLabel = None
+                    tileRightNeighborLabel = None
+                    tileUpNeighborLabel = None
+                    tileDownNeighborLabel = None
+                    # Gather labels if the neighbor exists
+                    if(tileLeftNeighbor != None):
+                        tileLeftNeighborLabel = tileLeftNeighbor.returnLabel()
+                    if(tileRightNeighbor != None):
+                        tileRightNeighborLabel = tileRightNeighbor.returnLabel()
+                    if(tileUpNeighbor != None):
+                        tileUpNeighborLabel = tileUpNeighbor.returnLabel()
+                    if(tileDownNeighbor != None):
+                        tileDownNeighborLabel = tileDownNeighbor.returnLabel()
+
+                    # Check neighbors associated with a bond direction
+                    # If the direction is left and the neighbor's label matches the rule's neighbor label...
+                    if(ruleDir == "left" and tileLeftNeighborLabel == ruleNeighbor):
+                        # Add this rule to AvailableMoves
+                        tempMove = AvailableTransition(
+                            ruleOrigin, ruleNeighbor, ruleDir, ruleFinalOrigin, ruleFinalNeighbor, tileID)
+                        AvailableMoves.append(tempMove)
+                    if(ruleDir == "right" and tileRightNeighborLabel == ruleNeighbor):
+                        tempMove = AvailableTransition(
+                            ruleOrigin, ruleNeighbor, ruleDir, ruleFinalOrigin, ruleFinalNeighbor, tileID)
+                        AvailableMoves.append(tempMove)
+                    if(ruleDir == "up" and tileUpNeighborLabel == ruleNeighbor):
+                        tempMove = AvailableTransition(
+                            ruleOrigin, ruleNeighbor, ruleDir, ruleFinalOrigin, ruleFinalNeighbor, tileID)
+                        AvailableMoves.append(tempMove)
+                    if(ruleDir == "down" and tileDownNeighborLabel == ruleNeighbor):
+                        tempMove = AvailableTransition(
+                            ruleOrigin, ruleNeighbor, ruleDir, ruleFinalOrigin, ruleFinalNeighbor, tileID)
+                        AvailableMoves.append(tempMove)
+
         # Main: The exit for the move-search is if there is no available moves at this point. If we can't find any moves, then we must be in the terminal assembly.
         if(AvailableMoves == []):
             break
@@ -240,7 +282,7 @@ def PlacingSecondTile(AssemblyHistory, CompleteStatesSet):
                 moveDir = activeMove.returnDir()
                 moveDestinationLabel = activeMove.returnDestination()
                 # Dummy Data to Prevent Future Errors
-                # Since there's no base state, the None value kicks in.
+                # Since there's no base state, the None value from the constructor kicks in.
                 destinationTile = ActiveTile(0, 0)
 
                 if(moveDir == "left"):
@@ -259,12 +301,12 @@ def PlacingSecondTile(AssemblyHistory, CompleteStatesSet):
                                 baseAffinities)
                             destinationTile.setRelevantTransitions(
                                 baseTransitions)
-                        # Establish the new tile's coordinates
-                        destinationTile.setX(originX - 1)
-                        destinationTile.setY(originY)
-                        # Update both tiles' neighbor-statuses
-                        originTile.setLeft(destinationTile)
-                        destinationTile.setRight(originTile)
+                    # Establish the new tile's coordinates
+                    destinationTile.setX(originX - 1)
+                    destinationTile.setY(originY)
+                    # Update both tiles' neighbor-statuses
+                    originTile.setLeft(destinationTile)
+                    destinationTile.setRight(originTile)
                 elif(moveDir == "right"):  # If moveDir == "right"
                     for state in CompleteStatesSet:
                         baseLabel = state.returnLabel()
@@ -281,12 +323,12 @@ def PlacingSecondTile(AssemblyHistory, CompleteStatesSet):
                                 baseAffinities)
                             destinationTile.setRelevantTransitions(
                                 baseTransitions)
-                        # Establish the new tile's coordinates
-                        destinationTile.setX(originX + 1)
-                        destinationTile.setY(originY)
-                        # Update both tiles' neighbor-statuses
-                        originTile.setRight(destinationTile)
-                        destinationTile.setLeft(originTile)
+                    # Establish the new tile's coordinates
+                    destinationTile.setX(originX + 1)
+                    destinationTile.setY(originY)
+                    # Update both tiles' neighbor-statuses
+                    originTile.setRight(destinationTile)
+                    destinationTile.setLeft(originTile)
                 elif(moveDir == "up"):
                     for state in CompleteStatesSet:
                         baseLabel = state.returnLabel()
@@ -303,12 +345,12 @@ def PlacingSecondTile(AssemblyHistory, CompleteStatesSet):
                                 baseAffinities)
                             destinationTile.setRelevantTransitions(
                                 baseTransitions)
-                        # Establish the new tile's coordinates
-                        destinationTile.setX(originX)
-                        destinationTile.setY(originY + 1)
-                        # Update both tiles' neighbor-statuses
-                        originTile.setUp(destinationTile)
-                        destinationTile.setDown(originTile)
+                    # Establish the new tile's coordinates
+                    destinationTile.setX(originX)
+                    destinationTile.setY(originY + 1)
+                    # Update both tiles' neighbor-statuses
+                    originTile.setUp(destinationTile)
+                    destinationTile.setDown(originTile)
                 elif(moveDir == "down"):
                     for state in CompleteStatesSet:
                         baseLabel = state.returnLabel()
@@ -325,15 +367,55 @@ def PlacingSecondTile(AssemblyHistory, CompleteStatesSet):
                                 baseAffinities)
                             destinationTile.setRelevantTransitions(
                                 baseTransitions)
-                        # Establish the new tile's coordinates
-                        destinationTile.setX(originX)
-                        destinationTile.setY(originY - 1)
-                        # Update both tiles' neighbor-statuses
-                        originTile.setDown(destinationTile)
-                        destinationTile.setUp(originTile)
+                    # Establish the new tile's coordinates
+                    destinationTile.setX(originX)
+                    destinationTile.setY(originY - 1)
+                    # Update both tiles' neighbor-statuses
+                    originTile.setDown(destinationTile)
+                    destinationTile.setUp(originTile)
                 # Append the new tile to the assembly
                 AssemblyHistory.append(destinationTile)
-            # Note: An else-statement for Transition Rules would go here, but the execution of transition rules are causing a lot of urt.
+            # If it's a transition rule:
+            else:
+                # Gather Move's Data
+                originID = activeMove.returnID()
+                originTile = AssemblyHistory[originID]  # Actual origin tile
+                bondDir = activeMove.returnDir()
+                neighborTile = None  # Actual neighbor tile
+
+                # Origin's final label based on the rule
+                finalOrigin = activeMove.returnFinalOrigin()
+                # Neighbor's final label based on the rule
+                finalNeighbor = activeMove.returnFinalNeighbor()
+
+                # Establish who's the neighbor.
+                # If it's a transition based from a leftward bond...
+                if(bondDir == "left"):
+                    neighborTile = originTile.returnLeft()
+                elif(bondDir == "right"):
+                    neighborTile = originTile.returnRight()
+                elif(bondDir == "up"):
+                    neighborTile = originTile.returnUp()
+                elif(bondDir == "down"):
+                    neighborTile = originTile.returnDown()
+
+                # Start replacing the origin and neighbor with another state
+                for state in CompleteStatesSet:
+                    baseLabel = state.returnLabel()
+                    baseColor = state.returnColor()
+                    baseAffinities = state.returnRelevantAffinities()
+                    baseTransitions = state.returnRelevantTransitions()
+
+                    if(baseLabel == finalOrigin):
+                        originTile.setLabel(baseLabel)
+                        originTile.setColor(baseColor)
+                        originTile.setRelevantAffinities(baseAffinities)
+                        originTile.setRelevantTransitions(baseTransitions)
+                    if(baseLabel == finalNeighbor):
+                        neighborTile.setLabel(baseLabel)
+                        neighborTile.setColor(baseColor)
+                        neighborTile.setRelevantAffinities(baseAffinities)
+                        neighborTile.setRelevantTransitions(baseTransitions)
         print("New Assembly:")
         # Main: Print resulting assembly
         for element in AssemblyHistory:

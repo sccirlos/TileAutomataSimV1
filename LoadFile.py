@@ -84,6 +84,18 @@ class TransitionRule:
     def returnOrigin(self):
         return self.origin
 
+    def returnNeighbor(self):
+        return self.neighbor
+
+    def returnDir(self):
+        return self.bondDir
+
+    def returnFinalOrigin(self):
+        return self.finalOrigin
+
+    def returnFinalNeighbor(self):
+        return self.finalNeighbor
+
     # Displayer
     def displayRule(self):
         if(self.bondDir == "left"):
@@ -98,8 +110,6 @@ class TransitionRule:
         else:
             print("["+self.origin+"/"+self.neighbor+"]"" -> [" +
                   self.finalOrigin+"/"+self.finalNeighbor+"]; with "+self.origin+" as the origin.")
-
-# I'm sure loading the files will grow to be complicated, so I made this file for anything relating to "Load"
 
 
 def readxml(file):
