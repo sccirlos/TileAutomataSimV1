@@ -2,6 +2,8 @@ from PyQt5.QtWidgets import QFileDialog
 import xml.etree.ElementTree as ET
 
 BaseStateSet = []  # Collection of Available Base States
+TransitionStateSet = []  # Collection of Available Transition States
+CompleteStateSet = []  # Collection of Base States and Transition States
 
 
 class BaseState:
@@ -71,29 +73,32 @@ class AffinityRule:
 
 
 class TransitionRule:
-    def __init__(self, originalLeft, originalRight, finalLeft, finalRight):
-        self.originalLeft = originalLeft
-        self.originalRight = originalRight
-        self.finalLeft = finalLeft
-        self.finalRight = finalRight
+    def __init__(self, origin, neighbor, bondDir, finalOrigin, finalNeighbor):
+        self.origin = origin  # Origin-tile's label
+        self.neighbor = neighbor  # Neighbor's label
+        # Direction from origin to neighbor, or Direction of the Bond; it's a String.
+        self.bondDir = bondDir
+        self.finalOrigin = finalOrigin  # Origin-tile's final label/state
+        self.finalNeighbor = finalNeighbor  # Neighbor's final label/state
+
     # Getters
+    def returnOrigin(self):
+        return self.origin
 
-    def returnOriginalLeft(self):
-        return self.originalLeft
-
-    def returnOriginalRight(self):
-        return self.originalRight
-
-    def returnFinalLeft(self):
-        return self.finalLeft
-
-    def returnFinalRight(self):
-        return self.finalRight
     # Displayer
-
     def displayRule(self):
-        print("["+self.originalLeft+","+self.originalRight +
-              "] -> ["+self.finalLeft+","+self.finalRight+"]")
+        if(self.bondDir == "left"):
+            print("["+self.neighbor+"|"+self.origin+"]"" -> [" +
+                  self.finalNeighbor+"|"+self.finalOrigin+"]; with "+self.origin+" as the origin.")
+        elif(self.bondDir == "right"):
+            print("["+self.origin+"|"+self.neighbor+"]"" -> [" +
+                  self.finalOrigin+"|"+self.finalNeighbor+"]; with "+self.origin+" as the origin.")
+        elif(self.bondDir == "up"):
+            print("["+self.neighbor+"/"+self.origin+"]"" -> [" +
+                  self.finalNeighbor+"/"+self.finalOrigin+"]; with "+self.origin+" as the origin.")
+        else:
+            print("["+self.origin+"/"+self.neighbor+"]"" -> [" +
+                  self.finalOrigin+"/"+self.finalNeighbor+"]; with "+self.origin+" as the origin.")
 
 # I'm sure loading the files will grow to be complicated, so I made this file for anything relating to "Load"
 
@@ -105,20 +110,29 @@ def readxml(file):
     AffinityRules = []  # Collection of Affinity Rules
     TransitionRules = []  # Collection of Transition Rules
 
-    # Main: Setting TileSet
-    for tile_tag in treeroot.findall('TileTypes/Tile'):
-        label = tile_tag.get('Label')
-        color = tile_tag.find('color').text
+    # Main: Setting BaseStateSet
+    for state_tag in treeroot.findall('StateTypes/BaseStates/State'):
+        label = state_tag.get('Label')
+        color = state_tag.find('color').text
         tempState = BaseState(label, color)
         BaseStateSet.append(tempState)
     print("Base State Set:")
     for element in BaseStateSet:
         element.displayBasic()
+    # Main: Setting TransitionStateSet
+    for state_tag in treeroot.findall('StateTypes/TransitionStates/State'):
+        label = state_tag.get('Label')
+        color = state_tag.find('color').text
+        tempState = BaseState(label, color)
+        BaseStateSet.append(tempState)
+    print("Transition State Set:")
+    for element in TransitionStateSet:
+        element.displayBasic()
 
     # Main: Setting System Rules
     # Sub: Setting Affinity Rules
     for rule_tag in treeroot.findall('System/AffinityRules/Rule'):
-        origin = rule_tag.get('Tile')
+        origin = rule_tag.get('State')
         for direction in rule_tag:
             dir = direction.tag
             destination = direction.text.replace("\"", "")
@@ -127,13 +141,15 @@ def readxml(file):
 
     # Sub: Setting Transition Rules
     for rule_tag in treeroot.findall('System/TransitionRules/Rule'):
-        originalLeft = rule_tag.get('Left')
-        originalRight = rule_tag.get('Right')
-        finalLeft = rule_tag.find('left').text.replace("\"", "")
-        finalRight = rule_tag.find('right').text.replace("\"", "")
-        tempRule = TransitionRule(
-            originalLeft, originalRight, finalLeft, finalRight)
-        TransitionRules.append(tempRule)
+        origin = rule_tag.get('State')
+        for info in rule_tag:
+            dir = info.tag
+            neighbor = info.get('Neighbor')
+            finalOrigin = info.get('finalOrigin')
+            finalNeighbor = info.get('finalNeighbor')
+            tempRule = TransitionRule(
+                origin, neighbor, dir, finalOrigin, finalNeighbor)
+            TransitionRules.append(tempRule)
 
     # Main: Displaying Relevant Rules for Each Base State
     print("\nAffinity Rules:")
@@ -156,5 +172,5 @@ def readxml(file):
             if(tempLabel == rule.returnOrigin()):
                 base_state.appendAffinity(rule)
         for rule in TransitionRules:
-            if(tempLabel == rule.returnOriginalLeft() or tempLabel == rule.returnOriginalRight()):
+            if(tempLabel == rule.returnOrigin()):
                 base_state.appendTransition(rule)
