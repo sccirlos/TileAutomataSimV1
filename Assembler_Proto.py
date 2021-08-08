@@ -6,12 +6,18 @@ from random import randrange
 class ActiveTile:  # Tiles based on the Base States
     ID = 0
 
-    def __init__(self, base_tile, x, y):
+    def __init__(self, x, y, base_state=None):
         # Attributes Inherited from a Base Tile
-        self.label = base_tile.returnLabel()
-        self.color = base_tile.returnColor()
-        self.relevantAffinities = base_tile.returnRelevantAffinities()
-        self.relevantTranstitions = base_tile.returnRelevantTransitions()
+        if(base_state == None):
+            self.label = "?"
+            self.color = "ff0000"
+            self.relevantAffinities = []
+            self.relevantTranstitions = []
+        else:
+            self.label = base_state.returnLabel()
+            self.color = base_state.returnColor()
+            self.relevantAffinities = base_state.returnRelevantAffinities()
+            self.relevantTranstitions = base_state.returnRelevantTransitions()
         # New Attributes for Active Tiles for Positional Tracking
         self.left = None  # Left Neighbor (Tile)
         self.right = None  # Right Neighbor (Tile)
@@ -24,7 +30,7 @@ class ActiveTile:  # Tiles based on the Base States
 
     # Getters
     def returnCoordinates(self):
-        return (str(self.x)+", "+str(self.y))
+        return ("("+str(self.x)+", "+str(self.y)+")")
 
     def returnRelevantAffinities(self):
         return self.relevantAffinities
@@ -57,7 +63,7 @@ class ActiveTile:  # Tiles based on the Base States
         return self.y
 
     # Setters
-    def setLabel(self, label):  # Will need to change this later because this only allows for a superficial transition (aka, just the label changes)
+    def setLabel(self, label):
         self.label = label
 
     def setLeft(self, neighbor):
@@ -89,44 +95,8 @@ class ActiveTile:  # Tiles based on the Base States
 
     # Displayers
     def displayBasicInfo(self):
-        print("\t-Label: "+self.label+"; X-Coordinate: "+str(self.x) +
-              "; Y-Coordinate: "+str(self.y)+"; Color: "+self.color)
-
-
-class CustomActiveTile:  # Tiles that aren't from the Base States
-    def __init__(self, label, color, x, y):
-        self.label = label
-        self.color = color
-        self.x = x
-        self.y = y
-        self.relevantAffinities = []
-        self.relevantTransitions = []
-        self.left = None
-        self.right = None
-        self.ID = ActiveTile.ID
-        ActiveTile.ID += 1
-    # Getters
-
-    def returnCoordinates(self):
-        return (str(self.x)+", "+str(self.y))
-
-    def returnRelevantAffinities(self):
-        return self.relevantAffinities
-
-    def returnRelevantTransitions(self):
-        return self.relevantTranstitions
-
-    def returnID(self):
-        return self.ID
-
-    def returnLeft(self):
-        return self.left
-
-    def returnRight(self):
-        return self.right
-
-    def returnLabel(self):
-        return self.label
+        print("\t-Label: "+self.label+"; Coordinates: (" +
+              str(self.x)+", "+str(self.y)+") ; Color: "+self.color)
 
 
 class AvailableAffinity:
@@ -155,33 +125,33 @@ class AvailableAffinity:
 
 
 class AvailableTransition:
-    def __init__(self, originalLeft, originalRight, finalLeft, finalRight, ID, neighborID):
-        self.originalLeft = originalLeft
-        self.originalRight = originalRight
-        self.finalLeft = finalLeft
-        self.finalRight = finalRight
-        self.ID = ID  # 'Origin' Tile's ID (Subjectively)
-        self.neighborID = neighborID  # 'Origin' Tile's Neighbor's ID
-        self.ruleType = "Transition"
+    def __init__(self, origin, neighbor, bondDir, finalOrigin, finalNeighbor, ID, ruleType):
+        self.origin = origin
+        self.neighbor = neighbor
+        self.bondDir = bondDir
+        self.finalOrigin = finalOrigin
+        self.finalNeighbor = finalNeighbor
+        self.ID = ID
+        self.ruleType = ruleType
+
     # Getters
+    def returnOrigin(self):
+        return self.origin
 
-    def returnOriginalLeft(self):
-        return self.originalLeft
+    def returnNeighbor(self):
+        return self.neighbor
 
-    def returnOriginalRight(self):
-        return self.originalRight
+    def returnDir(self):
+        return self.bondDir
 
-    def returnFinalLeft(self):
-        return self.finalLeft
+    def returnFinalOrigin(self):
+        return self.finalOrigin
 
-    def returnFinalRight(self):
-        return self.finalRight
+    def returnFinalNeighbor(self):
+        return self.finalNeighbor
 
     def returnID(self):
         return self.ID
-
-    def returnNeighborID(self):
-        return self.neighborID
 
     def returnRuleType(self):
         return self.ruleType
@@ -190,14 +160,14 @@ class AvailableTransition:
 def PlacingFirstTile(AssemblyHistory, BaseStates):
     elementNum = randrange(0, len(BaseStates))
     # Create an instance of the 1st active tile
-    tempActiveTile = ActiveTile(BaseStates[elementNum], 0, 0)
+    tempActiveTile = ActiveTile(0, 0, BaseStates[elementNum])
     AssemblyHistory.append(tempActiveTile)
     print("Current Assembly:")
     for element in AssemblyHistory:
         element.displayBasicInfo()
 
 
-def PlacingSecondTile(AssemblyHistory, BaseStates):
+def PlacingSecondTile(AssemblyHistory, CompleteStatesSet):
 
     while(True):
         # Main: Find out what are our available moves.
@@ -247,30 +217,7 @@ def PlacingSecondTile(AssemblyHistory, BaseStates):
             # Note: This feature is doodoo; revising how I can work with it while in a giant loop and in 2D. -Armando
             # Then check the current tile's transition rules...
             for rule in tileTransitions:
-                ruleOriginalLeft = rule.returnOriginalLeft()
-                ruleOriginalRight = rule.returnOriginalRight()
-                ruleFinalLeft = rule.returnFinalLeft()
-                ruleFinalRight = rule.returnFinalRight()
-                # If the tile has no neighbors, then there's no way to make a transition, so skip the entire transition check
-                if(tileLeftNeighbor == None and tileRightNeighbor == None):
-                    break
-                else:
-                    # Note: This part doesn't account for a missing neighbor
-                    tileLeftNeighborLabel = tileLeftNeighbor.returnLabel()
-                    tileLeftNeighborID = tileLeftNeighbor.returnID()
-                    tileRightNeighborLabel = tileRightNeighbor.returnLabel()
-                    tileRightNeighborID = tileRightNeighbor.returnID()
-
-                    # If the current tile is the 'left' tile, then we must check the 'right'. If everything is correct, add the transition rule to AvailableMoves[].
-                    if(tileLabel == ruleOriginalLeft and tileRightNeighborLabel == ruleOriginalRight):
-                        tempMove = AvailableTransition(
-                            ruleOriginalLeft, ruleOriginalRight, ruleFinalLeft, ruleFinalRight, tileID, tileRightNeighborID)
-                        AvailableMoves.append(tempMove)
-                    # Same thing as before: if the current tile is the 'right' tile, then we must check the 'left'...
-                    if(tileLabel == ruleOriginalRight and tileLeftNeighborLabel == ruleOriginalLeft):
-                        tempMove = AvailableTransition(
-                            ruleOriginalLeft, ruleOriginalRight, ruleFinalLeft, ruleFinalRight, tileID, tileLeftNeighborID)
-                        AvailableMoves.append(tempMove)
+                pass
             # -------------------------- WIP -------------------
         # Main: The exit for the move-search is if there is no available moves at this point. If we can't find any moves, then we must be in the terminal assembly.
         if(AvailableMoves == []):
@@ -293,17 +240,18 @@ def PlacingSecondTile(AssemblyHistory, BaseStates):
                 moveDir = activeMove.returnDir()
                 moveDestinationLabel = activeMove.returnDestination()
                 # Dummy Data to Prevent Future Errors
-                destinationTile = ActiveTile(BaseStates[0], 0, 0)
+                # Since there's no base state, the None value kicks in.
+                destinationTile = ActiveTile(0, 0)
 
                 if(moveDir == "left"):
-                    for base_tile in BaseStates:
-                        baseLabel = base_tile.returnLabel()
+                    for state in CompleteStatesSet:
+                        baseLabel = state.returnLabel()
 
                         # Note: Add an exception branch if the new label isn't from the BaseStates
                         if(baseLabel == moveDestinationLabel):
-                            baseColor = base_tile.returnColor()
-                            baseAffinities = base_tile.returnRelevantAffinities()
-                            baseTransitions = base_tile.returnRelevantTransitions()
+                            baseColor = state.returnColor()
+                            baseAffinities = state.returnRelevantAffinities()
+                            baseTransitions = state.returnRelevantTransitions()
 
                             destinationTile.setLabel(baseLabel)
                             destinationTile.setColor(baseColor)
@@ -318,14 +266,14 @@ def PlacingSecondTile(AssemblyHistory, BaseStates):
                         originTile.setLeft(destinationTile)
                         destinationTile.setRight(originTile)
                 elif(moveDir == "right"):  # If moveDir == "right"
-                    for base_tile in BaseStates:
-                        baseLabel = base_tile.returnLabel()
+                    for state in CompleteStatesSet:
+                        baseLabel = state.returnLabel()
 
                         # Note: Add an exception branch if the new label isn't from the BaseStates
                         if(baseLabel == moveDestinationLabel):
-                            baseColor = base_tile.returnColor()
-                            baseAffinities = base_tile.returnRelevantAffinities()
-                            baseTransitions = base_tile.returnRelevantTransitions()
+                            baseColor = state.returnColor()
+                            baseAffinities = state.returnRelevantAffinities()
+                            baseTransitions = state.returnRelevantTransitions()
 
                             destinationTile.setLabel(baseLabel)
                             destinationTile.setColor(baseColor)
@@ -340,14 +288,14 @@ def PlacingSecondTile(AssemblyHistory, BaseStates):
                         originTile.setRight(destinationTile)
                         destinationTile.setLeft(originTile)
                 elif(moveDir == "up"):
-                    for base_tile in BaseStates:
-                        baseLabel = base_tile.returnLabel()
+                    for state in CompleteStatesSet:
+                        baseLabel = state.returnLabel()
 
                         # Note: Add an exception branch if the new label isn't from the BaseStates
                         if(baseLabel == moveDestinationLabel):
-                            baseColor = base_tile.returnColor()
-                            baseAffinities = base_tile.returnRelevantAffinities()
-                            baseTransitions = base_tile.returnRelevantTransitions()
+                            baseColor = state.returnColor()
+                            baseAffinities = state.returnRelevantAffinities()
+                            baseTransitions = state.returnRelevantTransitions()
 
                             destinationTile.setLabel(baseLabel)
                             destinationTile.setColor(baseColor)
@@ -362,14 +310,14 @@ def PlacingSecondTile(AssemblyHistory, BaseStates):
                         originTile.setUp(destinationTile)
                         destinationTile.setDown(originTile)
                 elif(moveDir == "down"):
-                    for base_tile in BaseStates:
-                        baseLabel = base_tile.returnLabel()
+                    for state in CompleteStatesSet:
+                        baseLabel = state.returnLabel()
 
                         # Note: Add an exception branch if the new label isn't from the BaseStates
                         if(baseLabel == moveDestinationLabel):
-                            baseColor = base_tile.returnColor()
-                            baseAffinities = base_tile.returnRelevantAffinities()
-                            baseTransitions = base_tile.returnRelevantTransitions()
+                            baseColor = state.returnColor()
+                            baseAffinities = state.returnRelevantAffinities()
+                            baseTransitions = state.returnRelevantTransitions()
 
                             destinationTile.setLabel(baseLabel)
                             destinationTile.setColor(baseColor)
@@ -394,8 +342,12 @@ def PlacingSecondTile(AssemblyHistory, BaseStates):
 
 def Main():
     AssemblyHistory = []  # This will be the list of tiles where we placed a tile in chronological order; this will be essentially our complete history of created assemblies
-    # This is the list of basic tiles from the loading-seciton
+    # This is the list of base states from the loading-seciton
     BaseStates = LoadFile.BaseStateSet
+    # List of transition states from the loading-section
+    TransitionStates = LoadFile.TransitionStateSet
+    # Collection of Base States and Transition States
+    CompleteStatesSet = BaseStates + TransitionStates
 
     PlacingFirstTile(AssemblyHistory, BaseStates)
-    PlacingSecondTile(AssemblyHistory, BaseStates)
+    PlacingSecondTile(AssemblyHistory, CompleteStatesSet)

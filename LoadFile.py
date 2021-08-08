@@ -3,7 +3,6 @@ import xml.etree.ElementTree as ET
 
 BaseStateSet = []  # Collection of Available Base States
 TransitionStateSet = []  # Collection of Available Transition States
-CompleteStateSet = []  # Collection of Base States and Transition States
 
 
 class BaseState:
@@ -124,7 +123,7 @@ def readxml(file):
         label = state_tag.get('Label')
         color = state_tag.find('color').text
         tempState = BaseState(label, color)
-        BaseStateSet.append(tempState)
+        TransitionStateSet.append(tempState)
     print("Transition State Set:")
     for element in TransitionStateSet:
         element.displayBasic()
@@ -151,7 +150,7 @@ def readxml(file):
                 origin, neighbor, dir, finalOrigin, finalNeighbor)
             TransitionRules.append(tempRule)
 
-    # Main: Displaying Relevant Rules for Each Base State
+    # Main: Displaying the System's Rules
     print("\nAffinity Rules:")
     if(AffinityRules == []):
         print("NONE")
@@ -174,3 +173,11 @@ def readxml(file):
         for rule in TransitionRules:
             if(tempLabel == rule.returnOrigin()):
                 base_state.appendTransition(rule)
+    for transition_state in TransitionStateSet:
+        tempLabel = transition_state.returnLabel()
+        for rule in AffinityRules:
+            if(tempLabel == rule.returnOrigin()):
+                transition_state.appendAffinity(rule)
+        for rule in TransitionRules:
+            if(tempLabel == rule.returnOrigin()):
+                transition_state.appendTransition(rule)
