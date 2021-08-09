@@ -1,82 +1,193 @@
-from PyQt5.QtWidgets import QFileDialog 
+from PyQt5.QtWidgets import QFileDialog
 import xml.etree.ElementTree as ET
 
-class Tile:
-    def __init__(self, label,x, y, color):
-        self.label = label #The tile's label
-        self.x = x #The tile's starting x-position; Can be used as an int
-        self.y = y #The tile's starting y-position; Can be used as an int
-        self.color = color
-        #NOTE: These attributes could be added directly into the simulation portion rather than the load portion here.
-        self.left = "None" #The tile's left neighbor; L&R will be used later to track the tiles.
-        self.right = "None" #The tile's right neighbor
-        self.relevantAffinities = [] #Which elements from the AffinityRules list directly involve this tile?
-        self.relevantTranstitions = [] #Which elements from the TransitionRules list directly involve this tile?
-    def displayBasic(self): #Displays the basic information
-        print("Label: "+self.label+"; Spawning X-Coordinate: "+self.x+"; Spawning Y-Coordinate: "+self.y+"; Color: "+self.color)
+BaseStateSet = []  # Collection of Available Base States
+TransitionStateSet = []  # Collection of Available Transition States
+
+
+class BaseState:
+    def __init__(self, label, color):
+        self.label = label  # The base state's label
+        self.color = color  # The base state's color
+        # Which elements from the AffinityRules list directly involve this state?
+        self.relevantAffinities = []
+        # Which elements from the TransitionRules list directly involve this state?
+        self.relevantTranstitions = []
+    # Getters
+
+    def returnLabel(self):
+        return self.label
+
+    def returnColor(self):
+        return self.color
+
+    def returnRelevantAffinities(self):
+        return self.relevantAffinities
+
+    def returnRelevantTransitions(self):
+        return self.relevantTranstitions
+    # Displayers
+
+    def displayBasic(self):  # Displays the state's basic information
+        print("Label: "+self.label+"; Color: "+self.color)
+    # Appenders
+
+    def appendAffinity(self, rule):
+        self.relevantAffinities.append(rule)
+
+    def appendTransition(self, rule):
+        self.relevantTranstitions.append(rule)
+
 
 class AffinityRule:
     def __init__(self, origin, dir, destination):
-        self.origin = origin #Which label will get a new neighbor?
-        self.dir = dir #Which direction will the new neighbor be placed?
-        self.destination = destination #Who's the new neighbor?
+        self.origin = origin  # Which label will get a new neighbor?
+        self.dir = dir  # Which direction will the new neighbor be placed?
+        self.destination = destination  # Who's the new neighbor?
+    # Getters
+
+    def returnOrigin(self):
+        return self.origin
+
+    def returnDir(self):
+        return self.dir
+
+    def returnDestination(self):
+        return self.destination
+    # Displayer
+
     def displayRule(self):
         if(self.dir == "left"):
-            print(self.destination+" connects to the left of "+self.origin+" -> ["+self.destination+","+self.origin+"]")
+            print(self.destination+" connects to the left of " +
+                  self.origin+" -> ["+self.destination+"|"+self.origin+"]")
+        elif(self.dir == "right"):
+            print(self.destination+" connects to the right of " +
+                  self.origin+" ->["+self.origin+"|"+self.destination+"]")
+        elif(self.dir == "up"):
+            print(self.destination+" connects to the top of " +
+                  self.origin+"->["+self.destination+"/"+self.origin+"]")
         else:
-            print(self.destination+" connects to the right of "+self.origin+" ->["+self.origin+","+self.destination+"]")
+            print(self.destination+" connects to the bottom of " +
+                  self.origin+"->["+self.origin+"/"+self.destination+"]")
+
 
 class TransitionRule:
-    def __init__(self, originalLeft, originalRight, finalLeft, finalRight):
-        self.originalLeft = originalLeft
-        self.originalRight = originalRight
-        self.finalLeft = finalLeft
-        self.finalRight = finalRight
+    def __init__(self, origin, neighbor, bondDir, finalOrigin, finalNeighbor):
+        self.origin = origin  # Origin-tile's label
+        self.neighbor = neighbor  # Neighbor's label
+        # Direction from origin to neighbor, or Direction of the Bond; it's a String.
+        self.bondDir = bondDir
+        self.finalOrigin = finalOrigin  # Origin-tile's final label/state
+        self.finalNeighbor = finalNeighbor  # Neighbor's final label/state
+
+    # Getters
+    def returnOrigin(self):
+        return self.origin
+
+    def returnNeighbor(self):
+        return self.neighbor
+
+    def returnDir(self):
+        return self.bondDir
+
+    def returnFinalOrigin(self):
+        return self.finalOrigin
+
+    def returnFinalNeighbor(self):
+        return self.finalNeighbor
+
+    # Displayer
     def displayRule(self):
-        print("["+self.originalLeft+","+self.originalRight+"] -> ["+self.finalLeft+","+self.finalRight+"]")
-        
-#I'm sure loading the files will grow to be complicated, so I made this file for anything relating to "Load"
+        if(self.bondDir == "left"):
+            print("["+self.neighbor+"|"+self.origin+"]"" -> [" +
+                  self.finalNeighbor+"|"+self.finalOrigin+"]; with "+self.origin+" as the origin.")
+        elif(self.bondDir == "right"):
+            print("["+self.origin+"|"+self.neighbor+"]"" -> [" +
+                  self.finalOrigin+"|"+self.finalNeighbor+"]; with "+self.origin+" as the origin.")
+        elif(self.bondDir == "up"):
+            print("["+self.neighbor+"/"+self.origin+"]"" -> [" +
+                  self.finalNeighbor+"/"+self.finalOrigin+"]; with "+self.origin+" as the origin.")
+        else:
+            print("["+self.origin+"/"+self.neighbor+"]"" -> [" +
+                  self.finalOrigin+"/"+self.finalNeighbor+"]; with "+self.origin+" as the origin.")
+
+
 def readxml(file):
     tree = ET.parse(file)
     treeroot = tree.getroot()
-    
-    TileSet = [] #Collection of Available Tiles
-    AffinityRules = [] #Collection of Affinity Rules
-    TransitionRules = [] #Collection of Transition Rules
 
-    #Main: Setting TileSet
-    for tile_tag in treeroot.findall('TileTypes/Tile'):
-        label = tile_tag.get('Label')
-        xPosition = tile_tag.find('x').text
-        yPosition = tile_tag.find('y').text
-        color = tile_tag.find('color').text
-        tempTile = Tile(label, xPosition, yPosition, color)
-        TileSet.append(tempTile)
-    print("Inital Tile Set:")
-    for element in TileSet:
+    AffinityRules = []  # Collection of Affinity Rules
+    TransitionRules = []  # Collection of Transition Rules
+
+    # Main: Setting BaseStateSet
+    for state_tag in treeroot.findall('StateTypes/BaseStates/State'):
+        label = state_tag.get('Label')
+        color = state_tag.find('color').text
+        tempState = BaseState(label, color)
+        BaseStateSet.append(tempState)
+    print("Base State Set:")
+    for element in BaseStateSet:
+        element.displayBasic()
+    # Main: Setting TransitionStateSet
+    for state_tag in treeroot.findall('StateTypes/TransitionStates/State'):
+        label = state_tag.get('Label')
+        color = state_tag.find('color').text
+        tempState = BaseState(label, color)
+        TransitionStateSet.append(tempState)
+    print("Transition State Set:")
+    for element in TransitionStateSet:
         element.displayBasic()
 
-    #Main: Setting System Rules
-    #Sub: Setting Affinity Rules
+    # Main: Setting System Rules
+    # Sub: Setting Affinity Rules
     for rule_tag in treeroot.findall('System/AffinityRules/Rule'):
-        origin = rule_tag.get('Tile')
+        origin = rule_tag.get('State')
         for direction in rule_tag:
             dir = direction.tag
             destination = direction.text.replace("\"", "")
             tempRule = AffinityRule(origin, dir, destination)
             AffinityRules.append(tempRule)
-    print("\nAffinity Rules:")
-    for element in AffinityRules:
-        element.displayRule()
 
-    #Sub: Setting Transition Rules
+    # Sub: Setting Transition Rules
     for rule_tag in treeroot.findall('System/TransitionRules/Rule'):
-        originalLeft = rule_tag.get('Left')
-        originalRight = rule_tag.get('Right')
-        finalLeft = rule_tag.find('left').text.replace("\"", "")
-        finalRight = rule_tag.find('right').text.replace("\"", "")
-        tempRule = TransitionRule(originalLeft, originalRight, finalLeft, finalRight)
-        TransitionRules.append(tempRule)
+        origin = rule_tag.get('State')
+        for info in rule_tag:
+            dir = info.tag
+            neighbor = info.get('Neighbor')
+            finalOrigin = info.get('finalOrigin')
+            finalNeighbor = info.get('finalNeighbor')
+            tempRule = TransitionRule(
+                origin, neighbor, dir, finalOrigin, finalNeighbor)
+            TransitionRules.append(tempRule)
+
+    # Main: Displaying the System's Rules
+    print("\nAffinity Rules:")
+    if(AffinityRules == []):
+        print("NONE")
+    else:
+        for element in AffinityRules:
+            element.displayRule()
     print("\nTransition Rules:")
-    for element in TransitionRules:
-        element.displayRule()
+    if(TransitionRules == []):
+        print("NONE")
+    else:
+        for element in TransitionRules:
+            element.displayRule()
+    print("\n")
+    # Main: Assigning Each Tile's Relevant Rules
+    for base_state in BaseStateSet:
+        tempLabel = base_state.returnLabel()
+        for rule in AffinityRules:
+            if(tempLabel == rule.returnOrigin()):
+                base_state.appendAffinity(rule)
+        for rule in TransitionRules:
+            if(tempLabel == rule.returnOrigin()):
+                base_state.appendTransition(rule)
+    for transition_state in TransitionStateSet:
+        tempLabel = transition_state.returnLabel()
+        for rule in AffinityRules:
+            if(tempLabel == rule.returnOrigin()):
+                transition_state.appendAffinity(rule)
+        for rule in TransitionRules:
+            if(tempLabel == rule.returnOrigin()):
+                transition_state.appendTransition(rule)

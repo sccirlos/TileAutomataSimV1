@@ -10,5 +10,8 @@
 
 ### TA Simulator 
 
+> Version 0
+> August 2021
+> 
 > A user uploads an XML file... 
 

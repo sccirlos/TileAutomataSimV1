@@ -2,26 +2,28 @@
 <Root>
     <TileTypes>
         <Tile Label="A"> <!-- Label -->
-            <x>25</x> <!-- If inital tile, starting X-position -->
-            <y>25</y> <!-- If inital tile, starting Y-position -->
             <color>cc0000</color> <!-- Color of tile type-->
         </Tile>
         <Tile Label="B">
-            <x>26</x>
-            <y>25</y>
             <color>002db3</color>
         </Tile>
         <Tile Label="C">
-            <x>24</x>
-            <y>25</y>
             <color>ffff00</color>
+        </Tile>
+        <Tile Label="D">
+            <color>ff2222</color>
+        </Tile>
+        <Tile Label="E">
+            <color>ff00aaaa</color>
         </Tile>
     </TileTypes>
     <System>
         <AffinityRules> <!-- Affinity Rules -->
             <Rule Tile="A"> <!-- Affinity Rules for A-Type tiles -->
-                <left>"C"</left> <!-- Leftward Affinity Ex. C-A -->
                 <right>"B"</right> <!-- Rightward Affinity Ex. A-B-->
+                <left>"C"</left> <!-- Leftward Affinity Ex. C-A -->
+                <up>"D"</up>
+                <down>"E"</down>
             </Rule>
             <Rule Tile="B">
                 <left>"A"</left>
@@ -29,12 +31,14 @@
             <Rule Tile="C">
                 <right>"A"</right>
             </Rule>
+            <Rule Tile="D">
+                <down>"A"</down>
+            </Rule>
+            <Rule Tile="E">
+                <up>"A"</up>
+            </Rule>
         </AffinityRules>
         <TransitionRules> <!-- Transition Rules-->
-            <Rule Left="A" Right="B"> <!-- Transition Rule for connected A-B instances -->
-                <left>"A"</left> <!-- Resulting Left Tile -->
-                <right>"D"</right> <!-- Resulting Right Tile-->
-            </Rule>
         </TransitionRules>
     </System>
 </Root>
