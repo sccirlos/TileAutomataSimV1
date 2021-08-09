@@ -129,9 +129,14 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
 
+        self.graphWidget.setBackground('w')
+        self.graphWidget.showGrid(x=False, y=False)
+        #self.graphWidget.plot(x, y, pen=pen) #probably need a for loop (specifically wherever the calculations begin) that goes through each tile type and plots them with the pen set to their color
+
         self.actionLoad.triggered.connect(self.Click_FileSearch) #this is "Load" on the "File" menu
         
         self.pushButton.clicked.connect(self.Click_Run_Simulation) #this button executes the simulation. Afterwards the window updates to show results
+
 
     def Click_Run_Simulation(self): # Run application if everythings good
         err_flag = False
