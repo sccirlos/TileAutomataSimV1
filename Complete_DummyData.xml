@@ -49,7 +49,7 @@
             <Rule State="A"> <!-- From the point of view from State A; AKA. With State A as the origin... -->
                 <!-- The 'F' state will cause an automatic terminal assembly since nothing works with it in this example. -->
                 <right Neighbor="B" finalOrigin="F" finalNeighbor="B"> <!-- Information -->
-                </right> <!-- If a 'B' bonds on the top of an 'A', the 'A' turns to an 'F'.-->
+                </right> <!-- If a 'B' bonds on the right of an 'A', the 'A' turns to an 'F'.-->
             </Rule>
         </TransitionRules>
     </System>

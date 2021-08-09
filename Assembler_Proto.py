@@ -263,6 +263,7 @@ def PlacingSecondTile(AssemblyHistory, CompleteStatesSet):
 
         # Main: The exit for the move-search is if there is no available moves at this point. If we can't find any moves, then we must be in the terminal assembly.
         if(AvailableMoves == []):
+            print("TERMINAL ASSEMBLY REACHED!")
             break
         else:
             # Main: Execute a Random Available Move
