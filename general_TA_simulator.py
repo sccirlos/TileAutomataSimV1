@@ -152,6 +152,6 @@ if __name__ == "__main__":
     w = Ui_MainWindow()
     w.show()
     sys.exit(app.exec_())
-# 
+# initial
 
         
