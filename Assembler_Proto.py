@@ -2,6 +2,8 @@ from os import X_OK
 import LoadFile
 from random import randrange
 
+AssemblyHistory = []  # This will be the list of tiles where we placed a tile in chronological order; this will be essentially our complete history of created assemblies
+
 
 class ActiveTile:  # Tiles based on the Base States
     ID = 0
@@ -424,7 +426,6 @@ def PlacingSecondTile(AssemblyHistory, CompleteStatesSet):
 
 
 def Main():
-    AssemblyHistory = []  # This will be the list of tiles where we placed a tile in chronological order; this will be essentially our complete history of created assemblies
     # This is the list of base states from the loading-seciton
     BaseStates = LoadFile.BaseStateSet
     # List of transition states from the loading-section

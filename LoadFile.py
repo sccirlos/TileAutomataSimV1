@@ -173,7 +173,7 @@ def readxml(file):
     else:
         for element in TransitionRules:
             element.displayRule()
-
+    print("\n")
     # Main: Assigning Each Tile's Relevant Rules
     for base_state in BaseStateSet:
         tempLabel = base_state.returnLabel()
