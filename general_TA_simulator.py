@@ -153,19 +153,25 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def draw_tiles(self, assembly):
         painter = QPainter(self.label.pixmap())
         pen = QtGui.QPen()
+        brush = QtGui.QBrush()
+        font = QtGui.QFont()
+
         pen.setWidth(3)
 
-        brush = QtGui.QBrush()
-        
         brush.setStyle(Qt.Dense1Pattern)
+
+        font.setFamily("Times")
+        font.setBold(True)
+        painter.setFont(font)
         for stuff in assembly:
-            print(stuff.color)
+            #print(stuff.color)
             pen.setColor(QtGui.QColor("black"))
             brush.setColor(QtGui.QColor("#" + stuff.color))
 
             painter.setPen(pen)
             painter.setBrush(brush)
             painter.drawRect((stuff.x * 40) + 80, (stuff.y * 40) + 80, 40, 40)
+            painter.drawText((stuff.x * 40) + 90, (stuff.y * 40) + 105, stuff.label)
 
         painter.end()
         self.update()
