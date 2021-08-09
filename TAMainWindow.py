@@ -19,9 +19,6 @@ class Ui_MainWindow(object):
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(380, 570, 93, 28))
         self.pushButton.setObjectName("pushButton")
-        self.graphWidget = PlotWidget(self.centralwidget)
-        self.graphWidget.setGeometry(QtCore.QRect(0, 0, 851, 571))
-        self.graphWidget.setObjectName("graphWidget")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 853, 26))
@@ -46,4 +43,3 @@ class Ui_MainWindow(object):
         self.pushButton.setText(_translate("MainWindow", "Begin"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.actionLoad.setText(_translate("MainWindow", "Load"))
-from pyqtgraph import PlotWidget

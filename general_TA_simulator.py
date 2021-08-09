@@ -1,6 +1,10 @@
-from PyQt5 import QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog 
+from PyQt5.QtGui import QPainter, QBrush, QPen
 
+from PyQt5.QtCore import Qt
+
+import pyqtgraph as pg
 import TAMainWindow
 import LoadFile
 
@@ -128,14 +132,28 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-
-        self.graphWidget.setBackground('w')
-        self.graphWidget.showGrid(x=False, y=False)
-        #self.graphWidget.plot(x, y, pen=pen) #probably need a for loop (specifically wherever the calculations begin) that goes through each tile type and plots them with the pen set to their color
+        
+        self.label = QtWidgets.QLabel()
+        canvas = QtGui.QPixmap(850, 600)
+        canvas.fill(Qt.white)
+        self.label.setPixmap(canvas)
+        self.setCentralWidget(self.label)
+        self.draw_tiles()
 
         self.actionLoad.triggered.connect(self.Click_FileSearch) #this is "Load" on the "File" menu
         
         self.pushButton.clicked.connect(self.Click_Run_Simulation) #this button executes the simulation. Afterwards the window updates to show results
+
+    def draw_tiles(self):
+        x = [1, 3, 5, 7, 9] 
+        y = [1] * 5
+        painter = QPainter(self.label.pixmap())
+        pen = QtGui.QPen()
+        pen.setWidth(40)
+        pen.setColor(QtGui.QColor('red'))
+        painter.setPen(pen)
+        painter.drawPoint(200, 150)
+        painter.end()
 
 
     def Click_Run_Simulation(self): # Run application if everythings good
@@ -143,7 +161,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         
             
         if(err_flag == False):
-            print("all good")
+            self.draw_tiles()
             #display results
 
     def Click_FileSearch(self, id):
