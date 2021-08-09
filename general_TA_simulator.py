@@ -150,15 +150,17 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         
         self.pushButton.clicked.connect(self.Click_Run_Simulation) #this button executes the simulation. Afterwards the window updates to show results
 
-    def draw_tiles(self):
-        x = [1, 3, 5, 7, 9] 
-        y = [1] * 5
+    def draw_tiles(self, assembly):
         painter = QPainter(self.label.pixmap())
         pen = QtGui.QPen()
-        pen.setWidth(40)
-        pen.setColor(QtGui.QColor('red'))
-        painter.setPen(pen)
-        painter.drawPoint(1 * 80, 1 * 80)
+        pen.setWidth(3)
+        for stuff in assembly:
+            print(stuff.x)
+            pen.setColor(QtGui.QColor(stuff.color))
+
+            painter.setPen(pen)
+            painter.drawRect((stuff.x * 40) + 80, (stuff.y * 40) + 80, 40, 40)
+
         painter.end()
         self.update()
 
@@ -167,7 +169,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         if(err_flag == False):
             Assembler_Proto.Main()
-            self.draw_tiles()
+            self.draw_tiles(Assembler_Proto.AssemblyHistory)
 
     def Click_FileSearch(self, id):
         file = QFileDialog.getOpenFileName(
