@@ -154,11 +154,17 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         painter = QPainter(self.label.pixmap())
         pen = QtGui.QPen()
         pen.setWidth(3)
+
+        brush = QtGui.QBrush()
+        
+        brush.setStyle(Qt.Dense1Pattern)
         for stuff in assembly:
-            print(stuff.x)
-            pen.setColor(QtGui.QColor(stuff.color))
+            print(stuff.color)
+            pen.setColor(QtGui.QColor("black"))
+            brush.setColor(QtGui.QColor("#" + stuff.color))
 
             painter.setPen(pen)
+            painter.setBrush(brush)
             painter.drawRect((stuff.x * 40) + 80, (stuff.y * 40) + 80, 40, 40)
 
         painter.end()
