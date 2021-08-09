@@ -133,12 +133,10 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
         
-        self.label = QtWidgets.QLabel()
+        #self.label = QtWidgets.QLabel()
         canvas = QtGui.QPixmap(850, 600)
         canvas.fill(Qt.white)
         self.label.setPixmap(canvas)
-        self.setCentralWidget(self.label)
-        self.draw_tiles()
 
         self.actionLoad.triggered.connect(self.Click_FileSearch) #this is "Load" on the "File" menu
         
@@ -152,9 +150,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         pen.setWidth(40)
         pen.setColor(QtGui.QColor('red'))
         painter.setPen(pen)
-        painter.drawPoint(200, 150)
+        painter.drawPoint(1 * 80, 1 * 80)
         painter.end()
-
+        self.update()
 
     def Click_Run_Simulation(self): # Run application if everythings good
         err_flag = False
