@@ -177,8 +177,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
             painter.setPen(pen)
             painter.setBrush(brush)
-            painter.drawRect((stuff.x * 40) + 80, (stuff.y * 40) + 80, 40, 40)
-            painter.drawText((stuff.x * 40) + 90, (stuff.y * 40) + 105, stuff.label)
+            painter.drawRect((stuff.x * 40) + 200, (stuff.y * 40) + 200, 40, 40)
+            painter.drawText((stuff.x * 40) + 210, (stuff.y * 40) + 225, stuff.label)
 
         painter.end()
         self.update()
