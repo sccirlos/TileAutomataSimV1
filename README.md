@@ -1,6 +1,6 @@
 > Self-assembly Research
 
-## Tile Automata simulator 🥇 
+## Tile Automata simulator  
 
 
 ### [About Tile Automata model](http://self-assembly.net/wiki/index.php?title=Tile_Automata)
