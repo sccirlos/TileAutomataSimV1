@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Root>
+<SingleTile>
     <StateTypes>
         <BaseStates> <!-- States that can be used on the 1st tile.-->
             <State Label="A"> <!-- Label -->
@@ -53,4 +53,4 @@
             </Rule>
         </TransitionRules>
     </System>
-</Root>
+</SingleTile>
