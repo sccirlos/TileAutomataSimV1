@@ -158,7 +158,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         pen.setWidth(3)
 
-        brush.setStyle(Qt.Dense1Pattern)
+        brush.setStyle(Qt.SolidPattern)
 
         font.setFamily("Times")
         font.setBold(True)
@@ -187,6 +187,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         file = QFileDialog.getOpenFileName(
             self, "Select XML Document", "", "XML Files (*.xml)")
         LoadFile.readxml(file[0])
+        #self.draw_tiles(LoadFile.) #starting assembly goes here
 
 
 if __name__ == "__main__":
