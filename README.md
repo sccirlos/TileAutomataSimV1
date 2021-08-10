@@ -1,4 +1,4 @@
-## Self-assembly Research
+> Self-assembly Research
 
 ## Tile Automata simulator 🥇 
 
