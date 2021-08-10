@@ -119,75 +119,76 @@ def readxml(file):
     AffinityRules = []  # Collection of Affinity Rules
     TransitionRules = []  # Collection of Transition Rules
 
-    # Main: Setting BaseStateSet
-    for state_tag in treeroot.findall('StateTypes/BaseStates/State'):
-        label = state_tag.get('Label')
-        color = state_tag.find('color').text
-        tempState = BaseState(label, color)
-        BaseStateSet.append(tempState)
-    print("Base State Set:")
-    for element in BaseStateSet:
-        element.displayBasic()
-    # Main: Setting TransitionStateSet
-    for state_tag in treeroot.findall('StateTypes/TransitionStates/State'):
-        label = state_tag.get('Label')
-        color = state_tag.find('color').text
-        tempState = BaseState(label, color)
-        TransitionStateSet.append(tempState)
-    print("Transition State Set:")
-    for element in TransitionStateSet:
-        element.displayBasic()
+    if(treeroot.tag == "SingleTile"):
+        # Main: Setting BaseStateSet
+        for state_tag in treeroot.findall('StateTypes/BaseStates/State'):
+            label = state_tag.get('Label')
+            color = state_tag.find('color').text
+            tempState = BaseState(label, color)
+            BaseStateSet.append(tempState)
+        print("Base State Set:")
+        for element in BaseStateSet:
+            element.displayBasic()
+        # Main: Setting TransitionStateSet
+        for state_tag in treeroot.findall('StateTypes/TransitionStates/State'):
+            label = state_tag.get('Label')
+            color = state_tag.find('color').text
+            tempState = BaseState(label, color)
+            TransitionStateSet.append(tempState)
+        print("Transition State Set:")
+        for element in TransitionStateSet:
+            element.displayBasic()
 
-    # Main: Setting System Rules
-    # Sub: Setting Affinity Rules
-    for rule_tag in treeroot.findall('System/AffinityRules/Rule'):
-        origin = rule_tag.get('State')
-        for direction in rule_tag:
-            dir = direction.tag
-            destination = direction.text.replace("\"", "")
-            tempRule = AffinityRule(origin, dir, destination)
-            AffinityRules.append(tempRule)
+        # Main: Setting System Rules
+        # Sub: Setting Affinity Rules
+        for rule_tag in treeroot.findall('System/AffinityRules/Rule'):
+            origin = rule_tag.get('State')
+            for direction in rule_tag:
+                dir = direction.tag
+                destination = direction.text.replace("\"", "")
+                tempRule = AffinityRule(origin, dir, destination)
+                AffinityRules.append(tempRule)
 
-    # Sub: Setting Transition Rules
-    for rule_tag in treeroot.findall('System/TransitionRules/Rule'):
-        origin = rule_tag.get('State')
-        for info in rule_tag:
-            dir = info.tag
-            neighbor = info.get('Neighbor')
-            finalOrigin = info.get('finalOrigin')
-            finalNeighbor = info.get('finalNeighbor')
-            tempRule = TransitionRule(
-                origin, neighbor, dir, finalOrigin, finalNeighbor)
-            TransitionRules.append(tempRule)
+        # Sub: Setting Transition Rules
+        for rule_tag in treeroot.findall('System/TransitionRules/Rule'):
+            origin = rule_tag.get('State')
+            for info in rule_tag:
+                dir = info.tag
+                neighbor = info.get('Neighbor')
+                finalOrigin = info.get('finalOrigin')
+                finalNeighbor = info.get('finalNeighbor')
+                tempRule = TransitionRule(
+                    origin, neighbor, dir, finalOrigin, finalNeighbor)
+                TransitionRules.append(tempRule)
 
-    # Main: Displaying the System's Rules
-    print("\nAffinity Rules:")
-    if(AffinityRules == []):
-        print("NONE")
-    else:
-        for element in AffinityRules:
-            element.displayRule()
-    print("\nTransition Rules:")
-    if(TransitionRules == []):
-        print("NONE")
-    else:
-        for element in TransitionRules:
-            element.displayRule()
-    print("\n")
-    # Main: Assigning Each Tile's Relevant Rules
-    for base_state in BaseStateSet:
-        tempLabel = base_state.returnLabel()
-        for rule in AffinityRules:
-            if(tempLabel == rule.returnOrigin()):
-                base_state.appendAffinity(rule)
-        for rule in TransitionRules:
-            if(tempLabel == rule.returnOrigin()):
-                base_state.appendTransition(rule)
-    for transition_state in TransitionStateSet:
-        tempLabel = transition_state.returnLabel()
-        for rule in AffinityRules:
-            if(tempLabel == rule.returnOrigin()):
-                transition_state.appendAffinity(rule)
-        for rule in TransitionRules:
-            if(tempLabel == rule.returnOrigin()):
-                transition_state.appendTransition(rule)
+        # Main: Displaying the System's Rules
+        print("\nAffinity Rules:")
+        if(AffinityRules == []):
+            print("NONE")
+        else:
+            for element in AffinityRules:
+                element.displayRule()
+        print("\nTransition Rules:")
+        if(TransitionRules == []):
+            print("NONE")
+        else:
+            for element in TransitionRules:
+                element.displayRule()
+        print("\n")
+        # Main: Assigning Each Tile's Relevant Rules
+        for base_state in BaseStateSet:
+            tempLabel = base_state.returnLabel()
+            for rule in AffinityRules:
+                if(tempLabel == rule.returnOrigin()):
+                    base_state.appendAffinity(rule)
+            for rule in TransitionRules:
+                if(tempLabel == rule.returnOrigin()):
+                    base_state.appendTransition(rule)
+        for transition_state in TransitionStateSet:
+            tempLabel = transition_state.returnLabel()
+            for rule in AffinityRules:
+                if(tempLabel == rule.returnOrigin()):
+                    transition_state.appendAffinity(rule)
+            for rule in TransitionRules:
+                if(tempLabel == rule.returnOrigin()):
+                    transition_state.appendTransition(rule)

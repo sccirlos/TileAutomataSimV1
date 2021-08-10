@@ -1,9 +1,11 @@
 from os import X_OK
-import LoadFile
 from random import randrange
+import copy
+import LoadFile
 
 AssemblyHistory = []  # This will be the list of tiles where we placed a tile in chronological order; this will be essentially our complete history of created assemblies
 AvailableMoves = []  # Records possible rules to execute in a move; it's placed here so that the main window can access it easier
+CompleteAssemblyHistory = []  # Records all past assemblies.
 
 
 class ActiveTile:  # Tiles based on the Base States
@@ -168,6 +170,10 @@ def PlacingFirstTile(AssemblyHistory, BaseStates):
     print("Initial Assembly:")
     for element in AssemblyHistory:
         element.displayBasicInfo()
+    # Make a shallow copy of the current list of tiles (the assembly)
+    tempHistory = copy.deepcopy(AssemblyHistory)
+    # Attach the shallow copy to CompleteAssemblyHistory
+    CompleteAssemblyHistory.append(tempHistory)
 
 
 def PlacingSecondTile(AssemblyHistory, CompleteStatesSet):
@@ -426,10 +432,29 @@ def PlacingSecondTile(AssemblyHistory, CompleteStatesSet):
         # Main: Print resulting assembly
         for element in AssemblyHistory:
             element.displayBasicInfo()
+        # Make a shallow copy of the current list of tiles (the assembly)
+        tempHistory = copy.deepcopy(AssemblyHistory)
+        # Attach the shallow copy to CompleteAssemblyHistory
+        CompleteAssemblyHistory.append(tempHistory)
+
+
+def DisplayCompleteAssemblyHistory(CompleteAssemblyHistory):
+    print("Complete Assembly History: ")
+    i = 0
+    for assembly in CompleteAssemblyHistory:
+        print("\n Assembly #"+str(i)+":")
+        for element in assembly:
+            element.displayBasicInfo()
+        i += 1
+    # Reset i in case the user wants to assembly a different system
+    i = 0
 
 
 def Main():
+    # Resets conflicting information if the user loads a different system
     AssemblyHistory.clear()
+    CompleteAssemblyHistory.clear()
+
     ActiveTile.ID = 0  # Resets the ID counter for ActiveTiles
     # This is the list of base states from the loading-seciton
     BaseStates = LoadFile.BaseStateSet
@@ -440,5 +465,7 @@ def Main():
 
     PlacingFirstTile(AssemblyHistory, BaseStates)
     PlacingSecondTile(AssemblyHistory, CompleteStatesSet)
+    # Displays all past assemblies
+    DisplayCompleteAssemblyHistory(CompleteAssemblyHistory)
 
     # Resets the terminal assembly to allow the user to create another assembly instantly.
