@@ -1,8 +1,7 @@
-## TileAutomataSimV1
-
+## Self-assembly Research
 
 ## Tile Automata simulator 🥇 
-#  Self-assembly Research
+
 
 ### [About Tile Automata model](http://self-assembly.net/wiki/index.php?title=Tile_Automata)
 
