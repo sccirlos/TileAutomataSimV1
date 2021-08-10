@@ -435,3 +435,7 @@ def Main():
 
     PlacingFirstTile(AssemblyHistory, BaseStates)
     PlacingSecondTile(AssemblyHistory, CompleteStatesSet)
+
+    # Resets the terminal assembly to allow the user to create another assembly instantly.
+    AssemblyHistory.clear()
+    ActiveTile.ID = 0  # Resets the ID counter for ActiveTiles
