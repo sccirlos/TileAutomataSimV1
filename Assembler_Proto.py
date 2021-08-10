@@ -3,6 +3,7 @@ import LoadFile
 from random import randrange
 
 AssemblyHistory = []  # This will be the list of tiles where we placed a tile in chronological order; this will be essentially our complete history of created assemblies
+AvailableMoves = []  # Records possible rules to execute in a move; it's placed here so that the main window can access it easier
 
 
 class ActiveTile:  # Tiles based on the Base States
@@ -173,8 +174,10 @@ def PlacingSecondTile(AssemblyHistory, CompleteStatesSet):
 
     while(True):
         # Main: Find out what are our available moves.
-        # AvailableMoves is placed in here to reset it at the start of every search for moves
-        AvailableMoves = []
+
+        # Reset AvailableMoves when the simulator searches for a new move.
+        AvailableMoves.clear()
+
         # Checking each tile individually...
         for tile in AssemblyHistory:
             tileID = tile.returnID()
@@ -439,4 +442,3 @@ def Main():
     PlacingSecondTile(AssemblyHistory, CompleteStatesSet)
 
     # Resets the terminal assembly to allow the user to create another assembly instantly.
-    
