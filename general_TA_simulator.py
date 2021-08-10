@@ -160,6 +160,13 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         brush.setStyle(Qt.SolidPattern)
 
+        pen.setColor(QtGui.QColor("white"))
+        brush.setColor(QtGui.QColor("white"))
+
+        painter.setPen(pen)
+        painter.setBrush(brush)
+        painter.drawRect(0, 0, 1000, 1000)
+
         font.setFamily("Times")
         font.setBold(True)
         painter.setFont(font)
