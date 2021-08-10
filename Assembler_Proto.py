@@ -426,6 +426,8 @@ def PlacingSecondTile(AssemblyHistory, CompleteStatesSet):
 
 
 def Main():
+    AssemblyHistory.clear()
+    ActiveTile.ID = 0  # Resets the ID counter for ActiveTiles
     # This is the list of base states from the loading-seciton
     BaseStates = LoadFile.BaseStateSet
     # List of transition states from the loading-section
@@ -437,5 +439,4 @@ def Main():
     PlacingSecondTile(AssemblyHistory, CompleteStatesSet)
 
     # Resets the terminal assembly to allow the user to create another assembly instantly.
-    AssemblyHistory.clear()
-    ActiveTile.ID = 0  # Resets the ID counter for ActiveTiles
+    
