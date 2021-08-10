@@ -1,11 +1,12 @@
 from os import X_OK
 import LoadFile
+import general_TA_simulator
 from random import randrange
 
 AssemblyHistory = []  # This will be the list of tiles where we placed a tile in chronological order; this will be essentially our complete history of created assemblies
 
 
-class ActiveTile:  # Tiles based on the Base States
+class ActiveTile:  # Tiles based on CompleteStatesSet
     ID = 0
 
     def __init__(self, x, y, base_state=None):
@@ -164,9 +165,11 @@ def PlacingFirstTile(AssemblyHistory, BaseStates):
     # Create an instance of the 1st active tile
     tempActiveTile = ActiveTile(0, 0, BaseStates[elementNum])
     AssemblyHistory.append(tempActiveTile)
+    # Display the initial assembly in the terminal.
     print("Initial Assembly:")
     for element in AssemblyHistory:
         element.displayBasicInfo()
+    # Display the initial assembly in the GUI.
 
 
 def PlacingSecondTile(AssemblyHistory, CompleteStatesSet):
@@ -439,4 +442,3 @@ def Main():
     PlacingSecondTile(AssemblyHistory, CompleteStatesSet)
 
     # Resets the terminal assembly to allow the user to create another assembly instantly.
-    

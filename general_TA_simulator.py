@@ -1,15 +1,16 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog 
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog
 from PyQt5.QtGui import QPainter, QBrush, QPen
 
 from PyQt5.QtCore import Qt
 
-import pyqtgraph as pg
 import TAMainWindow
 import LoadFile
 import Assembler_Proto
 
 import sys
+
+w = None
 # General Seeded TA Simulator
 
 
@@ -140,15 +141,17 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        
+
         #self.label = QtWidgets.QLabel()
         canvas = QtGui.QPixmap(850, 600)
         canvas.fill(Qt.white)
         self.label.setPixmap(canvas)
 
-        self.actionLoad.triggered.connect(self.Click_FileSearch) #this is "Load" on the "File" menu
-        
-        self.pushButton.clicked.connect(self.Click_Run_Simulation) #this button executes the simulation. Afterwards the window updates to show results
+        # this is "Load" on the "File" menu
+        self.actionLoad.triggered.connect(self.Click_FileSearch)
+
+        # this button executes the simulation. Afterwards the window updates to show results
+        self.pushButton.clicked.connect(self.Click_Run_Simulation)
 
     def draw_tiles(self, assembly):
         painter = QPainter(self.label.pixmap())
@@ -171,19 +174,21 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         font.setBold(True)
         painter.setFont(font)
         for stuff in assembly:
-            #print(stuff.color)
+            # print(stuff.color)
             pen.setColor(QtGui.QColor("black"))
             brush.setColor(QtGui.QColor("#" + stuff.color))
 
             painter.setPen(pen)
             painter.setBrush(brush)
-            painter.drawRect((stuff.x * 40) + 200, (stuff.y * 40) + 200, 40, 40)
-            painter.drawText((stuff.x * 40) + 210, (stuff.y * 40) + 225, stuff.label)
+            painter.drawRect((stuff.x * 40) + 200,
+                             (stuff.y * 40) + 200, 40, 40)
+            painter.drawText((stuff.x * 40) + 210,
+                             (stuff.y * 40) + 225, stuff.label)
 
         painter.end()
         self.update()
 
-    def Click_Run_Simulation(self): # Run application if everythings good
+    def Click_Run_Simulation(self):  # Run application if everythings good
         err_flag = False
 
         if(err_flag == False):
@@ -191,10 +196,13 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.draw_tiles(Assembler_Proto.AssemblyHistory)
 
     def Click_FileSearch(self, id):
+        LoadFile.BaseStateSet.clear()
+        LoadFile.TransitionStateSet.clear()
         file = QFileDialog.getOpenFileName(
             self, "Select XML Document", "", "XML Files (*.xml)")
         LoadFile.readxml(file[0])
-        #self.draw_tiles(LoadFile.) #starting assembly goes here
+        # In case the user loads a new XML file:
+        # self.draw_tiles(LoadFile.) #starting assembly goes here
 
 
 if __name__ == "__main__":
