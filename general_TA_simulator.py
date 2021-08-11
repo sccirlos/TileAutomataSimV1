@@ -1,10 +1,9 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog 
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog
 from PyQt5.QtGui import QPainter, QBrush, QPen
 
 from PyQt5.QtCore import Qt
 
-import pyqtgraph as pg
 import TAMainWindow
 import LoadFile
 import Assembler_Proto
@@ -140,16 +139,18 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        
+
         #self.label = QtWidgets.QLabel()
         step = 0
         canvas = QtGui.QPixmap(850, 600)
         canvas.fill(Qt.white)
         self.label.setPixmap(canvas)
 
-        self.actionLoad.triggered.connect(self.Click_FileSearch) #this is "Load" on the "File" menu
-        
-        self.pushButton.clicked.connect(self.Click_Run_Simulation) #this button executes the simulation. Afterwards the window updates to show results
+        # this is "Load" on the "File" menu
+        self.actionLoad.triggered.connect(self.Click_FileSearch)
+
+        # this button executes the simulation. Afterwards the window updates to show results
+        self.pushButton.clicked.connect(self.Click_Run_Simulation)
 
         self.actionNext.triggered.connect(self.next_step(Assembler_Proto.AssemblyHistory))
 
@@ -176,7 +177,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         font.setBold(True)
         painter.setFont(font)
         for stuff in assembly:
-            #print(stuff.color)
+            # print(stuff.color)
             pen.setColor(QtGui.QColor("black"))
             brush.setColor(QtGui.QColor("#" + stuff.color))
 
@@ -188,7 +189,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         painter.end()
         self.update()
 
-    def Click_Run_Simulation(self): # Run application if everythings good
+    def Click_Run_Simulation(self):  # Run application if everythings good
         err_flag = False
 
         if(err_flag == False):
@@ -196,10 +197,14 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.draw_tiles(Assembler_Proto.AssemblyHistory)
 
     def Click_FileSearch(self, id):
+        # Simulator must clear the BaseStateSet and TransitionStateSet when the user attempts to load something.
+        LoadFile.BaseStateSet.clear()
+        LoadFile.TransitionStateSet.clear()
+
         file = QFileDialog.getOpenFileName(
             self, "Select XML Document", "", "XML Files (*.xml)")
         LoadFile.readxml(file[0])
-        #self.draw_tiles(LoadFile.) #starting assembly goes here
+        # self.draw_tiles(LoadFile.) #starting assembly goes here
 
     def next_step(self, assembly):
         #if self.step < completeassemblyhistory.length:
