@@ -141,7 +141,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.setupUi(self)
 
         #self.label = QtWidgets.QLabel()
-        step = 0
+        self.step = 0
         canvas = QtGui.QPixmap(850, 600)
         canvas.fill(Qt.white)
         self.label.setPixmap(canvas)
@@ -152,9 +152,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         # this button executes the simulation. Afterwards the window updates to show results
         self.pushButton.clicked.connect(self.Click_Run_Simulation)
 
-        self.actionNext.triggered.connect(self.next_step(Assembler_Proto.AssemblyHistory))
+        self.actionNext.triggered.connect(self.next_step)
 
-        self.actionPrevious.triggered.connect(self.prev_step(Assembler_Proto.AssemblyHistory))
+        self.actionPrevious.triggered.connect(self.prev_step)
 
     def draw_tiles(self, assembly):
         painter = QPainter(self.label.pixmap())
@@ -206,15 +206,15 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         LoadFile.readxml(file[0])
         # self.draw_tiles(LoadFile.) #starting assembly goes here
 
-    def next_step(self, assembly):
-        #if self.step < completeassemblyhistory.length:
-        self.step = self.step + 1
-        self.draw_tiles(assembly)
-
-    def prev_step(self, assembly):
-        if self.step < 0:
+    def next_step(self):
+        if self.step < len(Assembler_Proto.CompleteAssemblyHistory):
             self.step = self.step + 1
-            self.draw_tiles(assembly)
+            self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
+
+    def prev_step(self):
+        if self.step > 0:
+            self.step = self.step + 1
+            self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
 
 
 if __name__ == "__main__":
