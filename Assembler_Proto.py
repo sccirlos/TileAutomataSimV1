@@ -165,7 +165,7 @@ class AvailableTransition:
 def PlacingFirstTile(AssemblyHistory, BaseStates):
     elementNum = randrange(0, len(BaseStates))
     # Create an instance of the 1st active tile
-    tempActiveTile = ActiveTile(0, 0, BaseStates[elementNum])
+    tempActiveTile = ActiveTile(0, 0, BaseStates[0])
     AssemblyHistory.append(tempActiveTile)
     print("Initial Assembly:")
     for element in AssemblyHistory:
@@ -385,6 +385,32 @@ def PlacingSecondTile(AssemblyHistory, CompleteStatesSet):
                     # Update both tiles' neighbor-statuses
                     originTile.setDown(destinationTile)
                     destinationTile.setUp(originTile)
+                # UPDATE: Further update the new tile if it initiates with neighbors
+                destinationTempX = destinationTile.returnX()  # New tile's X-value
+                destinationTempY = destinationTile.returnY()  # New tile's y-value
+                # Searching through the tiles in AssemblyHistory before we place the new tile...
+                for tile in AssemblyHistory:
+                    tileX = tile.returnX()  # X-value of the current tile in AH
+                    tileY = tile.returnY()  # Y-value of the current tile in AH
+
+                    # The expected value X-value of the left neighbor.
+                    leftNeighborCheck = destinationTempX - 1
+                    # Repeat the logic for the rest of the possible spots...
+                    rightNeighborCheck = destinationTempX + 1
+                    upNeighborCheck = destinationTempY + 1
+                    downNeighborCheck = destinationTempY - 1
+
+                    # Found a left neighbor:
+                    # Proof: Difference between left neighbor's coordinates and the new tile's coordinates: (-1,0)
+                    if(tileX == leftNeighborCheck and tileY == destinationTempY):
+                        destinationTile.setLeft(tile)
+                    # Repeat logic for the rest...
+                    if(tileX == rightNeighborCheck and tileY == destinationTempY):
+                        destinationTile.setRight(tile)
+                    if(tileX == destinationTempX and tileY == upNeighborCheck):
+                        destinationTile.setUp(tile)
+                    if(tileX == destinationTempX and tileY == downNeighborCheck):
+                        destinationTile.setDown(tile)
                 # Append the new tile to the assembly
                 AssemblyHistory.append(destinationTile)
             # If it's a transition rule:
