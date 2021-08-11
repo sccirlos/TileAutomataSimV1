@@ -61,7 +61,7 @@
             </Rule>
             <Rule State="SB">
                 <left>"SA"</left>
-                <up>"0B"</up>
+                <down>"0B"</down>
             </Rule>
             <Rule State="0B">
                 <down>"SB"</down>
