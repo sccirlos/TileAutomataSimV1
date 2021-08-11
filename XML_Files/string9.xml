@@ -64,23 +64,23 @@
                 <up>"0B"</up>
             </Rule>
             <Rule State="0B">
-                <up>"SB"</up>
-                <up>"2B'"</up>
-                <down>"1B"</down>
+                <down>"SB"</down>
+                <down>"2B'"</down>
+                <up>"1B"</up>
                 <left>"A"</left>
             </Rule>
             <Rule State="1B">
-                <up>"0B"</up>
-                <down>"2B"</down>
+                <down>"0B"</down>
+                <up>"2B"</up>
                 <left>"A"</left>
             </Rule>
             <Rule State="2B">
-                <up>"1B"</up>
+                <down>"1B"</down>
                 <left>"A"</left>
             </Rule>
             <Rule State="2B'">
-                <down>"0B"</down>
-                <up>"1B"</up>
+                <up>"0B"</up>
+                <down>"1B"</down>
                 <left>"A"</left>
             </Rule>
             <Rule State="A">
@@ -107,28 +107,30 @@
             <Rule State="0A'">
                 <down Neighbor="0A" finalOrigin="0A" finalNeighbor="0A">
                 </down>
-                <left Neighbor="2B" finalOrigin="0A'" finalNeighbor="2B'">
-                </left>
-                <left Neighbor="2B*" finalOrigin="0A'" finalNeighbor="2B*">
-                </left>
+                <right Neighbor="2B" finalOrigin="0A" finalNeighbor="2B">
+                </right>
             </Rule>
             <Rule State="1A'">
                 <down Neighbor="1A" finalOrigin="1A" finalNeighbor="1A">
                 </down>  
-                <left Neighbor="2B" finalOrigin="1A'" finalNeighbor="2B'">
-                </left>   
-                <left Neighbor="2B*" finalOrigin="1A" finalNeighbor="2B*">
-                </left>                                
+                <right Neighbor="2B" finalOrigin="1A" finalNeighbor="2B">
+                </right>                                 
             </Rule>
             <Rule State="2A'">
                 <down Neighbor="2A" finalOrigin="2A" finalNeighbor="2A">
                 </down>
-                <left Neighbor="2B" finalOrigin="2A" finalNeighbor="2B">
-                </left>                               
+                <right Neighbor="2B" finalOrigin="2A" finalNeighbor="2B">
+                </right>                               
             </Rule>
             <Rule State="2B'">
                 <down Neighbor="0B" finalOrigin="2B*" finalNeighbor="0B">
                 </down>                            
+            </Rule>
+            <Rule State="2B">
+                <left Neighbor="0A" finalOrigin="2B'" finalNeighbor="0A">
+                </left>
+                <left Neighbor="1A" finalOrigin="2B'" finalNeighbor="1A">
+                </left>                          
             </Rule>
         </TransitionRules>
     </System>
