@@ -193,8 +193,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         err_flag = False
 
         if(err_flag == False):
+            self.step = 0
             Assembler_Proto.Main()
-            self.draw_tiles(Assembler_Proto.AssemblyHistory)
+            self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
 
     def Click_FileSearch(self, id):
         # Simulator must clear the BaseStateSet and TransitionStateSet when the user attempts to load something.
@@ -207,13 +208,13 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         # self.draw_tiles(LoadFile.) #starting assembly goes here
 
     def next_step(self):
-        if self.step < len(Assembler_Proto.CompleteAssemblyHistory):
+        if self.step < len(Assembler_Proto.CompleteAssemblyHistory) - 1:
             self.step = self.step + 1
             self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
 
     def prev_step(self):
         if self.step > 0:
-            self.step = self.step + 1
+            self.step = self.step - 1
             self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
 
 
