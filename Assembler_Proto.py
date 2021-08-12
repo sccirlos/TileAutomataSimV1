@@ -165,7 +165,7 @@ class AvailableTransition:
 def PlacingFirstTile(AssemblyHistory, BaseStates):
     elementNum = randrange(0, len(BaseStates))
     # Create an instance of the 1st active tile
-    tempActiveTile = ActiveTile(0, 0, BaseStates[elementNum])
+    tempActiveTile = ActiveTile(0, 0, BaseStates[0])
     AssemblyHistory.append(tempActiveTile)
     print("Initial Assembly:")
     for element in AssemblyHistory:
@@ -280,7 +280,7 @@ def PlacingSecondTile(AssemblyHistory, CompleteStatesSet):
             # Main: Execute a Random Available Move
             elementNum = randrange(0, len(AvailableMoves))  # Pick a number
             # Pick the corresponding available move from that number
-            activeMove = AvailableMoves[elementNum]
+            activeMove = AvailableMoves[0]
             # Determine what kind of rule we're executing.
             moveType = activeMove.returnRuleType()
             # If it's an affinity rule:
@@ -385,6 +385,32 @@ def PlacingSecondTile(AssemblyHistory, CompleteStatesSet):
                     # Update both tiles' neighbor-statuses
                     originTile.setDown(destinationTile)
                     destinationTile.setUp(originTile)
+                # UPDATE: Further update the new tile if it initiates with neighbors
+                destinationTempX = destinationTile.returnX()  # New tile's X-value
+                destinationTempY = destinationTile.returnY()  # New tile's y-value
+
+                # The expected value X-value of the left neighbor.
+                leftNeighborCheck = destinationTempX - 1
+                # Repeat the logic for the rest of the possible spots...
+                rightNeighborCheck = destinationTempX + 1
+                upNeighborCheck = destinationTempY + 1
+                downNeighborCheck = destinationTempY - 1
+                # Searching through the tiles in AssemblyHistory before we place the new tile...
+                for tile in AssemblyHistory:
+                    tileX = tile.returnX()  # X-value of the current tile in AH
+                    tileY = tile.returnY()  # Y-value of the current tile in AH
+
+                    # Found a left neighbor:
+                    # Proof: Difference between left neighbor's coordinates and the new tile's coordinates: (-1,0)
+                    if(tileX == leftNeighborCheck and tileY == destinationTempY):
+                        destinationTile.setLeft(tile)
+                    # Repeat logic for the rest...
+                    if(tileX == rightNeighborCheck and tileY == destinationTempY):
+                        destinationTile.setRight(tile)
+                    if(tileX == destinationTempX and tileY == upNeighborCheck):
+                        destinationTile.setUp(tile)
+                    if(tileX == destinationTempX and tileY == downNeighborCheck):
+                        destinationTile.setDown(tile)
                 # Append the new tile to the assembly
                 AssemblyHistory.append(destinationTile)
             # If it's a transition rule:
@@ -428,14 +454,62 @@ def PlacingSecondTile(AssemblyHistory, CompleteStatesSet):
                         neighborTile.setColor(baseColor)
                         neighborTile.setRelevantAffinities(baseAffinities)
                         neighborTile.setRelevantTransitions(baseTransitions)
+                # UPDATE: Further update the new tile if it initiates with neighbors
+                originX = originTile.returnX()  # X-value of the origin tile
+                originY = originTile.returnY()  # Y-value of the origin tile
+                neighborX = neighborTile.returnX()  # X-value of the neighbor tile
+                neighborY = neighborTile.returnY()  # Y-value of the neighbor tile
+                # Searching through the tiles in AssemblyHistory before we place the new tile...
+
+                # The expected X and Y values for the origin's neighbors
+                leftOriginCheck = originX - 1
+                rightOriginCheck = originX + 1
+                upOriginCheck = originY + 1
+                downOriginCheck = originY - 1
+
+                # The expected X and Y values for the neighbor's neighbors
+                leftNeighborCheck = neighborX - 1
+                rightNeighborCheck = neighborX + 1
+                upNeighborCheck = neighborY + 1
+                downNeighborCheck = neighborY - 1
+                for tile in AssemblyHistory:
+                    tileX = tile.returnX()  # X-value of the current tile in AH
+                    tileY = tile.returnY()  # Y-value of the current tile in AH
+
+                    # Found a left neighbor for the neighbor tile:
+                    # Proof: Difference between left neighbor's coordinates and the new tile's coordinates: (-1,0)
+                    if(tileX == leftOriginCheck and tileY == originY):
+                        originTile.setLeft(tile)
+                    # Repeat logic for the rest...
+                    if(tileX == rightOriginCheck and tileY == originY):
+                        originTile.setRight(tile)
+                    if(tileX == originX and tileY == upOriginCheck):
+                        originTile.setUp(tile)
+                    if(tileX == originX and tileY == downOriginCheck):
+                        originTile.setDown(tile)
+
+                    # Found a left neighbor for the neighbor tile:
+                    # Proof: Difference between left neighbor's coordinates and the new tile's coordinates: (-1,0)
+                    if(tileX == leftNeighborCheck and tileY == neighborY):
+                        neighborTile.setLeft(tile)
+                    # Repeat logic for the rest...
+                    if(tileX == rightNeighborCheck and tileY == neighborY):
+                        neighborTile.setRight(tile)
+                    if(tileX == neighborX and tileY == upNeighborCheck):
+                        neighborTile.setUp(tile)
+                    if(tileX == neighborX and tileY == downNeighborCheck):
+                        neighborTile.setDown(tile)
+
         print("New Assembly:")
         # Main: Print resulting assembly
         for element in AssemblyHistory:
             element.displayBasicInfo()
-        # Make a shallow copy of the current list of tiles (the assembly)
+        # Make a deep copy of the current list of tiles (the assembly)
         tempHistory = copy.deepcopy(AssemblyHistory)
-        # Attach the shallow copy to CompleteAssemblyHistory
+        # Attach the deep copy to CompleteAssemblyHistory
         CompleteAssemblyHistory.append(tempHistory)
+
+# This Display feature is only to make it clear how we can access past assembly.
 
 
 def DisplayCompleteAssemblyHistory(CompleteAssemblyHistory):
