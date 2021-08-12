@@ -141,6 +141,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.setupUi(self)
 
         #self.label = QtWidgets.QLabel()
+        self.step = 0
         canvas = QtGui.QPixmap(850, 600)
         canvas.fill(Qt.white)
         self.label.setPixmap(canvas)
@@ -150,6 +151,16 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         # this button executes the simulation. Afterwards the window updates to show results
         self.pushButton.clicked.connect(self.Click_Run_Simulation)
+
+        self.actionFirst.triggered.connect(self.first_step)
+
+        self.actionPrevious.triggered.connect(self.prev_step)
+
+        self.actionNext.triggered.connect(self.next_step)
+
+        self.actionLast.triggered.connect(self.last_step)
+
+        
 
     def draw_tiles(self, assembly):
         painter = QPainter(self.label.pixmap())
@@ -178,10 +189,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
             painter.setPen(pen)
             painter.setBrush(brush)
-            painter.drawRect((stuff.x * 40) + 200,
-                             (stuff.y * 40) + 200, 40, 40)
-            painter.drawText((stuff.x * 40) + 210,
-                             (stuff.y * 40) + 225, stuff.label)
+            painter.drawRect((stuff.x * 40) + 200, (stuff.y * -40) + 200, 40, 40)
+            painter.drawText((stuff.x * 40) + 210, (stuff.y * -40) + 225, stuff.label)
 
         painter.end()
         self.update()
@@ -190,8 +199,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         err_flag = False
 
         if(err_flag == False):
+            self.step = 0
             Assembler_Proto.Main()
-            self.draw_tiles(Assembler_Proto.AssemblyHistory)
+            self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
 
     def Click_FileSearch(self, id):
         # Simulator must clear the BaseStateSet and TransitionStateSet when the user attempts to load something.
@@ -202,6 +212,24 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self, "Select XML Document", "", "XML Files (*.xml)")
         LoadFile.readxml(file[0])
         # self.draw_tiles(LoadFile.) #starting assembly goes here
+
+    def first_step(self):
+        self.step = 0
+        self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
+
+    def prev_step(self):
+        if self.step > 0:
+            self.step = self.step - 1
+            self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
+
+    def next_step(self):
+        if self.step < len(Assembler_Proto.CompleteAssemblyHistory) - 1:
+            self.step = self.step + 1
+            self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
+    
+    def last_step(self):
+        self.step = len(Assembler_Proto.CompleteAssemblyHistory) - 1
+        self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
 
 
 if __name__ == "__main__":
