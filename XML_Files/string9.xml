@@ -154,7 +154,7 @@
                 </right>
                 <right Neighbor="1B" finalOrigin="2A" finalNeighbor="1">
                 </right>
-                <right Neighbor="2B*" finalOrigin="2A" finalNeighbor="1">
+                <right Neighbor="2B" finalOrigin="2A" finalNeighbor="1">
                 </right>                                 
             </Rule>      
         </TransitionRules>
