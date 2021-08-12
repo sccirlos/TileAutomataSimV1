@@ -173,24 +173,22 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         brush.setStyle(Qt.SolidPattern)
 
         pen.setColor(QtGui.QColor("white"))
-        brush.setColor(QtGui.QColor("white"))
-
+        brush.setColor(QtGui.QColor("white")) 
         painter.setPen(pen)
         painter.setBrush(brush)
-        painter.drawRect(0, 0, 1000, 1000)
+        painter.drawRect(0, 0, 1000, 1000) #this block is drawing a big white rectangle across the screen to "clear" it
 
         font.setFamily("Times")
         font.setBold(True)
         painter.setFont(font)
-        for stuff in assembly:
-            # print(stuff.color)
+        for tile in assembly: 
             pen.setColor(QtGui.QColor("black"))
-            brush.setColor(QtGui.QColor("#" + stuff.color))
+            brush.setColor(QtGui.QColor("#" + tile.color))
 
             painter.setPen(pen)
             painter.setBrush(brush)
-            painter.drawRect((stuff.x * 40) + 200, (stuff.y * -40) + 200, 40, 40)
-            painter.drawText((stuff.x * 40) + 210, (stuff.y * -40) + 225, stuff.label)
+            painter.drawRect((tile.x * 40) + 200, (tile.y * -40) + 500, 40, 40)
+            painter.drawText((tile.x * 40) + 210, (tile.y * -40) + 525, tile.label)
 
         painter.end()
         self.update()
