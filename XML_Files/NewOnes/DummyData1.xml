@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SingleTile> <!-- The system starts with a single tile. -->
+    <StateTypes>
+        <BaseStates> <!-- States that can be used on the 1st tile.-->
+            <State Label="A"> <!-- Label -->
+                <color>cc0000</color> <!-- Color of tile type-->
+            </State>
+            <State Label="B">
+                <color>002db3</color>
+            </State>
+            <State Label="C">
+                <color>ffff00</color>
+            </State>
+            <State Label="D">
+                <color>ff2222</color>
+            </State>
+            <State Label="E">
+                <color>ff00aaaa</color>
+            </State>
+        </BaseStates>
+        <TransitionStates> <!-- States that can't be used on the 1st tile -->
+            <State Label="F">
+                <color>ffffff</color>
+            </State>
+        </TransitionStates>
+    </StateTypes>
+    <System>
+        <AffinityRules>
+            <Rule Lable1="A" Label2="B" 
+        </AffinityRules>
+    </System>
+</SingleTile>
