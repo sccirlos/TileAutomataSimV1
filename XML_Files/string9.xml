@@ -61,7 +61,7 @@
             </Rule>
             <Rule State="SB">
                 <left>"SA"</left>
-                <down>"0B"</down>
+                <up>"0B"</up>
             </Rule>
             <Rule State="0B">
                 <down>"SB"</down>
@@ -105,26 +105,26 @@
                 </down>                                   
             </Rule>
             <Rule State="0A'">
-                <down Neighbor="0A" finalOrigin="0A" finalNeighbor="0A">
-                </down>
+                <up Neighbor="0A" finalOrigin="0A" finalNeighbor="0A">
+                </up>
                 <right Neighbor="2B" finalOrigin="0A" finalNeighbor="2B">
                 </right>
             </Rule>
             <Rule State="1A'">
-                <down Neighbor="1A" finalOrigin="1A" finalNeighbor="1A">
-                </down>  
+                <up Neighbor="1A" finalOrigin="1A" finalNeighbor="1A">
+                </up>  
                 <right Neighbor="2B" finalOrigin="1A" finalNeighbor="2B">
                 </right>                                 
             </Rule>
             <Rule State="2A'">
-                <down Neighbor="2A" finalOrigin="2A" finalNeighbor="2A">
-                </down>
+                <up Neighbor="2A" finalOrigin="2A" finalNeighbor="2A">
+                </up>
                 <right Neighbor="2B" finalOrigin="2A" finalNeighbor="2B">
                 </right>                               
             </Rule>
             <Rule State="2B'">
-                <down Neighbor="0B" finalOrigin="2B*" finalNeighbor="0B">
-                </down>                            
+                <up Neighbor="0B" finalOrigin="2B*" finalNeighbor="0B">
+                </up>                            
             </Rule>
             <Rule State="2B">
                 <left Neighbor="0A" finalOrigin="2B'" finalNeighbor="0A">
@@ -132,6 +132,31 @@
                 <left Neighbor="1A" finalOrigin="2B'" finalNeighbor="1A">
                 </left>                          
             </Rule>
+            <!-- String Encoding -->
+            <Rule State="0A">
+                <right Neighbor="0B" finalOrigin="0A" finalNeighbor="0">
+                </right>
+                <right Neighbor="1B" finalOrigin="0A" finalNeighbor="1">
+                </right>
+                <right Neighbor="2B*" finalOrigin="0A" finalNeighbor="0">
+                </right>                                 
+            </Rule>
+            <Rule State="1A">
+                <right Neighbor="0B" finalOrigin="1A" finalNeighbor="1">
+                </right>
+                <right Neighbor="1B" finalOrigin="1A" finalNeighbor="0">
+                </right>
+                <right Neighbor="2B*" finalOrigin="1A" finalNeighbor="1">
+                </right>                                 
+            </Rule>    
+            <Rule State="2A">
+                <right Neighbor="0B" finalOrigin="2A" finalNeighbor="0">
+                </right>
+                <right Neighbor="1B" finalOrigin="2A" finalNeighbor="1">
+                </right>
+                <right Neighbor="2B*" finalOrigin="2A" finalNeighbor="1">
+                </right>                                 
+            </Rule>      
         </TransitionRules>
     </System>
 </SingleTile>
