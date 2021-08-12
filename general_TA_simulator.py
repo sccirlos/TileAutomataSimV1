@@ -33,12 +33,20 @@ class Tile:
     # maybe list of affinities pairs (state, direction)
     # boolean can_change
     
-    def __init__(self, l):
+    def __init__(self, l, _x, _y):
         self.label = l
+        self.x = _x
+        self.y = _y
 
     def __str__(self):
-        return self.label    
+        s = self.label + " (" + self.x + ", " + self.y + ")"
+        return s
 
+    def get_label(self):
+        return self.label
+
+    def set_label(self, l):
+        self.label = l
 class Assembly:
     def __init__(self):
         self.label = ""
@@ -54,7 +62,32 @@ class Assembly:
     def set_tiles(self, t):
         self.tiles = t
     # Sonya on attachments
+    def get_attachments(self, sy): #takes in a system
+        attachments_list = []
+        sys_attachments = sy.get_initial_states()
+        # sys_v_transition_rules = sy.get_vertical_transition_rules
+        for i in range(1, len(self.tiles)-1):
+            t1 = (self.tiles[i-1][0])
+            t2 = (self.tiles[i][0])
+            ttc = (i-1, i)
+            ttl = (t1, t2)
+            print(ttl)
+            if ttl in sys_attachments:
+                attachments_list.append((ttc, ttl, sys_attachments[ttl]))
+        return attachments_list     
 
+    def set_attachments(self, att): # tuple of ((coord pair), (current labels), (transition labels))
+        a = Assembly()
+        a.label = self.label + "T " #+ 
+        a.tiles = self.tiles
+        #change = trans[0][0]
+       # print(a.tiles[change][0])
+        #print(trans[2][1])
+       # print(trans[0])
+        #a.tiles[change] = trans[2][1]
+        print("New Assembly Tiles: ", a.tiles)
+        return a
+    
     #Elise on transitions    
     def get_transitions(self, sy): #takes in a system
         transitions_list = []
