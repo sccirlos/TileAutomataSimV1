@@ -234,8 +234,11 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
 
     def play_sequence(self):
-        while(self.step < len(Assembler_Proto.CompleteAssemblyHistory)):
+        while(self.step <= len(Assembler_Proto.CompleteAssemblyHistory) - 1):
             #some timer function
+            loop = QtCore.QEventLoop()
+            QtCore.QTimer.singleShot(1000, loop.quit)
+            loop.exec_()
             self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
             self.step = self.step + 1
 
