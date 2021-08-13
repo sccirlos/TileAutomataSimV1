@@ -245,10 +245,11 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         while(self.step <= len(Assembler_Proto.CompleteAssemblyHistory) - 1 and self.play == True):
             
             self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
-            self.step = self.step + 1
+            
             loop = QtCore.QEventLoop()
             QtCore.QTimer.singleShot(900, loop.quit)
             loop.exec_()
+            self.step = self.step + 1
 
         self.stop_sequence()
 
