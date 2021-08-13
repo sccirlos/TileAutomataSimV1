@@ -142,6 +142,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         #self.label = QtWidgets.QLabel()
         self.step = 0
+        self.play = True
         canvas = QtGui.QPixmap(850, 600)
         canvas.fill(Qt.white)
         self.label.setPixmap(canvas)
@@ -155,6 +156,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.actionFirst.triggered.connect(self.first_step)
 
         self.actionPrevious.triggered.connect(self.prev_step)
+
+        self.actionStop.triggered.connect(self.stop_sequence)
 
         self.actionPlay.triggered.connect(self.play_sequence)
 
@@ -216,31 +219,39 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
 
     def first_step(self):
+        self.play = False
         self.step = 0
         self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
 
     def prev_step(self):
+        self.play = False
         if self.step > 0:
             self.step = self.step - 1
             self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
 
     def next_step(self):
+        self.play = False
         if self.step < len(Assembler_Proto.CompleteAssemblyHistory) - 1:
             self.step = self.step + 1
             self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
     
     def last_step(self):
+        self.play = False
         self.step = len(Assembler_Proto.CompleteAssemblyHistory) - 1
         self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
 
     def play_sequence(self):
-        while(self.step <= len(Assembler_Proto.CompleteAssemblyHistory) - 1):
-            #some timer function
-            loop = QtCore.QEventLoop()
-            QtCore.QTimer.singleShot(1000, loop.quit)
-            loop.exec_()
+        self.play = True
+        while(self.step <= len(Assembler_Proto.CompleteAssemblyHistory) - 1 and self.play == True):
+            
             self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
             self.step = self.step + 1
+            loop = QtCore.QEventLoop()
+            QtCore.QTimer.singleShot(900, loop.quit)
+            loop.exec_()
+
+    def stop_sequence(self):
+        self.play = False
 
 
 if __name__ == "__main__":
