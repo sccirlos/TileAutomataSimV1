@@ -219,24 +219,24 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
 
     def first_step(self):
-        self.play = False
+        self.stop_sequence()
         self.step = 0
         self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
 
     def prev_step(self):
-        self.play = False
+        self.stop_sequence()
         if self.step > 0:
             self.step = self.step - 1
             self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
 
     def next_step(self):
-        self.play = False
+        self.stop_sequence()
         if self.step < len(Assembler_Proto.CompleteAssemblyHistory) - 1:
             self.step = self.step + 1
             self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
     
     def last_step(self):
-        self.play = False
+        self.stop_sequence()
         self.step = len(Assembler_Proto.CompleteAssemblyHistory) - 1
         self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
 
@@ -249,6 +249,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             loop = QtCore.QEventLoop()
             QtCore.QTimer.singleShot(900, loop.quit)
             loop.exec_()
+
+        self.stop_sequence()
 
     def stop_sequence(self):
         self.play = False
