@@ -156,6 +156,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         self.actionPrevious.triggered.connect(self.prev_step)
 
+        self.actionPlay.triggered.connect(self.play_sequence)
+
         self.actionNext.triggered.connect(self.next_step)
 
         self.actionLast.triggered.connect(self.last_step)
@@ -209,7 +211,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         file = QFileDialog.getOpenFileName(
             self, "Select XML Document", "", "XML Files (*.xml)")
         LoadFile.readxml(file[0])
-        # self.draw_tiles(LoadFile.) #starting assembly goes here
+        self.step = 0
+        Assembler_Proto.Main()
+        self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
 
     def first_step(self):
         self.step = 0
@@ -228,6 +232,12 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def last_step(self):
         self.step = len(Assembler_Proto.CompleteAssemblyHistory) - 1
         self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
+
+    def play_sequence(self):
+        while(self.step < len(Assembler_Proto.CompleteAssemblyHistory)):
+            #some timer function
+            self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
+            self.step = self.step + 1
 
 
 if __name__ == "__main__":
