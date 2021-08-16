@@ -268,7 +268,10 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
             
             loop = QtCore.QEventLoop()
-            QtCore.QTimer.singleShot(1000, loop.quit)
+            if self.step != 0:
+                QtCore.QTimer.singleShot(1000 / Assembler_Proto.TimeTaken[self.step], loop.quit)
+            else:
+                QtCore.QTimer.singleShot(1000, loop.quit)
             loop.exec_()
             self.step = self.step + 1
             if self.step != 0 and self.step < len(Assembler_Proto.CompleteAssemblyHistory):
