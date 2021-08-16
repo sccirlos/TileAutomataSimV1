@@ -142,10 +142,13 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         #self.label = QtWidgets.QLabel()
         self.step = 0
+        self.time = 0
         self.play = True
         canvas = QtGui.QPixmap(850, 600)
         canvas.fill(Qt.white)
         self.label.setPixmap(canvas)
+
+        self.label_2.setText("")
 
         # this is "Load" on the "File" menu
         self.actionLoad.triggered.connect(self.Click_FileSearch)
@@ -196,6 +199,11 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             painter.drawText((tile.x * 40) + 410, (tile.y * -40) + 325, tile.label)
 
         painter.end()
+
+        
+        self.label_2.setText("Time elapsed: " + str(self.time) + " seconds")
+        #self.label_3.setText("Current step time: " + str(1/len(Assembler_Proto.AvailableMoves)))
+
         self.update()
 
     def Click_Run_Simulation(self):  # Run application if everythings good
@@ -221,11 +229,13 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def first_step(self):
         self.stop_sequence()
         self.step = 0
+        self.time = 0
         self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
 
     def prev_step(self):
         self.stop_sequence()
         if self.step > 0:
+            #self.time = self.time - (1/Assembler_Proto.AvailableMoves[self.step]) #Might need to go below
             self.step = self.step - 1
             self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
 
@@ -233,21 +243,29 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.stop_sequence()
         if self.step < len(Assembler_Proto.CompleteAssemblyHistory) - 1:
             self.step = self.step + 1
+            #self.time = self.time + (1/Assembler_Proto.AvailableMoves[self.step]) #Might need to go above
             self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
     
     def last_step(self):
         self.stop_sequence()
+        current = self.step
         self.step = len(Assembler_Proto.CompleteAssemblyHistory) - 1
+        #while (current != self.step):
+            #current = current + 1
+            #self.time = self.time + (1/Assembler_Proto.AvailableMoves[self.step]) 
+
         self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
+        #print(len(Assembler_Proto.AvailableMoves))
 
     def play_sequence(self):
         self.play = True
         while(self.step <= len(Assembler_Proto.CompleteAssemblyHistory) - 1 and self.play == True):
-            
+            #if self.step != 0:
+                #self.time = self.time + (1/Assembler_Proto.AvailableMoves[self.step])
             self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
             
             loop = QtCore.QEventLoop()
-            QtCore.QTimer.singleShot(900, loop.quit)
+            QtCore.QTimer.singleShot(1000, loop.quit)
             loop.exec_()
             self.step = self.step + 1
 
