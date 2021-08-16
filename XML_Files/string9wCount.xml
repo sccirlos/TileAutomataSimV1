@@ -90,6 +90,9 @@
                 <left>"S"</left>
                 <up>"c"</up>
             </Rule>
+            <Rule State="S">
+                <right>"+"</right>
+            </Rule>
             <Rule State="0B">
                 <down>"SB"</down>
                 <down>"2B'"</down>
@@ -123,6 +126,9 @@
             </Rule>
             <Rule State="0">
                 <up>"nc"</up>
+            </Rule>
+            <Rule State="0c">
+                <up>"c"</up>
             </Rule>
         </AffinityRules>
         <TransitionRules>
@@ -186,7 +192,7 @@
                 </right>                                 
             </Rule>    
             <Rule State="2A">
-                <right Neighbor="0B" finalOrigin="2A" finalNeighbor="0">
+                <right Neighbor="0B" finalOrigin="2A" finalNeighbor="1">
                 </right>
                 <right Neighbor="1B" finalOrigin="2A" finalNeighbor="1">
                 </right>
@@ -203,12 +209,26 @@
                 <left Neighbor="0" finalOrigin="0" finalNeighbor="0">
                 </left>
                 <left Neighbor="1" finalOrigin="1" finalNeighbor="1">
-                </left>           
+                </left>
+                <left Neighbor="N" finalOrigin="N" finalNeighbor="N">
+                </left>             
             </Rule>
             <Rule State="N">
                 <right Neighbor="nc" finalOrigin="N" finalNeighbor="N">
                 </right>                               
-            </Rule>    
+            </Rule>
+            <Rule State="+">
+                <up Neighbor="0" finalOrigin="S" finalNeighbor="0">
+                </up>
+                <up Neighbor="1" finalOrigin="S" finalNeighbor="1">
+                </up>                          
+            </Rule>
+            <Rule State="0c">
+                <up Neighbor="0" finalOrigin="0" finalNeighbor="0">
+                </up>
+                <up Neighbor="1" finalOrigin="0" finalNeighbor="1">
+                </up>                          
+            </Rule>
         </TransitionRules>
     </System>
 </SingleTile>
