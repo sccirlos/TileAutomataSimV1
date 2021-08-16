@@ -6,47 +6,47 @@
         <!-- State's label -->
         <State Label="A1">
             <color>ff0000</color> <!-- State's color -->
-            <inital>true></inital> <!-- Is this state an inital state? AKA. Is this state floating around looking for something to attach to? -->
+            <initial>true></initial> <!-- Is this state an initial state? AKA. Is this state floating around looking for something to attach to? -->
             <seed>true</seed> <!-- Can this state be placed as the seed? AKA. Can this state be used on the 1st move? -->
         </State>
         <State Label="A2">
             <color>ff0000</color>
-            <inital>true</inital>
+            <initial>true</initial>
             <seed>false</seed>
         </State>
         <State Label="A3">
             <color>ff0000</color>
-            <inital>true</inital>
+            <initial>true</initial>
             <seed>false</seed>
         </State>
         <State Label="B1">
             <color>0000ff</color>
-            <inital>true</inital>
+            <initial>true</initial>
             <seed>false</seed>
         </State>
         <State Label="B2">
             <color>0000ff</color>
-            <inital>true</inital>
+            <initial>true</initial>
             <seed>false</seed>
         </State>
         <State Label="B3">
             <color>0000ff</color>
-            <inital>true</inital>
+            <initial>true</initial>
             <seed>false</seed>
         </State>
         <State Label="C1">
             <color>ffff00</color>
-            <inital>false</inital>
+            <initial>false</initial>
             <seed>false</seed>
         </State>
         <State Label="C2">
             <color>ffff00</color>
-            <inital>false</inital>
+            <initial>false</initial>
             <seed>false</seed>
         </State>
         <State Label="C3">
             <color>ffff00</color>
-            <inital>false</inital>
+            <initial>false</initial>
             <seed>false</seed>
         </State>
     </StateTypes>

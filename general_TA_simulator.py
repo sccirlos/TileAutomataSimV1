@@ -160,8 +160,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         self.actionLast.triggered.connect(self.last_step)
 
-        
-
     def draw_tiles(self, assembly):
         painter = QPainter(self.label.pixmap())
         pen = QtGui.QPen()
@@ -189,8 +187,10 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
             painter.setPen(pen)
             painter.setBrush(brush)
-            painter.drawRect((stuff.x * 40) + 200, (stuff.y * -40) + 200, 40, 40)
-            painter.drawText((stuff.x * 40) + 210, (stuff.y * -40) + 225, stuff.label)
+            painter.drawRect((stuff.x * 40) + 200,
+                             (stuff.y * -40) + 200, 40, 40)
+            painter.drawText((stuff.x * 40) + 210,
+                             (stuff.y * -40) + 225, stuff.label)
 
         painter.end()
         self.update()
@@ -204,9 +204,13 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
 
     def Click_FileSearch(self, id):
-        # Simulator must clear the BaseStateSet and TransitionStateSet when the user attempts to load something.
-        LoadFile.BaseStateSet.clear()
-        LoadFile.TransitionStateSet.clear()
+        # Simulator must clear all of LoadFile's global variables when the user attempts to load something.
+        LoadFile.AffinityRules.clear()
+        LoadFile.TransitionRules.clear()
+        LoadFile.SeedAssembly.clear()
+        LoadFile.SeedStateSet.clear()
+        LoadFile.InitialStateSet.clear()
+        LoadFile.CompleteStateSet.clear()
 
         file = QFileDialog.getOpenFileName(
             self, "Select XML Document", "", "XML Files (*.xml)")
@@ -226,7 +230,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         if self.step < len(Assembler_Proto.CompleteAssemblyHistory) - 1:
             self.step = self.step + 1
             self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
-    
+
     def last_step(self):
         self.step = len(Assembler_Proto.CompleteAssemblyHistory) - 1
         self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
