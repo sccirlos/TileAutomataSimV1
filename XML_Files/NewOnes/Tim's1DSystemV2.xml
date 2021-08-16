@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The system starts with a single tile. -->
+<SingleTile>
+    <!-- List of states the system works with. -->
+    <StateTypes>
+        <!-- State's label -->
+        <State Label="A1">
+            <color>ff0000</color> <!-- State's color -->
+            <inital>true></inital> <!-- Is this state an inital state? AKA. Is this state floating around looking for something to attach to? -->
+            <seed>true</seed> <!-- Can this state be placed as the seed? AKA. Can this state be used on the 1st move? -->
+        </State>
+        <State Label="A2">
+            <color>ff0000</color>
+            <inital>true</inital>
+            <seed>false</seed>
+        </State>
+        <State Label="A3">
+            <color>ff0000</color>
+            <inital>true</inital>
+            <seed>false</seed>
+        </State>
+        <State Label="B1">
+            <color>0000ff</color>
+            <inital>true</inital>
+            <seed>false</seed>
+        </State>
+        <State Label="B2">
+            <color>0000ff</color>
+            <inital>true</inital>
+            <seed>false</seed>
+        </State>
+        <State Label="B3">
+            <color>0000ff</color>
+            <inital>true</inital>
+            <seed>false</seed>
+        </State>
+        <State Label="C1">
+            <color>ffff00</color>
+            <inital>false</inital>
+            <seed>false</seed>
+        </State>
+        <State Label="C2">
+            <color>ffff00</color>
+            <inital>false</inital>
+            <seed>false</seed>
+        </State>
+        <State Label="C3">
+            <color>ffff00</color>
+            <inital>false</inital>
+            <seed>false</seed>
+        </State>
+    </StateTypes>
+    <!-- System Rules = Affinity Rules + Transition Rules -->
+    <System>
+        <AffinityRules>
+            <!-- Affinity Format: Label1 = The left/top label; Label2 = The right/bottom label; Dir = h if it's a horizontal affinity, or v if it's a vertical affinity; Str = The affinity's strength. -->
+            <Rule Label1="A1" Label2="A2" Dir="h" Str="1"></Rule>
+            <Rule Label1="A2" Label2="A3" Dir="h" Str="1"></Rule>
+            <Rule Label1="C1" Label2="A2" Dir="h" Str="1"></Rule>
+            <Rule Label1="A1" Label2="C2" Dir="h" Str="1"></Rule>
+            <Rule Label1="A2" Label2="C3" Dir="h" Str="1"></Rule>
+            <Rule Label1="C2" Label2="A3" Dir="h" Str="1"></Rule>
+            <Rule Label1="A3" Label2="B1" Dir="h" Str="1"></Rule>
+            <Rule Label1="B1" Label2="B2" Dir="h" Str="1"></Rule>
+            <Rule Label1="A3" Label2="C1" Dir="h" Str="1"></Rule>
+            <!-- <Rule Label1="C3" Label2="B1" Dir="h" Str="1"></Rule> is not included because it causes an infinite loop. -->
+            <Rule Label1="B1" Label2="C2" Dir="h" Str="1"></Rule>
+            <Rule Label1="C1" Label2="B2" Dir="h" Str="1"></Rule>
+            <Rule Label1="B2" Label2="B3" Dir="h" Str="1"></Rule>
+            <Rule Label1="B2" Label2="C3" Dir="h" Str="1"></Rule>
+            <Rule Label1="C2" Lable2="B3" Dir="h" Str="1"></Rule>
+            <Rule Label1="C1" Label2="C2" Dir="h" Str="1"></Rule>
+            <Rule Label1="C2" Label2="C3" Dir="h" Str="1"></Rule>
+            <Rule Label1="C3" Label2="C1" Dir="h" Str="1"></Rule>
+        </AffinityRules>
+        <TransitionRules>
+            <!-- Transition Format: Label1 = The left's/top's starting label; Label2 = The right's/bottom's starting label.-->
+            <!-- Label1Final = The left's/top's final state; Label2Final = The right's/bottom's final state; Dir = h if it's a vertical transition, or v if it's a vertical transition. -->
+            <Rule Label1="B2" Label2="B3" Label1Final="C2" Label2Final="C3" Dir="h"></Rule>
+            <Rule Label1="B1" Label2="C2" Label1Final="C1" Label2Final="C2" Dir="h"></Rule>
+            <Rule Label1="A3" Label2="C1" Label1Final="C3" Label2Final="C1" Dir="h"></Rule>
+            <Rule Label1="A2" Label2="C3" Label1Final="C2" Label2Final="C3" Dir="h"></Rule>
+        </TransitionRules>
+    </System>
+</SingleTile>
