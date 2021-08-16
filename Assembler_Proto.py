@@ -5,6 +5,7 @@ import LoadFile
 
 AssemblyHistory = []  # This will be the list of tiles where we placed a tile in chronological order; this will be essentially our complete history of created assemblies
 AvailableMoves = []  # Records possible rules to execute in a move; it's placed here so that the main window can access it easier
+TimeTaken = [] #Records the length of AvailableMoves at each step
 CompleteAssemblyHistory = []  # Records all past assemblies.
 
 
@@ -182,6 +183,7 @@ def PlacingSecondTile(AssemblyHistory, CompleteStatesSet):
         # Main: Find out what are our available moves.
 
         # Reset AvailableMoves when the simulator searches for a new move.
+        TimeTaken.append(len(AvailableMoves))
         AvailableMoves.clear()
 
         # Checking each tile individually...
