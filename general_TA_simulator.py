@@ -269,7 +269,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             
             loop = QtCore.QEventLoop()
             if self.step != 0:
-                QtCore.QTimer.singleShot(1000 / Assembler_Proto.TimeTaken[self.step], loop.quit)
+                QtCore.QTimer.singleShot(int(1000 / Assembler_Proto.TimeTaken[self.step]), loop.quit)
             else:
                 QtCore.QTimer.singleShot(1000, loop.quit)
             loop.exec_()
