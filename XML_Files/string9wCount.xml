@@ -20,6 +20,18 @@
             <State Label="A">
                 <color>f03A47</color>
             </State>
+            <State Label="N">
+                <color>323031</color>
+            </State>
+            <State Label="+">
+                <color>323031</color>
+            </State>
+            <State Label="c">
+                <color>3f88c5</color>
+            </State>
+            <State Label="nc">
+                <color>f03A47</color>
+            </State>
         </BaseStates>
         <TransitionStates> <!-- States that can't be used on the 1st tile -->
             <State Label="0A">
@@ -46,12 +58,21 @@
             <State Label="2B*">
                 <color>3f88c5</color>
             </State>
+            <State Label="2A*">
+                <color>f03A47</color>
+            </State>
             <State Label="0">
                 <color>dfe0e2</color>
             </State>
             <State Label="1">
                 <color>dfe0e2</color>
-            </State>            
+            </State>
+            <State Label="S">
+                <color>323031</color>
+            </State>
+            <State Label="0c">
+                <color>3f88c5</color>
+            </State>       
         </TransitionStates>
     </StateTypes>
     <System>
@@ -62,6 +83,12 @@
             <Rule State="SB">
                 <left>"SA"</left>
                 <up>"0B"</up>
+                <right>"+"</right>
+            </Rule>
+            <Rule State="+">
+                <left>"SB"</left>
+                <left>"S"</left>
+                <up>"c"</up>
             </Rule>
             <Rule State="0B">
                 <down>"SB"</down>
@@ -87,6 +114,15 @@
                 <right>"B0"</right>
                 <right>"B1'"</right>
                 <right>"B2'"</right>
+            </Rule>
+            <Rule State="2A*">
+                <up>"N"</up>
+            </Rule>
+            <Rule State="1">
+                <up>"nc"</up>
+            </Rule>
+            <Rule State="0">
+                <up>"nc"</up>
             </Rule>
         </AffinityRules>
         <TransitionRules>
@@ -136,9 +172,9 @@
             <Rule State="0A">
                 <right Neighbor="0B" finalOrigin="0A" finalNeighbor="0">
                 </right>
-                <right Neighbor="1B" finalOrigin="0A" finalNeighbor="1">
+                <right Neighbor="1B" finalOrigin="0A" finalNeighbor="0">
                 </right>
-                <right Neighbor="2B*" finalOrigin="0A" finalNeighbor="0">
+                <right Neighbor="2B*" finalOrigin="0A" finalNeighbor="1">
                 </right>                                 
             </Rule>
             <Rule State="1A">
@@ -154,9 +190,25 @@
                 </right>
                 <right Neighbor="1B" finalOrigin="2A" finalNeighbor="1">
                 </right>
-                <right Neighbor="2B" finalOrigin="2A" finalNeighbor="1">
+                <right Neighbor="2B" finalOrigin="2A*" finalNeighbor="1">
                 </right>                                 
-            </Rule>      
+            </Rule> 
+            <Rule State="c">
+                <left Neighbor="0" finalOrigin="1" finalNeighbor="0">
+                </left>
+                <left Neighbor="1" finalOrigin="0c" finalNeighbor="1">
+                </left>           
+            </Rule>
+            <Rule State="nc">
+                <left Neighbor="0" finalOrigin="0" finalNeighbor="0">
+                </left>
+                <left Neighbor="1" finalOrigin="1" finalNeighbor="1">
+                </left>           
+            </Rule>
+            <Rule State="N">
+                <right Neighbor="nc" finalOrigin="N" finalNeighbor="N">
+                </right>                               
+            </Rule>    
         </TransitionRules>
     </System>
 </SingleTile>
