@@ -530,6 +530,7 @@ def Main():
     # Resets conflicting information if the user loads a different system
     AssemblyHistory.clear()
     CompleteAssemblyHistory.clear()
+    TimeTaken.clear()
 
     ActiveTile.ID = 0  # Resets the ID counter for ActiveTiles
     # This is the list of base states from the loading-seciton

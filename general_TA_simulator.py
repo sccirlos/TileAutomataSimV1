@@ -226,6 +226,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self, "Select XML Document", "", "XML Files (*.xml)")
         LoadFile.readxml(file[0])
         self.step = 0
+        self.time = 0
         Assembler_Proto.Main()
         self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
 
@@ -263,14 +264,15 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def play_sequence(self):
         self.play = True
         while(self.step <= len(Assembler_Proto.CompleteAssemblyHistory) - 1 and self.play == True):
-            if self.step != 0:
-                self.time = self.time + (1/Assembler_Proto.TimeTaken[self.step])
+            
             self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
             
             loop = QtCore.QEventLoop()
             QtCore.QTimer.singleShot(1000, loop.quit)
             loop.exec_()
             self.step = self.step + 1
+            if self.step != 0 and self.step < len(Assembler_Proto.CompleteAssemblyHistory):
+                self.time = self.time + (1/Assembler_Proto.TimeTaken[self.step])
 
         self.stop_sequence()
 
