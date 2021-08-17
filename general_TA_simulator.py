@@ -6,9 +6,14 @@ from PyQt5.QtCore import Qt
 
 import TAMainWindow
 import LoadFile
+import SaveFile
 import Assembler_Proto
 
 import sys
+
+# Global Variables
+currentSystem = None
+
 # General Seeded TA Simulator
 
 
@@ -58,8 +63,16 @@ class System:
     # Temp int
     # Initial List of States
     # Seed Assembly Object
-    def __init__(self, temp=None, states=None, initial_states=None, seed_assembly=None, vertical_affinities=None, horizontal_affinities=None, vertical_transition_rules=None, horizontal_transition_rules=None):
+    def __init__(self, temp=None, states=None, initial_states=None, seed_assembly=None, seed_states=None, vertical_affinities=None, horizontal_affinities=None, vertical_transition_rules=None, horizontal_transition_rules=None):
         self.temp = temp
+        self.states = states
+        self.initial_states = initial_states
+        # Are we using an assembly for a seed? If yes, then what is it?
+        # AKA. Will be empty if not used or filled with something if used...
+        self.seed_assembly = seed_assembly  # List of pre-fabricated tiles
+        # Are we using a single tile for a seed? If yes, then what is it?
+        # AKA. Will be empty if not used or filled with something if used...
+        self.seed_states = seed_states  # List of potential tiles used for the seed
         # Takes 2 tiles [N][S] and returns the glue strength between them as an int
         self.vertical_affinities = vertical_affinities
         # Takes 2 tiles [W][E] and returns the glue strength between them as an int
@@ -68,9 +81,6 @@ class System:
         self.vertical_transition_rules = vertical_transition_rules
         # Takes 2 tiles [W][E] and returns the transition pair
         self.horizontal_transition_rules = horizontal_transition_rules
-        self.states = states
-        self.initial_states = initial_states
-        self.seed_assembly = seed_assembly
 
     def get_temp(self):
         return self.temp
@@ -120,6 +130,9 @@ class System:
     def set_seed_assembly(self, s):
         self.seed_assembly = s
 
+    def get_seed_states(self):
+        return self.seed_states
+
     def add_transition_rule(self, tr, direct):
         if direct == "v":
             self.vertical_transition_rules.append(tr)
@@ -148,6 +161,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         # this is "Load" on the "File" menu
         self.actionLoad.triggered.connect(self.Click_FileSearch)
+
+        # "Save" from the "File" menu
+        self.actionSave.triggered.connect(self.Click_SaveFile)
 
         # this button executes the simulation. Afterwards the window updates to show results
         self.pushButton.clicked.connect(self.Click_Run_Simulation)
@@ -205,8 +221,11 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
     def Click_FileSearch(self, id):
         # Simulator must clear all of LoadFile's global variables when the user attempts to load something.
-        LoadFile.AffinityRules.clear()
-        LoadFile.TransitionRules.clear()
+        LoadFile.Temp = "0"
+        LoadFile.HorizontalAffinityRules.clear()
+        LoadFile.VerticalAffinityRules.clear()
+        LoadFile.HorizontalTransitionRules.clear()
+        LoadFile.VerticalTransitionRules.clear()
         LoadFile.SeedAssembly.clear()
         LoadFile.SeedStateSet.clear()
         LoadFile.InitialStateSet.clear()
@@ -215,7 +234,26 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         file = QFileDialog.getOpenFileName(
             self, "Select XML Document", "", "XML Files (*.xml)")
         LoadFile.readxml(file[0])
-        # self.draw_tiles(LoadFile.) #starting assembly goes here
+
+    def Click_SaveFile(self):
+        # Creating a System object from data read.
+        temp = LoadFile.Temp
+        states = LoadFile.CompleteStateSet
+        inital_states = LoadFile.InitialStateSet
+        seed_assembly = LoadFile.SeedAssembly
+        seed_states = LoadFile.SeedStateSet
+        vertical_affinities = LoadFile.VerticalAffinityRules
+        horizontal_affinities = LoadFile.HorizontalAffinityRules
+        vertical_transitions = LoadFile.VerticalTransitionRules
+        horizontal_transitions = LoadFile.HorizontalTransitionRules
+
+        # Establish the current system we're working with
+        currentSystem = System(temp, states, inital_states, seed_assembly, seed_states, vertical_affinities,
+                               horizontal_affinities, vertical_transitions, horizontal_transitions)
+
+        SaveFile.main(currentSystem)
+
+    # self.draw_tiles(LoadFile.) #starting assembly goes here
 
     def first_step(self):
         self.step = 0

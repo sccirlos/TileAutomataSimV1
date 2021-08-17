@@ -51,7 +51,7 @@
         </State>
     </StateTypes>
     <!-- System Rules = Affinity Rules + Transition Rules -->
-    <System>
+    <System Temp="1">
         <AffinityRules>
             <!-- Affinity Format: Label1 = The left/top label; Label2 = The right/bottom label; Dir = h if it's a horizontal affinity, or v if it's a vertical affinity; Strength = The affinity's strength. -->
             <Rule Label1="A1" Label2="A2" Dir="h" Strength="1"></Rule>
