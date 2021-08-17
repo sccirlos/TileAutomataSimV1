@@ -26,11 +26,11 @@ class State:
 
 
 class AffinityRule:
-    def __init__(self, label1, label2, dir, str):
+    def __init__(self, label1, label2, dir, strength):
         self.label1 = label1  # Left/Upper label
         self.label2 = label2  # Right/Bottom label
         self.dir = dir  # Horizontal or Vertical
-        self.str = str  # Bond Strength
+        self.strength = strength  # Bond Strength (as a string)
 
     # Getters
     def returnLabel1(self):
@@ -43,7 +43,7 @@ class AffinityRule:
         return self.dir
 
     def returnStr(self):
-        return self.str
+        return self.strength
 
 
 class TransitionRule:
@@ -77,6 +77,7 @@ def readxml(file):
 
     # If the system has a single tile for its seed:
     if(treeroot.tag == "SingleTile"):
+        # Read and record the system's states
         for state_tag in treeroot.findall('StateTypes/State'):
             label = state_tag.get("Label")  # State's label
             color = state_tag.find("color").text  # State's color
@@ -84,8 +85,6 @@ def readxml(file):
             initialStatusString = state_tag.find("initial").text
             # State's seed status as a string
             seedStatusString = state_tag.find("seed").text
-
-            print("Label: "+label)
 
             # Create a temp State object
             tempState = State(label, color)
@@ -97,9 +96,30 @@ def readxml(file):
                 SeedStateSet.append(tempState)
             # After those 2 checks, add this state to CompleteStateSet
             CompleteStateSet.append(tempState)
+        # Read and record affinity rules
+        for rule_tag in treeroot.findall('System/AffinityRules/Rule'):
+            label1 = rule_tag.get("Label1")  # Rule's label1
+            label2 = rule_tag.get("Label2")  # Rule's label2
+            dir = rule_tag.get("Dir")  # Rule's dir
+            strength = rule_tag.get("Strength")  # Rule's strength
 
-    # TEST: Checking if the states are read and stored correctly.
-    # Checking inital states:
+            print(label1)  # Error check here
+            # Create temp Rule object
+            tempRule = AffinityRule(label1, label2, dir, strength)
+            AffinityRules.append(tempRule)
+        # Read and record transition rules
+        for rule_tag in treeroot.findall('System/TransitionRules/Rule'):
+            label1 = rule_tag.get("Label1")
+            label2 = rule_tag.get("Label2")
+            label1Final = rule_tag.get("Label1Final")
+            label2Final = rule_tag.get("Label2Final")
+            dir = rule_tag.get("Dir")
+
+            tempRule = TransitionRule(
+                label1, label2, label1Final, label2Final, dir)
+            TransitionRules.append(tempRule)
+
+    # Checking States:
     print("All States Used:")
     for state in CompleteStateSet:
         stateLabel = state.returnLabel()
@@ -115,4 +135,31 @@ def readxml(file):
         stateLabel = state.returnLabel()
         stateColor = state.returnColor()
         print("\t-Label: "+stateLabel+"; Color: "+stateColor)
+
+    # Checking Rules
+    print("Affinity Rules:")
+    for rule in AffinityRules:
+        label1 = rule.returnLabel1()
+        label2 = rule.returnLabel2()
+        dir = rule.returnDir()
+        strength = rule.returnStr()
+
+        if(dir == "h"):
+            print("\t- ["+label1+"|"+label2+"]; Bond Strength: "+strength)
+        else:
+            print("\t- ["+label1+"/"+label2+"]; Bond Strength: "+strength)
+    print("Transition Rules:")
+    for rule in TransitionRules:
+        label1 = rule.returnLabel1()
+        label2 = rule.returnLabel2()
+        label1Final = rule.returnLabel1Final()
+        label2Final = rule.returnLabel2Final()
+        dir = rule.returnDir()
+
+        if(dir == "h"):
+            print("\t- ["+label1+"|"+label2+"] -> [" +
+                  label1Final+"|"+label2Final+"]")
+        else:
+            print("\t- ["+label1+"/"+label2+"] -> [" +
+                  label1Final+"/"+label2Final+"]")
     print("Check complete!")

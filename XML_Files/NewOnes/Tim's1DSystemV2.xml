@@ -53,25 +53,24 @@
     <!-- System Rules = Affinity Rules + Transition Rules -->
     <System>
         <AffinityRules>
-            <!-- Affinity Format: Label1 = The left/top label; Label2 = The right/bottom label; Dir = h if it's a horizontal affinity, or v if it's a vertical affinity; Str = The affinity's strength. -->
-            <Rule Label1="A1" Label2="A2" Dir="h" Str="1"></Rule>
-            <Rule Label1="A2" Label2="A3" Dir="h" Str="1"></Rule>
-            <Rule Label1="C1" Label2="A2" Dir="h" Str="1"></Rule>
-            <Rule Label1="A1" Label2="C2" Dir="h" Str="1"></Rule>
-            <Rule Label1="A2" Label2="C3" Dir="h" Str="1"></Rule>
-            <Rule Label1="C2" Label2="A3" Dir="h" Str="1"></Rule>
-            <Rule Label1="A3" Label2="B1" Dir="h" Str="1"></Rule>
-            <Rule Label1="B1" Label2="B2" Dir="h" Str="1"></Rule>
-            <Rule Label1="A3" Label2="C1" Dir="h" Str="1"></Rule>
-            <!-- <Rule Label1="C3" Label2="B1" Dir="h" Str="1"></Rule> is not included because it causes an infinite loop. -->
-            <Rule Label1="B1" Label2="C2" Dir="h" Str="1"></Rule>
-            <Rule Label1="C1" Label2="B2" Dir="h" Str="1"></Rule>
-            <Rule Label1="B2" Label2="B3" Dir="h" Str="1"></Rule>
-            <Rule Label1="B2" Label2="C3" Dir="h" Str="1"></Rule>
-            <Rule Label1="C2" Lable2="B3" Dir="h" Str="1"></Rule>
-            <Rule Label1="C1" Label2="C2" Dir="h" Str="1"></Rule>
-            <Rule Label1="C2" Label2="C3" Dir="h" Str="1"></Rule>
-            <Rule Label1="C3" Label2="C1" Dir="h" Str="1"></Rule>
+            <!-- Affinity Format: Label1 = The left/top label; Label2 = The right/bottom label; Dir = h if it's a horizontal affinity, or v if it's a vertical affinity; Strength = The affinity's strength. -->
+            <Rule Label1="A1" Label2="A2" Dir="h" Strength="1"></Rule>
+            <Rule Label1="A2" Label2="A3" Dir="h" Strength="1"></Rule>
+            <Rule Label1="C1" Label2="A2" Dir="h" Strength="1"></Rule>
+            <Rule Label1="A1" Label2="C2" Dir="h" Strength="1"></Rule>
+            <Rule Label1="A2" Label2="C3" Dir="h" Strength="1"></Rule>
+            <Rule Label1="C2" Label2="A3" Dir="h" Strength="1"></Rule>
+            <Rule Label1="A3" Label2="B1" Dir="h" Strength="1"></Rule>
+            <Rule Label1="B1" Label2="B2" Dir="h" Strength="1"></Rule>
+            <Rule Label1="A3" Label2="C1" Dir="h" Strength="1"></Rule>
+            <Rule Label1="B1" Label2="C2" Dir="h" Strength="1"></Rule>
+            <Rule Label1="C1" Label2="B2" Dir="h" Strength="1"></Rule>
+            <Rule Label1="B2" Label2="B3" Dir="h" Strength="1"></Rule>
+            <Rule Label1="B2" Label2="C3" Dir="h" Strength="1"></Rule>
+            <Rule Label1="C2" Label2="B3" Dir="h" Strength="1"></Rule>
+            <Rule Label1="C1" Label2="C2" Dir="h" Strength="1"></Rule>
+            <Rule Label1="C2" Label2="C3" Dir="h" Strength="1"></Rule>
+            <Rule Label1="C3" Label2="C1" Dir="h" Strength="1"></Rule>
         </AffinityRules>
         <TransitionRules>
             <!-- Transition Format: Label1 = The left's/top's starting label; Label2 = The right's/bottom's starting label.-->
