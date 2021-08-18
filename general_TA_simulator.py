@@ -170,6 +170,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         
 
+        
+
     def draw_tiles(self, assembly):
         painter = QPainter(self.label.pixmap())
         pen = QtGui.QPen()
@@ -259,12 +261,13 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.time = self.time + (1/Assembler_Proto.TimeTaken[current]) 
 
         self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
-        
+       
 
     def play_sequence(self):
         self.play = True
-        while(self.step <= len(Assembler_Proto.CompleteAssemblyHistory) - 1 and self.play == True):
-            
+        print(len(Assembler_Proto.CompleteAssemblyHistory))
+        while(self.step < len(Assembler_Proto.CompleteAssemblyHistory) and self.play == True):
+            print(self.step)
             self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
             
             loop = QtCore.QEventLoop()
@@ -277,6 +280,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             if self.step != 0 and self.step < len(Assembler_Proto.CompleteAssemblyHistory):
                 self.time = self.time + (1/Assembler_Proto.TimeTaken[self.step])
 
+        self.step = len(Assembler_Proto.CompleteAssemblyHistory) - 1 #this line is here to prevent a crash that happens if you click last after play finishes
         self.stop_sequence()
 
     def stop_sequence(self):
@@ -287,5 +291,6 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     w = Ui_MainWindow()
     w.show()
+   
     sys.exit(app.exec_())
 #
