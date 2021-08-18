@@ -216,6 +216,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         if(err_flag == False):
             self.step = 0
+            self.time = 0
             Assembler_Proto.Main()
             self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
 
