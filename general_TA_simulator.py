@@ -27,6 +27,10 @@ import sys
     #Keep growing until their are no more rules that apply
 
 # class Tile 
+
+def toCoords(x, y):
+    return "(" + str(x) + "," + str(y) + ")"
+
 class Tile:
     # label
     # # changes or list of changes (start num)
@@ -51,6 +55,12 @@ class Assembly:
     def __init__(self):
         self.label = ""
         self.tiles = [] #tuple of (label, x, y)
+        self.coords = {} #mapping of strings (x, y) to tiles
+        self.leftMost = 0
+        self.rightMost = 0
+        self.upMost = 0
+        self.downMost = 0
+
     def get_label(self):
         return self.label
     def set_label(self, l):
@@ -61,19 +71,64 @@ class Assembly:
 
     def set_tiles(self, t):
         self.tiles = t
+
+        for tileI in self.tiles:
+            self.coords["(" + str(tileI.x) + "," + str(tileI.y) + ")" ] = tileI
+            # TO DO update boundaries
+
+
+
     # Sonya on attachments
     def get_attachments(self, sy): #takes in a system
         attachments_list = []
-        sys_attachments = sy.get_initial_states()
+        # sys_attachments = sy.get_initial_states()
         # sys_v_transition_rules = sy.get_vertical_transition_rules
-        for i in range(1, len(self.tiles)-1):
-            t1 = (self.tiles[i-1][0])
-            t2 = (self.tiles[i][0])
-            ttc = (i-1, i)
-            ttl = (t1, t2)
-            print(ttl)
-            if ttl in sys_attachments:
-                attachments_list.append((ttc, ttl, sys_attachments[ttl]))
+        
+        
+        for iX in range(self.leftMost, self.rightMost + 1):
+            for iY in range(self.downMost, self.upMost + 1):
+                #curTile = (self.coords.get())
+
+                # Get each neighbor
+                neighborN = self.coords.get(toCoords(iX, iY + 1))
+                neighborS = self.coords.get(toCoords(iX, iY - 1))
+                neighborE = self.coords.get(toCoords(iX + 1, iY))
+                neighborW = self.coords.get(toCoords(iX - 1, iY))
+
+                for iTile in sy.getInitialStates():
+                    attStr = 0
+
+                    if(neighborN != None):
+                        stren = (sy.get_vertical_transition_rules())[iTile][neighborN.getLabel()]
+                        if(stren != None): attStr += stren
+                    if(neighborS != None):
+                        stren = (sy.get_vertical_transition_rules())[neighborS.getLabel()][iTile]
+                        if(stren != None): attStr += stren
+                    if(neighborE != None):
+                        stren = (sy.get_horizontal_transition_rules())[iTile][neighborE.getLabel()]
+                        if(stren != None): attStr += stren
+                    if(neighborW != None):
+                        stren = (sy.get_horizontal_transition_rules())[neighborW.getLabel()][iTile]
+                        if(str != None): attStr += stren
+
+                    if attStr > sy.getTemp():
+                        attMove = {"type": "a"}
+
+                        attMove["x"] = iX
+                        attMove["y"] = iY
+                        attMove["state1"] = iTile.getLabel
+
+                        
+
+                        attachments_list.append(attMove)
+
+
+
+            #ttc = (i-1, i)
+            #ttl = (t1, t2)
+            #print(ttl)
+            #if ttl in sys_attachments:
+                #attachments_list.append((ttc, ttl, sys_attachments[ttl]))
         return attachments_list     
 
     def set_attachments(self, att): # tuple of ((coord pair), (current labels), (transition labels))
@@ -86,6 +141,9 @@ class Assembly:
        # print(trans[0])
         #a.tiles[change] = trans[2][1]
         print("New Assembly Tiles: ", a.tiles)
+
+        ########## TO DO Update boundaries
+
         return a
     
     #Elise on transitions    
