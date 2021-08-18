@@ -221,7 +221,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
     def Click_FileSearch(self, id):
         # Simulator must clear all of LoadFile's global variables when the user attempts to load something.
-        LoadFile.Temp = "0"
         LoadFile.HorizontalAffinityRules.clear()
         LoadFile.VerticalAffinityRules.clear()
         LoadFile.HorizontalTransitionRules.clear()

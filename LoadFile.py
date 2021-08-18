@@ -7,7 +7,6 @@ from UniversalClasses import SeedAssemblyTile
 from UniversalClasses import AffinityRule
 from UniversalClasses import TransitionRule
 
-Temp = "0"  # System's Temperature (as a string)
 # System's Affinity Rules
 VerticalAffinityRules = []
 HorizontalAffinityRules = []
@@ -51,6 +50,8 @@ def readxml(file):
             CompleteStateSet.append(tempState)
         # Read and record the system's Temp
         for system_tag in treeroot.findall('System'):
+            # Temp doesn't like being an implied global variable lmao
+            global Temp
             Temp = system_tag.get("Temp")
         # Read and record affinity rules
         for rule_tag in treeroot.findall('System/AffinityRules/Rule'):
