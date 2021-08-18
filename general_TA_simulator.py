@@ -99,10 +99,10 @@ class Assembly:
                     attStr = 0
 
                     if(neighborN != None):
-                        stren = (sy.get_vertical_transition_rules())[iTile][neighborN.getLabel()]
+                        stren = (sy.get_vertical_transition_rules())[neighborN.getLabel()][iTile]
                         if(stren != None): attStr += stren
                     if(neighborS != None):
-                        stren = (sy.get_vertical_transition_rules())[neighborS.getLabel()][iTile]
+                        stren = (sy.get_vertical_transition_rules())[iTile][neighborS.getLabel()]
                         if(stren != None): attStr += stren
                     if(neighborE != None):
                         stren = (sy.get_horizontal_transition_rules())[iTile][neighborE.getLabel()]
@@ -149,16 +149,57 @@ class Assembly:
     #Elise on transitions    
     def get_transitions(self, sy): #takes in a system
         transitions_list = []
-        sys_h_transition_rules = sy.get_horizontal_transition_rules()
-        # sys_v_transition_rules = sy.get_vertical_transition_rules
-        for i in range(1, len(self.tiles)-1):
-            t1 = (self.tiles[i-1][0])
-            t2 = (self.tiles[i][0])
-            ttc = (i-1, i)
-            ttl = (t1, t2)
-            print(ttl)
-            if ttl in sys_h_transition_rules:
-                transitions_list.append((ttc, ttl, sys_h_transition_rules[ttl]))
+        
+        sys_h_tr = sy.get_horizontal_transition_rules()
+        sys_v_tr = sy.get_vertical_transition_rules()
+
+        # Check each tile in the assembly
+        for iTile in range(1, len(self.tiles)-1):
+            iVTranRules = sys_v_tr[iTile.get_label]
+            iHTranRules = sys_h_tr[iTile.get_label]
+
+
+            # Get only the south and east neighbors of iTile
+            neighborS = self.coords.get(toCoords(iTile.x, iTile.y - 1))
+            neighborE = self.coords.get(toCoords(iTile.x + 1, iTile.y))
+
+            if(neighborS != None):
+                rules = iVTranRules.get(iTile.getLabel())
+                if rules != None:
+                    move = {"type": "t"}
+                    move["x"] = iTile.x
+                    move["y"] = iTile.y
+                    move["state1"] = iTile.getLabel()
+                    move["state2"] = neighborS.getLabel()
+
+                    for i in range(rules.length()):
+                        move["state1Final"] = rules[i].returnLabel1Final() 
+                        move["state2Final"] = rules[i].returnLabel2Final() 
+                        transitions_list.append(move)
+
+            if(neighborE != None):
+                rules = iHTranRules.get(iTile.getLabel())
+                if rules != None:
+                    move = {"type": "t"}
+                    move["x"] = iTile.x
+                    move["y"] = iTile.y
+                    move["state1"] = iTile.getLabel()
+                    move["state2"] = neighborE.getLabel()
+
+                    for i in range(rules.length()):
+                        move["state1Final"] = rules[i].returnLabel1Final() 
+                        move["state2Final"] = rules[i].returnLabel2Final() 
+                        transitions_list.append(move)
+
+            #t1 = (self.tiles[i-1][0])
+            #t2 = (self.tiles[i][0])
+            #ttc = (i-1, i)
+            #ttl = (t1, t2)
+            
+            #print(ttl)
+            #if ttl in sys_h_tr:
+                #transitions_list.append((ttc, ttl, sys_h_transition_rules[ttl]))
+
         return transitions_list      
 
     def set_transition(self, trans): # tuple of ((coord pair), (current labels), (transition labels))
