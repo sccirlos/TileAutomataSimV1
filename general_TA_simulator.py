@@ -73,7 +73,8 @@ class Assembly:
         self.tiles = t
 
         for tileI in self.tiles:
-            self.coords["(" + str(tileI.x) + "," + str(tileI.y) + ")" ] = tileI
+            #tileI.x == tileI[1] and tileI.y == tileI[2]
+            self.coords["(" + str(tileI[1]) + "," + str(tileI[2]) + ")" ] = tileI
             # TO DO update boundaries
 
 
