@@ -87,7 +87,9 @@ class Assembly:
         
         for iX in range(self.leftMost, self.rightMost + 1):
             for iY in range(self.downMost, self.upMost + 1):
-                #curTile = (self.coords.get())
+
+                # Check if position is empty
+                if self.coords.get(toCoords(iX, iY + 1)) != None: continue
 
                 # Get each neighbor
                 neighborN = self.coords.get(toCoords(iX, iY + 1))
@@ -95,30 +97,30 @@ class Assembly:
                 neighborE = self.coords.get(toCoords(iX + 1, iY))
                 neighborW = self.coords.get(toCoords(iX - 1, iY))
 
+
+                # Calcuate the str of each tile attaching at this position
                 for iTile in sy.getInitialStates():
                     attStr = 0
 
                     if(neighborN != None):
-                        stren = (sy.get_vertical_transition_rules())[neighborN.getLabel()][iTile]
+                        stren = (sy.get_vertical_affinities())[neighborN.getLabel()][iTile]
                         if(stren != None): attStr += stren
                     if(neighborS != None):
-                        stren = (sy.get_vertical_transition_rules())[iTile][neighborS.getLabel()]
+                        stren = (sy.get_vertical_affinities())[iTile][neighborS.getLabel()]
                         if(stren != None): attStr += stren
                     if(neighborE != None):
-                        stren = (sy.get_horizontal_transition_rules())[iTile][neighborE.getLabel()]
+                        stren = (sy.get_horizontal_affinities())[iTile][neighborE.getLabel()]
                         if(stren != None): attStr += stren
                     if(neighborW != None):
-                        stren = (sy.get_horizontal_transition_rules())[neighborW.getLabel()][iTile]
+                        stren = (sy.get_horizontal_affinities())[neighborW.getLabel()][iTile]
                         if(str != None): attStr += stren
 
-                    if attStr > sy.getTemp():
+                    if attStr >= sy.getTemp():
                         attMove = {"type": "a"}
 
                         attMove["x"] = iX
                         attMove["y"] = iY
                         attMove["state1"] = iTile.getLabel
-
-                        
 
                         attachments_list.append(attMove)
 
@@ -148,6 +150,15 @@ class Assembly:
     
     #Elise on transitions    
     def get_transitions(self, sy): #takes in a system
+            #t1 = (self.tiles[i-1][0])
+            #t2 = (self.tiles[i][0])
+            #ttc = (i-1, i)
+            #ttl = (t1, t2)
+            
+            #print(ttl)
+            #if ttl in sys_h_tr:
+                #transitions_list.append((ttc, ttl, sys_h_transition_rules[ttl]))
+        
         transitions_list = []
         
         sys_h_tr = sy.get_horizontal_transition_rules()
@@ -155,6 +166,7 @@ class Assembly:
 
         # Check each tile in the assembly
         for iTile in range(1, len(self.tiles)-1):
+            # first dictionary
             iVTranRules = sys_v_tr[iTile.get_label]
             iHTranRules = sys_h_tr[iTile.get_label]
 
@@ -164,7 +176,9 @@ class Assembly:
             neighborE = self.coords.get(toCoords(iTile.x + 1, iTile.y))
 
             if(neighborS != None):
-                rules = iVTranRules.get(iTile.getLabel())
+                # second dictionary
+                rules = iVTranRules.get(neighborS.getLabel())
+
                 if rules != None:
                     move = {"type": "t"}
                     move["x"] = iTile.x
@@ -172,13 +186,15 @@ class Assembly:
                     move["state1"] = iTile.getLabel()
                     move["state2"] = neighborS.getLabel()
 
+                    # a pair of states may have mutliple rules
                     for i in range(rules.length()):
+                        #class is in universal classes
                         move["state1Final"] = rules[i].returnLabel1Final() 
                         move["state2Final"] = rules[i].returnLabel2Final() 
                         transitions_list.append(move)
 
             if(neighborE != None):
-                rules = iHTranRules.get(iTile.getLabel())
+                rules = iHTranRules.get(neighborE.getLabel())
                 if rules != None:
                     move = {"type": "t"}
                     move["x"] = iTile.x
@@ -191,14 +207,6 @@ class Assembly:
                         move["state2Final"] = rules[i].returnLabel2Final() 
                         transitions_list.append(move)
 
-            #t1 = (self.tiles[i-1][0])
-            #t2 = (self.tiles[i][0])
-            #ttc = (i-1, i)
-            #ttl = (t1, t2)
-            
-            #print(ttl)
-            #if ttl in sys_h_tr:
-                #transitions_list.append((ttc, ttl, sys_h_transition_rules[ttl]))
 
         return transitions_list      
 
@@ -213,6 +221,10 @@ class Assembly:
         #a.tiles[change] = trans[2][1]
         print("New Assembly Tiles: ", a.tiles)
         return a
+
+
+    def getMoves(self, sy):
+        return self.get_attachments(sy) + self.get_transitions(sy)
     
 class System:
     # Horizontal Hash Rule
@@ -280,6 +292,8 @@ class System:
     def set_seed_assembly(self, s):
         self.seed_assembly = s
 
+
+    # TO DO Update these to write to a dictionary, and to use lists of objects from universalClasses.py
     def add_transition_rule(self, tr, direct):
         if direct == "v":
             self.vertical_transition_rules.append(tr)
@@ -290,7 +304,9 @@ class System:
         if direct == "v":
             self.vertical_affinities.append(a)
         else:
-            self.horizontal_affinities.append(a)                     
+            self.horizontal_affinities.append(a)  
+
+
 # Step 1: Command Line with File Select 
 #         
 class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
