@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SingleTile> <!-- The system only starts with a single tile. -->
+    <StateTypes>
+        <BaseStates> <!-- States that can be used on the 1st tile.-->
+            <State Label="A1"> <!-- Label -->
+                <color>ff0000</color>
+            </State>
+        </BaseStates>
+        <TransitionStates> <!-- States that can't be used on the 1st tile -->
+            <State Label="A2">
+                <color>ff0000</color>
+            </State>
+            <State Label="A3">
+                <color>ff0000</color>
+            </State>
+            <State Label="B1">
+                <color>0000ff</color>
+            </State>
+            <State Label="B2">
+                <color>0000ff</color>
+            </State>
+            <State Label="B3">
+                <color>0000ff</color>
+            </State>
+            <State Label="C1">
+                <color>ffff00</color>
+            </State>
+            <State Label="C2">
+                <color>ffff00</color>
+            </State>
+            <State Label="C3">
+                <color>ffff00</color>
+            </State>
+        </TransitionStates>
+    </StateTypes>
+    <System>
+        <AffinityRules>
+        <!-- Note: Cn-states don't directly attach to any other tile.-->
+            <Rule State="A1">
+                <right>"A2"</right>
+            </Rule>
+            <Rule State="A2">
+                <right>"A3"</right>
+            </Rule>
+            <Rule State="A3">
+                <right>"B1"</right>
+            </Rule>
+            <Rule State="B1">
+                <right>"B2"</right>
+            </Rule>
+            <Rule State="B2">
+                <right>"B3"</right>
+            </Rule>
+            <Rule State="C1">
+                <right>"A2"</right>
+                <right>"B2"</right>
+            </Rule>
+            <Rule State="C2">
+                <right>"A3"</right>
+                <right>"B3"</right>
+            </Rule>
+            <!-- Note: The C2+B3 Affinity Rule in Tim's System is a mistake. It's ignored in this system. -->
+        </AffinityRules>
+        <TransitionRules>
+            <Rule State="B1">
+                <right Neighbor="C2" finalOrigin="C1" finalNeighbor="C2">
+                </right>
+            </Rule>
+            <Rule State="B2"> 
+                <right Neighbor="B3" finalOrigin="C2" finalNeighbor="C3"> 
+                </right>
+            </Rule>
+            <Rule State="A3">
+                <right Neighbor="C1" finalOrigin="C3" finalNeighbor="C1">
+                </right>
+            </Rule>
+            <Rule State="A2">
+                <right Neighbor="C3" finalOrigin="C2" finalNeighbor="C3">
+                </right>
+            </Rule>
+        </TransitionRules>
+    </System>
+</SingleTile>
