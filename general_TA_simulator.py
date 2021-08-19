@@ -150,14 +150,13 @@ class Assembly:
     #Elise on transitions    
     def get_transitions(self, sy): #takes in a system
         transitions_list = []
-        
         sys_h_tr = sy.get_horizontal_transition_rules()
         sys_v_tr = sy.get_vertical_transition_rules()
 
         # Check each tile in the assembly
-        for iTile in range(1, len(self.tiles)-1):
-            iVTranRules = sys_v_tr[iTile.get_label]
-            iHTranRules = sys_h_tr[iTile.get_label]
+        for iTile in self.tiles:
+            iHTranRules = sys_h_tr[iTile[0]]
+            iVTranRules = sys_v_tr[iTile[0]]
 
 
             # Get only the south and east neighbors of iTile
@@ -356,8 +355,15 @@ if __name__ == "__main__":
     ht_rules[BC] = BX
     ht_rules[CD] = CY
     ht_rules[DE] = DZ
+
+    vt_rules = {}
+    vt_rules[AB] = AW
+    vt_rules[BC] = BX
+    vt_rules[CD] = CY
+    vt_rules[DE] = DZ
     print("Horizontal Transition Rules: ", ht_rules)
     system.set_horizontal_transition_rules(ht_rules)
+    system.set_vertical_transition_rules(vt_rules)
     tr_list = assembly.get_transitions(system)
     print("Transitions List: ", tr_list)
     ind = randrange(len(tr_list) -1)
