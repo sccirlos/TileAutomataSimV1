@@ -233,7 +233,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         if(err_flag == False):
             self.step = 0
             self.time = 0
-            Assembler_Proto.Main()
+            #Assembler_Proto.Main()
             self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
 
     def Click_FileSearch(self, id):
@@ -253,8 +253,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         self.step = 0
         self.time = 0
-        Assembler_Proto.Main()
-        self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
+        #Assembler_Proto.Main()
+        #self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
 
     def Click_SaveFile(self):
         # Creating a System object from data read.
