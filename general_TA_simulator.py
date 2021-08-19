@@ -144,6 +144,10 @@ class Assembly:
         print("New Assembly Tiles: ", a.tiles)
 
         ########## TO DO Update boundaries
+        attach = att[0][0]
+        a.tiles[attach]
+
+
 
         return a
     
@@ -155,6 +159,7 @@ class Assembly:
 
         # Check each tile in the assembly
         for iTile in self.tiles:
+            print(iTile)
             iHTranRules = sys_h_tr[iTile[0]]
             iVTranRules = sys_v_tr[iTile[0]]
 
@@ -341,6 +346,7 @@ if __name__ == "__main__":
 
     #add transition rules
     ht_rules = {} #
+    vt_rules = {}
     SA = ("S", "A")
     AB = ("A", "B")
     BC = ("B", "C")
@@ -351,12 +357,14 @@ if __name__ == "__main__":
     BX = ("B", "X")
     CY = ("C", "Y")
     DZ = ("D", "Z")
+    
+    ht_rules[SA] = SA
     ht_rules[AB] = AW
     ht_rules[BC] = BX
     ht_rules[CD] = CY
     ht_rules[DE] = DZ
 
-    vt_rules = {}
+    vt_rules[SA] = SA
     vt_rules[AB] = AW
     vt_rules[BC] = BX
     vt_rules[CD] = CY
