@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SingleTile>
+    <StateTypes>
+        <BaseStates> <!-- States that can be used on the 1st tile.-->
+            <State Label="A"> <!-- Label -->
+                <color>cc0000</color> <!-- Color of tile type-->
+            </State>
+            <State Label="B">
+                <color>002db3</color>
+            </State>
+            <State Label="C">
+                <color>ffff00</color>
+            </State>
+            <State Label="D">
+                <color>ff2222</color>
+            </State>
+            <State Label="E">
+                <color>ff00aaaa</color>
+            </State>
+        </BaseStates>
+        <TransitionStates> <!-- States that can't be used on the 1st tile -->
+            <State Label="F">
+                <color>ffffff</color>
+            </State>
+        </TransitionStates>
+    </StateTypes>
+    <System>
+        <AffinityRules> <!-- Affinity Rules -->
+            <Rule State="A"> <!-- Affinity Rules for A-Type tiles -->
+                <right>"B"</right> <!-- Rightward Affinity Ex. A-B-->
+                <left>"C"</left> <!-- Leftward Affinity Ex. C-A -->
+                <up>"D"</up>
+                <down>"E"</down>
+            </Rule>
+            <Rule State="B">
+                <left>"A"</left>
+            </Rule>
+            <Rule State="C">
+                <right>"A"</right>
+            </Rule>
+            <Rule State="D">
+                <down>"A"</down>
+            </Rule>
+            <Rule State="E">
+                <up>"A"</up>
+            </Rule>
+        </AffinityRules>
+        <TransitionRules> <!-- Transition Rules-->
+            <Rule State="A"> <!-- From the point of view from State A; AKA. With State A as the origin... -->
+                <!-- The 'F' state will cause an automatic terminal assembly since nothing works with it in this example. -->
+                <right Neighbor="B" finalOrigin="F" finalNeighbor="B"> <!-- Information -->
+                </right> <!-- If a 'B' bonds on the right of an 'A', the 'A' turns to an 'F'.-->
+            </Rule>
+        </TransitionRules>
+    </System>
+</SingleTile>

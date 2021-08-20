@@ -1,3 +1,17 @@
-# TileAutomataSimV1
+> Self-assembly Research
 
-Tile Automata Simulator 2021
+## Tile Automata simulator  
+
+
+### [About Tile Automata model](http://self-assembly.net/wiki/index.php?title=Tile_Automata)
+
+
+
+
+### TA Simulator 
+
+> Version 0
+> August 2021
+> 
+> A user uploads an XML file... 
+
