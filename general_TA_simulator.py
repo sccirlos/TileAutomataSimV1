@@ -553,6 +553,7 @@ if __name__ == "__main__":
     ht_rules = {} #
     vt_rules = {}
     tile_ht = {}
+    tile_vt = {}
     S = "S"
     A = "A"
     B = "B"
