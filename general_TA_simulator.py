@@ -83,8 +83,7 @@ class Assembly:
         self.tiles = t
 
         for tileI in self.tiles:
-            #tileI.x == tileI[1] and tileI.y == tileI[2]
-            self.coords["(" + str(tileI[1]) + "," + str(tileI[2]) + ")" ] = tileI
+            self.coords["(" + str(tileI.x) + "," + str(tileI.y) + ")" ] = tileI
             # TO DO update boundaries
 
 
@@ -180,9 +179,9 @@ class Assembly:
 
         # Check each tile in the assembly
         for iTile in self.tiles:
-            print(iTile)
-            iHTranRules = sys_h_tr[iTile[0]]
-            iVTranRules = sys_v_tr[iTile[0]]
+            print(iTile.get_label())
+            iVTranRules = sys_v_tr[iTile.get_label()]
+            iHTranRules = sys_h_tr[iTile.get_label()]
 
 
             # Get only the south and east neighbors of iTile
@@ -514,16 +513,16 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 if __name__ == "__main__":
     #Basic Dummy Data for Assembly
     tiles = []
-    # Create tile objects instead of storing as tuples
-    S_tile = ("S", 0, 0)
+    
+    S_tile = Tile("S", 0, 0)
     tiles.append(S_tile)
-    A_tile = ("A", 1, 0)
+    A_tile = Tile("A", 1, 0)
     tiles.append(A_tile)
-    B_tile = ("B", 2, 0)
+    B_tile = Tile("B", 2, 0)
     tiles.append(B_tile)
-    C_tile = ("C", 3, 0)
+    C_tile = Tile("C", 3, 0)
     tiles.append(C_tile)
-    D_tile = ("D", 4, 0)
+    D_tile = Tile("D", 4, 0)
     tiles.append(D_tile)
     
     assembly = Assembly()
