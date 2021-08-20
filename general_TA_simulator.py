@@ -186,21 +186,20 @@ class Assembly:
             iHTranRules = sys_h_tr[sys_h_tiles[iTile.get_label()]]
             iVTranRules = sys_v_tr[sys_v_tiles[iTile.get_label()]]
 
-
             # Get only the south and east neighbors of iTile
             neighborS = self.coords.get(toCoords(iTile.x, iTile.y - 1))
             neighborE = self.coords.get(toCoords(iTile.x + 1, iTile.y))
 
             if(neighborS != None):
                 # second dictionary
-                rules = iVTranRules.get(neighborS.getLabel())
+                rules = iVTranRules.get(neighborS.get_label())
 
                 if rules != None:
                     move = {"type": "t"}
                     move["x"] = iTile.x
                     move["y"] = iTile.y
-                    move["state1"] = iTile.getLabel()
-                    move["state2"] = neighborS.getLabel()
+                    move["state1"] = iTile.get_label()
+                    move["state2"] = neighborS.get_label()
 
                     # a pair of states may have mutliple rules
                     for i in range(rules.length()):
@@ -210,16 +209,17 @@ class Assembly:
                         transitions_list.append(move)
 
             if(neighborE != None):
-                rules = iHTranRules.get(neighborE.getLabel())
+                #rules = iHTranRules[neighborE.get_label()]
+                rules = iHTranRules
                 if rules != None:
                     move = {"type": "t"}
                     move["x"] = iTile.x
                     move["y"] = iTile.y
-                    move["state1"] = iTile.getLabel()
-                    move["state2"] = neighborE.getLabel()
+                    move["state1"] = iTile.get_label()
+                    move["state2"] = neighborE.get_label()
 
-                    for i in range(rules.length()):
-                        move["state1Final"] = rules[i].returnLabel1Final() 
+                    for i in range(len(rules)):
+                        move["state1Final"] = rules[i].returnLabel1Final() #needs a working function
                         move["state2Final"] = rules[i].returnLabel2Final() 
                         transitions_list.append(move)
 
