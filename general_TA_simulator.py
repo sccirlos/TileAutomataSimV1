@@ -176,12 +176,15 @@ class Assembly:
         transitions_list = []
         sys_h_tr = sy.get_horizontal_transition_rules()
         sys_v_tr = sy.get_vertical_transition_rules()
+        sys_h_tiles = sy.get_tile_horizontal_transitions()
+        sys_v_tiles = sy.get_tile_vertical_transitions()
 
         # Check each tile in the assembly
         for iTile in self.tiles:
-            print(iTile.get_label())
-            iVTranRules = sys_v_tr[iTile.get_label()]
-            iHTranRules = sys_h_tr[iTile.get_label()]
+            print(sys_h_tiles[iTile.get_label()])
+            
+            iHTranRules = sys_h_tr[sys_h_tiles[iTile.get_label()]]
+            iVTranRules = sys_v_tr[sys_v_tiles[iTile.get_label()]]
 
 
             # Get only the south and east neighbors of iTile
@@ -235,7 +238,6 @@ class Assembly:
         print("New Assembly Tiles: ", a.tiles)
         return a
 
-
     def getMoves(self, sy):
         return self.get_attachments(sy) + self.get_transitions(sy)
     
@@ -247,12 +249,15 @@ class System:
     # Temp int
     # Initial List of States
     # Seed Assembly Object
-    def __init__(self, temp=None, states=None, initial_states=None, seed_assembly=None, seed_states=None, vertical_affinities=None, horizontal_affinities=None, vertical_transition_rules=None, horizontal_transition_rules=None):
+    def __init__(self, temp=None, states=None, initial_states=None, seed_assembly=None, seed_states=None, vertical_affinities=None, horizontal_affinities=None, vertical_transition_rules=None, horizontal_transition_rules=None, tile_vertical_transitions=None, tile_horizontal_transitions=None):
         self.temp = temp
         self.vertical_affinities = vertical_affinities #Takes 2 tiles [N][S] and returns the glue strength between them as an int
         self.horizontal_affinities = horizontal_affinities #Takes 2 tiles [W][E] and returns the glue strength between them as an int
         self.vertical_transition_rules = vertical_transition_rules #Takes 2 tiles [N][S] and and returns the transition pair
         self.horizontal_transition_rules = horizontal_transition_rules #Takes 2 tiles [W][E] and returns the transition pair
+        self.tile_vertical_transitions = tile_vertical_transitions #Takes tile and returns vertical transition pairs
+        self.tile_horizontal_transitions = tile_horizontal_transitions #Takes tile and returns horizontal transition pairs
+        
         self.states = states
         self.initial_states = initial_states
         self.seed_assembly = seed_assembly
@@ -284,8 +289,20 @@ class System:
     def get_horizontal_transition_rules(self):
         return self.horizontal_transition_rules
 
-    def set_horizontal_transition_rules(self, v):
-        self.horizontal_transition_rules = v
+    def set_horizontal_transition_rules(self, h):
+        self.horizontal_transition_rules = h
+
+    def get_tile_vertical_transitions(self):
+        return self.tile_vertical_transitions
+
+    def set_tile_vertical_transitions(self, tile_vt):
+        self.tile_vertical_transitions = tile_vt
+
+    def get_tile_horizontal_transitions(self):
+        return self.tile_horizontal_transitions
+
+    def set_tile_horizontal_transitions(self, tile_ht):
+        self.tile_horizontal_transitions = tile_ht
 
     def get_states(self):
         return self.states
@@ -305,8 +322,6 @@ class System:
     def set_seed_assembly(self, s):
         self.seed_assembly = s
 
-
-    
     def get_seed_states(self):
         return self.seed_states
 
@@ -537,6 +552,12 @@ if __name__ == "__main__":
     #add transition rules
     ht_rules = {} #
     vt_rules = {}
+    tile_ht = {}
+    S = "S"
+    A = "A"
+    B = "B"
+    C = "C"
+    D = "D"
     SA = ("S", "A")
     AB = ("A", "B")
     BC = ("B", "C")
@@ -548,11 +569,23 @@ if __name__ == "__main__":
     CY = ("C", "Y")
     DZ = ("D", "Z")
     
+    tile_ht[S] = SA
+    tile_ht[A] = AB
+    tile_ht[B] = (AB, BC)
+    tile_ht[C] = (BC, CD)
+    tile_ht[D] = (CD, DE)
+
     ht_rules[SA] = SA
     ht_rules[AB] = AW
     ht_rules[BC] = BX
     ht_rules[CD] = CY
     ht_rules[DE] = DZ
+
+    tile_vt[S] = SA
+    tile_vt[A] = AB
+    tile_vt[B] = (AB, BC)
+    tile_vt[C] = (BC, CD)
+    tile_vt[D] = (CD, DE)
 
     vt_rules[SA] = SA
     vt_rules[AB] = AW
@@ -562,6 +595,8 @@ if __name__ == "__main__":
     print("Horizontal Transition Rules: ", ht_rules)
     system.set_horizontal_transition_rules(ht_rules)
     system.set_vertical_transition_rules(vt_rules)
+    system.set_tile_horizontal_transitions(tile_ht)
+    system.set_tile_vertical_transitions(tile_vt)
     tr_list = assembly.get_transitions(system)
     print("Transitions List: ", tr_list)
     ind = randrange(len(tr_list) -1)
