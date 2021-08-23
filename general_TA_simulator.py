@@ -236,15 +236,16 @@ class Assembly:
 
 
         return transitions_list      
-
-    def set_transition(self, trans): # tuple of ((coord pair), (current labels), (transition labels))
+                                     # ((type: ), (current labels), (transition labels))
+    def set_transition(self, trans): # tuple of {'type': 't', 'x': 0, 'y': 0, 'state1': 'S', 'state2': 'A', 'state1Final': 'S', 'state2Final': 'A'}
         a = Assembly()
-        a.label = self.label + "T "+ trans[2][0] + trans[2][1]
+        a.label = self.label + "T "+ trans["state1Final"] + trans["state2Final"] #originally trans[2][0] + trans[2][1]
         a.tiles = self.tiles
-        change = trans[0][0]
-        print(a.tiles[change][0])
-        print(trans[2][1])
-        print(trans[0])
+        change = trans["type"]
+        
+        #print(a.tiles[change])
+        print(trans["state2Final"])
+        print(trans["type"])
         #a.tiles[change] = trans[2][1]
         print("New Assembly Tiles: ", a.tiles)
         return a
