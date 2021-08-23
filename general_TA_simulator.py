@@ -181,9 +181,13 @@ class Assembly:
 
         # Check each tile in the assembly
         for iTile in self.tiles:
-            print(sys_h_tiles[iTile.get_label()])
-            
-            iHTranRules = sys_h_tr[sys_h_tiles[iTile.get_label()]]
+           # print(sys_h_tiles[iTile.get_label()])
+            if isinstance(sys_h_tiles[iTile.get_label()], tuple):
+                iHTranRules = sys_h_tr[sys_h_tiles[iTile.get_label()]]
+            else:
+                for tiles in sys_h_tiles[iTile.get_label()]:
+                    iHTranRules = sys_h_tr[tiles]
+
             iVTranRules = sys_v_tr[sys_v_tiles[iTile.get_label()]]
 
             # Get only the south and east neighbors of iTile
@@ -193,7 +197,6 @@ class Assembly:
             if(neighborS != None):
                 # second dictionary
                 rules = iVTranRules.get(neighborS.get_label())
-
                 if rules != None:
                     move = {"type": "t"}
                     move["x"] = iTile.x
@@ -203,6 +206,7 @@ class Assembly:
 
                     # a pair of states may have mutliple rules
                     for i in range(rules.length()):
+                        
                         #class is in universal classes
                         move["state1Final"] = rules[i].returnLabel1Final() 
                         move["state2Final"] = rules[i].returnLabel2Final() 
@@ -210,7 +214,8 @@ class Assembly:
 
             if(neighborE != None):
                 #rules = iHTranRules[neighborE.get_label()]
-                rules = iHTranRules
+                rules = []
+                rules.append(iHTranRules)
                 if rules != None:
                     move = {"type": "t"}
                     move["x"] = iTile.x
@@ -219,8 +224,9 @@ class Assembly:
                     move["state2"] = neighborE.get_label()
 
                     for i in range(len(rules)):
-                        move["state1Final"] = rules[i].returnLabel1Final() #needs a working function
-                        move["state2Final"] = rules[i].returnLabel2Final() 
+                        print(rules[i])
+                        move["state1Final"] = rules[i][0] #.returnLabel1Final() 
+                        move["state2Final"] = rules[i][1] #.returnLabel2Final() 
                         transitions_list.append(move)
 
 
@@ -571,10 +577,10 @@ if __name__ == "__main__":
     DZ = ("D", "Z")
     
     tile_ht[S] = SA
-    tile_ht[A] = AB
-    tile_ht[B] = (AB, BC)
-    tile_ht[C] = (BC, CD)
-    tile_ht[D] = (CD, DE)
+    tile_ht[A] = {SA, AB}
+    tile_ht[B] = {AB, BC}
+    tile_ht[C] = {BC, CD}
+    tile_ht[D] = {CD, DE}
 
     ht_rules[SA] = SA
     ht_rules[AB] = AW
@@ -583,10 +589,10 @@ if __name__ == "__main__":
     ht_rules[DE] = DZ
 
     tile_vt[S] = SA
-    tile_vt[A] = AB
-    tile_vt[B] = (AB, BC)
-    tile_vt[C] = (BC, CD)
-    tile_vt[D] = (CD, DE)
+    tile_vt[A] = {SA, AB}
+    tile_vt[B] = {AB, BC}
+    tile_vt[C] = {BC, CD}
+    tile_vt[D] = {CD, DE}
 
     vt_rules[SA] = SA
     vt_rules[AB] = AW
