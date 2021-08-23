@@ -188,7 +188,11 @@ class Assembly:
                 for tiles in sys_h_tiles[iTile.get_label()]:
                     iHTranRules = sys_h_tr[tiles]
 
-            iVTranRules = sys_v_tr[sys_v_tiles[iTile.get_label()]]
+            if isinstance(sys_v_tiles[iTile.get_label()], tuple):
+                iVTranRules = sys_v_tr[sys_v_tiles[iTile.get_label()]]
+            else:
+                for tiles in sys_v_tiles[iTile.get_label()]:
+                    iVTranRules = sys_v_tr[tiles]
 
             # Get only the south and east neighbors of iTile
             neighborS = self.coords.get(toCoords(iTile.x, iTile.y - 1))
@@ -196,7 +200,9 @@ class Assembly:
 
             if(neighborS != None):
                 # second dictionary
-                rules = iVTranRules.get(neighborS.get_label())
+                # rules = iVTranRules.get(neighborS.get_label())
+                rules = []
+                rules.append(iVTranRules)
                 if rules != None:
                     move = {"type": "t"}
                     move["x"] = iTile.x
@@ -205,11 +211,10 @@ class Assembly:
                     move["state2"] = neighborS.get_label()
 
                     # a pair of states may have mutliple rules
-                    for i in range(rules.length()):
-                        
+                    for i in range(len(rules)):
                         #class is in universal classes
-                        move["state1Final"] = rules[i].returnLabel1Final() 
-                        move["state2Final"] = rules[i].returnLabel2Final() 
+                        move["state1Final"] = rules[i][0] #.returnLabel1Final() 
+                        move["state2Final"] = rules[i][1] #.returnLabel2Final() 
                         transitions_list.append(move)
 
             if(neighborE != None):
@@ -224,7 +229,7 @@ class Assembly:
                     move["state2"] = neighborE.get_label()
 
                     for i in range(len(rules)):
-                        print(rules[i])
+                        #print(rules[i])
                         move["state1Final"] = rules[i][0] #.returnLabel1Final() 
                         move["state2Final"] = rules[i][1] #.returnLabel2Final() 
                         transitions_list.append(move)
