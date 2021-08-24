@@ -159,6 +159,12 @@ class System:
     def returnHorizontalTransitionDict(self):
         return self.horizontal_transitions_dict
 
+    def get_tile_vertical_transitions(self):
+        return self.tile_vertical_transitions
+
+    def get_tile_horizontal_transitions(self):
+        return self.tile_horizontal_transitions
+
     # Displayers
 
     def displayVerticalAffinityDict(self):
@@ -174,6 +180,12 @@ class System:
         print(self.horizontal_transitions_dict)
 
     # TO DO Update these to write to a dictionary, and to use lists of objects from universalClasses.py
+
+    def set_tile_vertical_transitions(self, tile_vt):
+        self.tile_vertical_transitions = tile_vt
+
+    def set_tile_horizontal_transitions(self, tile_ht):
+        self.tile_horizontal_transitions = tile_ht
 
     def add_transition_rule(self, tr, direct):
         if direct == "v":
