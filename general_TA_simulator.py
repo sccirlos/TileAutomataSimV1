@@ -88,7 +88,6 @@ class Assembly:
             # TO DO update boundaries
 
 
-
     # Sonya on attachments
     def get_attachments(self, sy): #takes in a system
         attachments_list = []
@@ -135,8 +134,6 @@ class Assembly:
 
                         attachments_list.append(attMove)
 
-
-
             #ttc = (i-1, i)
             #ttl = (t1, t2)
             #print(ttl)
@@ -158,8 +155,6 @@ class Assembly:
         ########## TO DO Update boundaries
         attach = att[0][0]
         a.tiles[attach]
-
-
 
         return a
     
@@ -235,9 +230,8 @@ class Assembly:
                         move["state2Final"] = rules[i][1] #.returnLabel2Final() 
                         transitions_list.append(move)
 
-
         return transitions_list      
-                                     # ((type: ), (current labels), (transition labels))
+                                     # ORIGINAL ((type: ), (current labels), (transition labels))
     def set_transition(self, trans): # tuple of {'type': 't', 'x': 0, 'y': 0, 'state1': 'S', 'state2': 'A', 'state1Final': 'S', 'state2Final': 'A'}
         a = Assembly()
         a.label = self.label + "T "+ trans["state1Final"] + trans["state2Final"] #originally trans[2][0] + trans[2][1]
@@ -253,10 +247,6 @@ class Assembly:
 
     def getMoves(self, sy):
         return self.get_attachments(sy) + self.get_transitions(sy)
-    
-
-# Step 1: Command Line with File Select
-#
 
 
 class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
@@ -294,10 +284,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.actionNext.triggered.connect(self.next_step)
 
         self.actionLast.triggered.connect(self.last_step)
-
-        
-
-        
 
     def draw_tiles(self, assembly):
         painter = QPainter(self.label.pixmap())
@@ -358,8 +344,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         LoadFile.InitialStateSet.clear()
         LoadFile.CompleteStateSet.clear()
 
-        file = QFileDialog.getOpenFileName(
-            self, "Select XML Document", "", "XML Files (*.xml)")
+        file = QFileDialog.getOpenFileName(self, "Select XML Document", "", "XML Files (*.xml)")
         LoadFile.readxml(file[0])
 
         self.step = 0
