@@ -5,6 +5,7 @@ from PyQt5.QtGui import QPainter, QBrush, QPen
 from PyQt5.QtCore import Qt
 from random import randrange
 
+from UniversalClasses import System
 import TAMainWindow
 import LoadFile
 import SaveFile
@@ -253,102 +254,7 @@ class Assembly:
     def getMoves(self, sy):
         return self.get_attachments(sy) + self.get_transitions(sy)
     
-class System:
-    # Horizontal Hash Rule
-    # Vertical Hash Rules
-    # Horizontal Transition Rules
-    # Vertical Transition Rules
-    # Temp int
-    # Initial List of States
-    # Seed Assembly Object
-    def __init__(self, temp=None, states=None, initial_states=None, seed_assembly=None, seed_states=None, vertical_affinities=None, horizontal_affinities=None, vertical_transition_rules=None, horizontal_transition_rules=None, tile_vertical_transitions=None, tile_horizontal_transitions=None):
-        self.temp = temp
-        self.vertical_affinities = vertical_affinities #Takes 2 tiles [N][S] and returns the glue strength between them as an int
-        self.horizontal_affinities = horizontal_affinities #Takes 2 tiles [W][E] and returns the glue strength between them as an int
-        self.vertical_transition_rules = vertical_transition_rules #Takes 2 tiles [N][S] and and returns the transition pair
-        self.horizontal_transition_rules = horizontal_transition_rules #Takes 2 tiles [W][E] and returns the transition pair
-        self.tile_vertical_transitions = tile_vertical_transitions #Takes tile and returns vertical transition pairs
-        self.tile_horizontal_transitions = tile_horizontal_transitions #Takes tile and returns horizontal transition pairs
-        
-        self.states = states
-        self.initial_states = initial_states
-        self.seed_assembly = seed_assembly
-        
-    def get_temp(self):
-        return self.temp
 
-    def set_temp(self, t):
-        self.temp = t
-
-    def get_vertical_affinities(self):
-        return self.vertical_affinities
-
-    def set_vertical_affinities(self, v):
-        self.vertical_affinities = v
-
-    def get_horizontal_affinities(self):
-        return self.horizontal_affinities
-
-    def set_horizontal_affinities(self, h):
-        self.horizontal_affinities = h
-
-    def get_vertical_transition_rules(self):
-        return self.vertical_transition_rules
-
-    def set_vertical_transition_rules(self, v):
-        self.vertical_transition_rules = v
-
-    def get_horizontal_transition_rules(self):
-        return self.horizontal_transition_rules
-
-    def set_horizontal_transition_rules(self, h):
-        self.horizontal_transition_rules = h
-
-    def get_tile_vertical_transitions(self):
-        return self.tile_vertical_transitions
-
-    def set_tile_vertical_transitions(self, tile_vt):
-        self.tile_vertical_transitions = tile_vt
-
-    def get_tile_horizontal_transitions(self):
-        return self.tile_horizontal_transitions
-
-    def set_tile_horizontal_transitions(self, tile_ht):
-        self.tile_horizontal_transitions = tile_ht
-
-    def get_states(self):
-        return self.states
-
-    def set_states(self, s):
-        self.states = s
-
-    def get_initial_states(self):
-        return self.initial_states
-
-    def set_initial_states(self, s):
-        self.initial_states = s
-
-    def get_seed_assembly(self):
-        return self.seed_assembly
-
-    def set_seed_assembly(self, s):
-        self.seed_assembly = s
-
-    def get_seed_states(self):
-        return self.seed_states
-
-    # TO DO Update these to write to a dictionary, and to use lists of objects from universalClasses.py
-    def add_transition_rule(self, tr, direct):
-        if direct == "v":
-            self.vertical_transition_rules.append(tr)
-        else:
-            self.horizontal_transition_rules.append(tr)
-
-    def add_affinity(self, a, direct):
-        if direct == "v":
-            self.vertical_affinities.append(a)
-        else:
-            self.horizontal_affinities.append(a)
 # Step 1: Command Line with File Select
 #
 
@@ -538,84 +444,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
 
 if __name__ == "__main__":
-    #Basic Dummy Data for Assembly
-    tiles = []
     
-    S_tile = Tile("S", 0, 0)
-    tiles.append(S_tile)
-    A_tile = Tile("A", 1, 0)
-    tiles.append(A_tile)
-    B_tile = Tile("B", 2, 0)
-    tiles.append(B_tile)
-    C_tile = Tile("C", 3, 0)
-    tiles.append(C_tile)
-    D_tile = Tile("D", 4, 0)
-    tiles.append(D_tile)
-    
-    assembly = Assembly()
-    assembly.set_label("Dummy")
-    assembly.set_tiles(tiles)
-    st = ["S", "A", "B", "C", "D", "E", "V", "W", "X", "Y", "Z"]
-    intst = ["S", "A", "B", "C", "D", "E"]
-    
-    # still needs transition rules and affinities
-    system = System(temp=1, states=st, seed_assembly=assembly, initial_states=intst)
-
-    #add transition rules
-    ht_rules = {} #
-    vt_rules = {}
-    tile_ht = {}
-    tile_vt = {}
-    S = "S"
-    A = "A"
-    B = "B"
-    C = "C"
-    D = "D"
-    SA = ("S", "A")
-    AB = ("A", "B")
-    BC = ("B", "C")
-    CD = ("C", "D")
-    DE = ("D", "E")
-    SV = ("S", "V")
-    AW = ("A", "W")
-    BX = ("B", "X")
-    CY = ("C", "Y")
-    DZ = ("D", "Z")
-    
-    tile_ht[S] = SA
-    tile_ht[A] = {SA, AB}
-    tile_ht[B] = {AB, BC}
-    tile_ht[C] = {BC, CD}
-    tile_ht[D] = {CD, DE}
-
-    ht_rules[SA] = SA
-    ht_rules[AB] = AW
-    ht_rules[BC] = BX
-    ht_rules[CD] = CY
-    ht_rules[DE] = DZ
-
-    tile_vt[S] = SA
-    tile_vt[A] = {SA, AB}
-    tile_vt[B] = {AB, BC}
-    tile_vt[C] = {BC, CD}
-    tile_vt[D] = {CD, DE}
-
-    vt_rules[SA] = SA
-    vt_rules[AB] = AW
-    vt_rules[BC] = BX
-    vt_rules[CD] = CY
-    vt_rules[DE] = DZ
-    print("Horizontal Transition Rules: ", ht_rules)
-    system.set_horizontal_transition_rules(ht_rules)
-    system.set_vertical_transition_rules(vt_rules)
-    system.set_tile_horizontal_transitions(tile_ht)
-    system.set_tile_vertical_transitions(tile_vt)
-    tr_list = assembly.get_transitions(system)
-    print("Transitions List: ", tr_list)
-    ind = randrange(len(tr_list) -1)
-    pickedt = tr_list[ind]
-    print(pickedt)
-    a1 = assembly.set_transition(pickedt)
     #App Stuff
     app = QApplication(sys.argv)
     w = Ui_MainWindow()
