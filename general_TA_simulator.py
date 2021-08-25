@@ -241,7 +241,7 @@ class Assembly:
         #print(a.tiles[change])
         print(trans["state2Final"])
         print(trans["type"])
-        #a.tiles[change] = trans[2][1]
+        a.tiles[trans["x"]][trans["y"]] = trans["state2Final"]
         print("New Assembly Tiles: ", a.tiles)
         return a
 
