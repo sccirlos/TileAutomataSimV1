@@ -153,8 +153,8 @@ class Assembly:
         print("New Assembly Tiles: ", a.tiles)
 
         ########## TO DO Update boundaries
-      
-        a.tiles[att["x"]][att["y"]] = Tile(att["state1"], att["x"], [att["y"])
+        att_tile = Tile(att["state1"], att["x"], att["y"])
+        a.tiles[att["x"]][att["y"]] = att_tile
 
         return a
     
