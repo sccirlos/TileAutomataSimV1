@@ -130,7 +130,7 @@ class Assembly:
 
                         attMove["x"] = iX
                         attMove["y"] = iY
-                        attMove["state1"] = iTile.getLabel
+                        attMove["state1"] = iTile.get_label()
 
                         attachments_list.append(attMove)
 
@@ -140,10 +140,10 @@ class Assembly:
             #if ttl in sys_attachments:
                 #attachments_list.append((ttc, ttl, sys_attachments[ttl]))
         return attachments_list     
-
-    def set_attachments(self, att): # tuple of ((coord pair), (current labels), (transition labels))
+                                    # ORIGINAL tuple of ((coord pair), (current labels), (transition labels))
+    def set_attachments(self, att): # tuple of ((type: ), (x: ), (y: ), (state1: ))
         a = Assembly()
-        a.label = self.label + "T " #+ 
+        a.label = self.label + "A " + att["state1"] 
         a.tiles = self.tiles
         #change = trans[0][0]
        # print(a.tiles[change][0])
@@ -153,8 +153,8 @@ class Assembly:
         print("New Assembly Tiles: ", a.tiles)
 
         ########## TO DO Update boundaries
-        attach = att[0][0]
-        a.tiles[attach]
+      
+        a.tiles[att["x"]][att["y"]] = Tile(att["state1"], att["x"], [att["y"])
 
         return a
     
