@@ -113,16 +113,16 @@ class Assembly:
                     attStr = 0
 
                     if(neighborN != None):
-                        stren = (sy.get_vertical_affinities())[neighborN.getLabel()][iTile]
+                        stren = (sy.get_vertical_affinities())[neighborN.get_label()][iTile]
                         if(stren != None): attStr += stren
                     if(neighborS != None):
-                        stren = (sy.get_vertical_affinities())[iTile][neighborS.getLabel()]
+                        stren = (sy.get_vertical_affinities())[iTile][neighborS.get_label()]
                         if(stren != None): attStr += stren
                     if(neighborE != None):
-                        stren = (sy.get_horizontal_affinities())[iTile][neighborE.getLabel()]
+                        stren = (sy.get_horizontal_affinities())[iTile][neighborE.get_label()]
                         if(stren != None): attStr += stren
                     if(neighborW != None):
-                        stren = (sy.get_horizontal_affinities())[neighborW.getLabel()][iTile]
+                        stren = (sy.get_horizontal_affinities())[neighborW.get_label()][iTile]
                         if(str != None): attStr += stren
 
                     if attStr >= sy.getTemp():
