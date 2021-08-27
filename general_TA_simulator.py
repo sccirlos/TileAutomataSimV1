@@ -358,7 +358,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         global vertical_transitions
         global horizontal_transitions
 
-        ates = LoadFile.CompleteStateSet
+         # Creating a System object from data read.
+        temp = LoadFile.Temp
+        states = LoadFile.CompleteStateSet
         inital_states = LoadFile.InitialStateSet
         seed_assembly = LoadFile.SeedAssembly
         seed_states = LoadFile.SeedStateSet
