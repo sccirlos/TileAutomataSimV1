@@ -211,7 +211,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.stop_sequence()
         self.step = 0
         self.time = 0
-        self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
+        self.draw_tiles(self.Engine.assemblyList[self.step])
 
     def prev_step(self):
         self.stop_sequence()
@@ -222,10 +222,10 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
     def next_step(self):
         self.stop_sequence()
-        if self.step < len(Assembler_Proto.CompleteAssemblyHistory) - 1:
+        if self.Engine.build() != -1:
             self.step = self.step + 1
-            self.time = self.time + (1/Assembler_Proto.TimeTaken[self.step]) #Might need to go above
-            self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
+            #self.time = self.time + (1/Assembler_Proto.TimeTaken[self.step]) #Might need to go above
+            self.draw_tiles(self.Engine.assemblyList[self.step])
 
     def last_step(self):
         self.stop_sequence()

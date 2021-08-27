@@ -43,6 +43,7 @@ class Engine:
         cAssembly = self.getCurrentAssembly()
         moveList = cAssembly.getMoves(self.system)
 
+        #print(moveList.length())
         # Check if assembly is terminal
         if(moveList.length() == 0): return -1
 

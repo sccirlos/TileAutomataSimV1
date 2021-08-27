@@ -27,14 +27,20 @@ class Tile:
         self.y = _y
 
     def __str__(self):
-        s = self.label + " (" + self.x + ", " + self.y + ")"
+        s = self.state.label + " (" + self.x + ", " + self.y + ")"
         return s
 
+    def get_state(self):
+        return self.state
+
+    def set_state(self, s):
+        self.state = s
+
     def get_label(self):
-        return self.label
+        return self.state.label
 
     def set_label(self, l):
-        self.label = l
+        self.state.label = l
 
 class Assembly:
     def __init__(self):
@@ -161,8 +167,8 @@ class Assembly:
                 #transitions_list.append((ttc, ttl, sys_h_transition_rules[ttl]))
         
         transitions_list = []
-        sys_h_tr = sy.get_horizontal_transition_rules()
-        sys_v_tr = sy.get_vertical_transition_rules()
+        sys_h_tr = sy.returnHorizontalTransitionDict()
+        sys_v_tr = sy.returnVerticalTransitionDict()
         sys_h_tiles = sy.get_tile_horizontal_transitions()
         sys_v_tiles = sy.get_tile_vertical_transitions()
 
