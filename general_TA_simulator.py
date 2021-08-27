@@ -15,7 +15,7 @@ import sys
 
 # Global Variables
 currentSystem = None
-
+currentAssemblyHistory = []
 # General Seeded TA Simulator
 
 
@@ -304,14 +304,15 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         font.setFamily("Times")
         font.setBold(True)
         painter.setFont(font)
-        for tile in assembly: 
+        for tile in assembly.tiles: 
+            #print(tile[0].color)
             pen.setColor(QtGui.QColor("black"))
-            brush.setColor(QtGui.QColor("#" + tile.color))
+            brush.setColor(QtGui.QColor("#" + tile.label[0].color))
 
             painter.setPen(pen)
             painter.setBrush(brush)
             painter.drawRect((tile.x * 40) + 200, (tile.y * -40) + 500, 40, 40)
-            painter.drawText((tile.x * 40) + 210, (tile.y * -40) + 525, tile.label)
+            painter.drawText((tile.x * 40) + 210, (tile.y * -40) + 525, tile.label[0].label)
 
         painter.end()
 
@@ -384,8 +385,13 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         self.step = 0
         self.time = 0
+
+        a = Assembly()
+        t = Tile(currentSystem.returnSeedStates(), 0, 0)
+        a.tiles.append(t)
+        currentAssemblyHistory.append(a)
         #Assembler_Proto.Main()
-        #self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
+        self.draw_tiles(currentAssemblyHistory[self.step])
 
     def Click_SaveFile(self):
         # Creating a System object from data read.
