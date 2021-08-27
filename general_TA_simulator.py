@@ -5,6 +5,7 @@ from PyQt5.QtGui import QPainter, QBrush, QPen
 from PyQt5.QtCore import Qt
 from random import randrange
 
+from assemblyEngine import Engine
 from UniversalClasses import System, Assembly, Tile
 import TAMainWindow
 import LoadFile
@@ -37,8 +38,6 @@ currentAssemblyHistory = []
 # Step button
 # Keep growing until their are no more rules that apply
 
-# class Tile 
-
 class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def __init__(self):
         super().__init__()
@@ -47,6 +46,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         #self.label = QtWidgets.QLabel()
         self.step = 0
         self.time = 0
+        self.Engine = None
         self.play = True
         canvas = QtGui.QPixmap(850, 600)
         canvas.fill(Qt.white)
@@ -97,12 +97,12 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         for tile in assembly.tiles: 
             #print(tile[0].color)
             pen.setColor(QtGui.QColor("black"))
-            brush.setColor(QtGui.QColor("#" + tile.state[0].color))
+            brush.setColor(QtGui.QColor("#" + tile.state.color))
 
             painter.setPen(pen)
             painter.setBrush(brush)
             painter.drawRect((tile.x * 40) + 200, (tile.y * -40) + 500, 40, 40)
-            painter.drawText((tile.x * 40) + 210, (tile.y * -40) + 525, tile.state[0].label)
+            painter.drawText((tile.x * 40) + 210, (tile.y * -40) + 525, tile.state.label)
 
         painter.end()
 
@@ -125,6 +125,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
 
     def Click_FileSearch(self, id):
+        file = QFileDialog.getOpenFileName(self, "Select XML Document", "", "XML Files (*.xml)")
         # Simulator must clear all of LoadFile's global variables when the user attempts to load something.
         LoadFile.HorizontalAffinityRules.clear()
         LoadFile.VerticalAffinityRules.clear()
@@ -135,8 +136,10 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         LoadFile.InitialStateSet.clear()
         LoadFile.CompleteStateSet.clear()
 
-        file = QFileDialog.getOpenFileName(self, "Select XML Document", "", "XML Files (*.xml)")
         LoadFile.readxml(file[0])
+
+        if self.Engine != None:
+            self.Engine.clear()
 
            # Creating global variables
         global temp
@@ -175,13 +178,13 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         self.step = 0
         self.time = 0
-
-        a = Assembly()
-        t = Tile(currentSystem.returnSeedStates(), 0, 0)
-        a.tiles.append(t)
-        currentAssemblyHistory.append(a)
+        self.Engine = Engine(currentSystem)
+        #a = Assembly()
+        #t = Tile(currentSystem.returnSeedStates(), 0, 0)
+        #a.tiles.append(t)
+        #currentAssemblyHistory.append(a)
         #Assembler_Proto.Main()
-        self.draw_tiles(currentAssemblyHistory[self.step])
+        self.draw_tiles(self.Engine.assemblyList[self.step])
 
     def Click_SaveFile(self):
         # Creating a System object from data read.

@@ -13,6 +13,8 @@ class Engine:
         self.lastIndex = 0
 
         # Get seed 
+        print(self.system.returnSeedStates())
+
         seedState = random.choice(self.system.returnSeedStates())
         seed = UniversalClasses.Tile(seedState, 0, 0) 
         seedAssembly = UniversalClasses.Assembly()
