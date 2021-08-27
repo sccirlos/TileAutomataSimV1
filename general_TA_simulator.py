@@ -48,8 +48,8 @@ class Tile:
     # maybe list of affinities pairs (state, direction)
     # boolean can_change
     
-    def __init__(self, l, _x, _y):
-        self.label = l
+    def __init__(self, s, _x, _y):
+        self.state = s
         self.x = _x
         self.y = _y
 
@@ -307,12 +307,12 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         for tile in assembly.tiles: 
             #print(tile[0].color)
             pen.setColor(QtGui.QColor("black"))
-            brush.setColor(QtGui.QColor("#" + tile.label[0].color))
+            brush.setColor(QtGui.QColor("#" + tile.state[0].color))
 
             painter.setPen(pen)
             painter.setBrush(brush)
             painter.drawRect((tile.x * 40) + 200, (tile.y * -40) + 500, 40, 40)
-            painter.drawText((tile.x * 40) + 210, (tile.y * -40) + 525, tile.label[0].label)
+            painter.drawText((tile.x * 40) + 210, (tile.y * -40) + 525, tile.state[0].label)
 
         painter.end()
 
