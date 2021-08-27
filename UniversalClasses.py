@@ -59,7 +59,15 @@ class Assembly:
 
         for tileI in self.tiles:
             self.coords["(" + str(tileI.x) + "," + str(tileI.y) + ")" ] = tileI
-            # TO DO update boundaries
+            # update boundaries
+            if(tileI.y > self.upMost):
+                self.upMost = tileI.y
+            if(tileI.y < self.downMost):
+                self.downMost = tileI.y
+            if(tileI.x > self.rightMost):
+                self.rightMost = tileI.x
+            if(tileI.x < self.leftMost):
+                self.leftMost = tileI.x
 
 
     # Sonya on attachments
@@ -126,9 +134,18 @@ class Assembly:
         #a.tiles[change] = trans[2][1]
         print("New Assembly Tiles: ", a.tiles)
 
-        ########## TO DO Update boundaries
+        
         att_tile = Tile(att["state1"], att["x"], att["y"])
         a.tiles[att["x"]][att["y"]] = att_tile
+        # Update Boundaries
+        if(att["y"] > self.upMost):
+            self.upMost = att["y"]
+        if(att["y"] < self.downMost):
+            self.downMost = att["y"]
+        if(att["x"] > self.rightMost):
+            self.rightMost = att["x"]
+        if(att["x"] < self.leftMost):
+            self.leftMost + att["x"]
 
         return a
     
@@ -177,6 +194,7 @@ class Assembly:
                     move = {"type": "t"}
                     move["x"] = iTile.x
                     move["y"] = iTile.y
+                    move["dir"] = "v"
                     move["state1"] = iTile.get_label()
                     move["state2"] = neighborS.get_label()
 
@@ -195,6 +213,7 @@ class Assembly:
                     move = {"type": "t"}
                     move["x"] = iTile.x
                     move["y"] = iTile.y
+                    move["dir"] = "h"
                     move["state1"] = iTile.get_label()
                     move["state2"] = neighborE.get_label()
 
@@ -215,12 +234,26 @@ class Assembly:
         #print(a.tiles[change])
         print(trans["state2Final"])
         print(trans["type"])
-        a.tiles[trans["x"]][trans["y"]] = trans["state2Final"]
+        a.tiles[trans["x"]][trans["y"]] = trans["state1Final"]
+        if(trans["dir"] == "v"):
+            a.tiles[trans["x"]][trans["y"] - 1] = trans["state1Final"]
+        if(trans["dir"] == "h"):
+            a.tiles[trans["x"] - 1][trans["y"]] = trans["state1Final"]
         print("New Assembly Tiles: ", a.tiles)
         return a
 
     def getMoves(self, sy):
         return self.get_attachments(sy) + self.get_transitions(sy)
+
+    def performMove(self, move):
+        if(move["type"] == "a"):
+            return self.set_attachments(move)
+        if(move["type"] == "t"):
+            return self.set_transition(move)
+
+
+
+
 
 # Not in use right now.
 class SeedAssemblyTile:
