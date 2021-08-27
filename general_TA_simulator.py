@@ -358,6 +358,28 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         global vertical_transitions
         global horizontal_transitions
 
+        ates = LoadFile.CompleteStateSet
+        inital_states = LoadFile.InitialStateSet
+        seed_assembly = LoadFile.SeedAssembly
+        seed_states = LoadFile.SeedStateSet
+        vertical_affinities = LoadFile.VerticalAffinityRules
+        horizontal_affinities = LoadFile.HorizontalAffinityRules
+        vertical_transitions = LoadFile.VerticalTransitionRules
+        horizontal_transitions = LoadFile.HorizontalTransitionRules
+
+        # Establish the current system we're working with
+        currentSystem = System(temp, states, inital_states, seed_assembly, seed_states, vertical_affinities,
+                               horizontal_affinities, vertical_transitions, horizontal_transitions)
+        print("\nSystem Dictionaries:")
+        print("Vertical Affinities:")
+        currentSystem.displayVerticalAffinityDict()
+        print("Horizontal Affinities:")
+        currentSystem.displayHorizontalAffinityDict()
+        print("Vertical Transitions:")
+        currentSystem.displayVerticalTransitionDict()
+        print("Horizontal Transitions:")
+        currentSystem.displayHorizontalTransitionDict()
+
         self.step = 0
         self.time = 0
         #Assembler_Proto.Main()
