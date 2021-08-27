@@ -347,6 +347,17 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         file = QFileDialog.getOpenFileName(self, "Select XML Document", "", "XML Files (*.xml)")
         LoadFile.readxml(file[0])
 
+           # Creating global variables
+        global temp
+        global states
+        global inital_states
+        global seed_assembly
+        global seed_states
+        global vertical_affinities
+        global horizontal_affinities
+        global vertical_transitions
+        global horizontal_transitions
+
         self.step = 0
         self.time = 0
         #Assembler_Proto.Main()
