@@ -1,6 +1,6 @@
 > Self-assembly Research
 
-## Tile Automata simulator  
+## Tile Automata simulator created with 💙 by the Algorithmic Self Assembly Research Group at University of Texas Rio Grande Valley.
 
 
 ### [About Tile Automata model](http://self-assembly.net/wiki/index.php?title=Tile_Automata)
@@ -13,5 +13,5 @@
 > Version 0
 > August 2021
 > 
-> A user uploads an XML file... 
+
 
