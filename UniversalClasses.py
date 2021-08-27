@@ -12,6 +12,9 @@ class State:
     def returnColor(self):
         return self.color
 
+def toCoords(x, y):
+    return "(" + str(x) + "," + str(y) + ")"
+
 class Tile:
     # label
     # # changes or list of changes (start num)

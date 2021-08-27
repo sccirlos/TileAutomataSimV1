@@ -39,11 +39,6 @@ currentAssemblyHistory = []
 
 # class Tile 
 
-def toCoords(x, y):
-    return "(" + str(x) + "," + str(y) + ")"
-
-
-
 class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def __init__(self):
         super().__init__()
