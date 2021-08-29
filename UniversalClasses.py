@@ -153,7 +153,9 @@ class Assembly:
 
         
         att_tile = Tile(att["state1"], att["x"], att["y"])
-        a.tiles[att["x"]][att["y"]] = att_tile
+        a.tiles.append(att_tile)
+        a.coords[toCoords(att["x"], att["y"])] = att_tile
+
         # Update Boundaries
         if(att["y"] > self.upMost):
             self.upMost = att["y"]
