@@ -109,25 +109,17 @@ class Assembly:
                     attStr = 0
                     
                     if(neighborN != None):
-                        rule = v_rules.get(neighborN.get_label())
-                        if (rule != None):
-                            stren = rule.get(iTile.get_label())
-                            if(stren != None): attStr += str(stren)
+                        stren = v_rules.get((neighborN.get_label(), iTile.get_label()))
+                        if(stren != None): attStr += int(stren)
                     if(neighborS != None):
-                        rule = v_rules.get(iTile.get_label())
-                        if (rule != None):
-                            stren = rule.get(neighborS.get_label())
-                            if(stren != None): attStr += str(stren)
+                        stren = v_rules.get((iTile.get_label(), neighborS.get_label()))
+                        if(stren != None): attStr += int(stren)
                     if(neighborE != None):
-                        rule = h_rules.get(iTile.get_label())
-                        if (rule != None):
-                            stren = rule.get(neighborE.get_label())
-                            if(stren != None): attStr += str(stren)
+                        stren = h_rules.get((iTile.get_label(), neighborE.get_label()))
+                        if(stren != None): attStr += int(stren)
                     if(neighborW != None):
-                        rule = h_rules.get(neighborW.get_label())
-                        if (rule != None):
-                            stren = rule.get(iTile.get_label())
-                            if(stren != None): attStr += str(stren)
+                        stren = h_rules.get((neighborW.get_label(), iTile.get_label()))
+                        if(stren != None): attStr += int(stren)
 
                     print(iTile.get_label(), ": ", attStr)
                     if attStr >= sy.returnTemp():
