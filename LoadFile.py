@@ -82,7 +82,7 @@ def readxml(file):
             if(dir == "h"):
                 HorizontalTransitionRules.append(tempRule)
             else:
-                VerticalAffinityRules.append(tempRule)
+                VerticalTransitionRules.append(tempRule)
     # Note: Add an elif if the seed is an assembly
 
     # Checking Temp:

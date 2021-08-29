@@ -45,7 +45,9 @@ class Engine:
 
         #print(moveList.length())
         # Check if assembly is terminal
-        if(moveList.length() == 0): return -1
+        if(len(moveList) == 0): 
+            print("Terminal")
+            return -1
 
 
         # Update lastIndex

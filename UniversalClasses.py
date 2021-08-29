@@ -9,6 +9,9 @@ class State:
     def returnLabel(self):
         return self.label
 
+    def get_label(self):
+        return self.label
+
     def returnColor(self):
         return self.color
 
@@ -82,12 +85,17 @@ class Assembly:
         # sys_attachments = sy.get_initial_states()
         # sys_v_transition_rules = sy.get_vertical_transition_rules
         
+        v_rules = sy.returnVerticalAffinityDict()
+        h_rules = sy.returnHorizontalAffinityDict()
         
-        for iX in range(self.leftMost, self.rightMost + 1):
-            for iY in range(self.downMost, self.upMost + 1):
+        for iX in range(self.leftMost - 1, self.rightMost + 2):
+            for iY in range(self.downMost - 1, self.upMost + 2):
+
+                
 
                 # Check if position is empty
                 if self.coords.get(toCoords(iX, iY)) != None: continue
+                print("Testing ", iX, ", ", iY)
 
                 # Get each neighbor
                 neighborN = self.coords.get(toCoords(iX, iY + 1))
@@ -97,23 +105,32 @@ class Assembly:
 
 
                 # Calcuate the str of each tile attaching at this position
-                for iTile in sy.getInitialStates():
+                for iTile in sy.returnInitialStates():
                     attStr = 0
-
+                    
                     if(neighborN != None):
-                        stren = (sy.get_vertical_affinities())[neighborN.get_label()][iTile]
-                        if(stren != None): attStr += stren
+                        rule = v_rules.get(neighborN.get_label())
+                        if (rule != None):
+                            stren = rule.get(iTile.get_label())
+                            if(stren != None): attStr += str(stren)
                     if(neighborS != None):
-                        stren = (sy.get_vertical_affinities())[iTile][neighborS.get_label()]
-                        if(stren != None): attStr += stren
+                        rule = v_rules.get(iTile.get_label())
+                        if (rule != None):
+                            stren = rule.get(neighborS.get_label())
+                            if(stren != None): attStr += str(stren)
                     if(neighborE != None):
-                        stren = (sy.get_horizontal_affinities())[iTile][neighborE.get_label()]
-                        if(stren != None): attStr += stren
+                        rule = h_rules.get(iTile.get_label())
+                        if (rule != None):
+                            stren = rule.get(neighborE.get_label())
+                            if(stren != None): attStr += str(stren)
                     if(neighborW != None):
-                        stren = (sy.get_horizontal_affinities())[neighborW.get_label()][iTile]
-                        if(str != None): attStr += stren
+                        rule = h_rules.get(neighborW.get_label())
+                        if (rule != None):
+                            stren = rule.get(iTile.get_label())
+                            if(stren != None): attStr += str(stren)
 
-                    if attStr >= sy.getTemp():
+                    print(iTile.get_label(), ": ", attStr)
+                    if attStr >= sy.returnTemp():
                         attMove = {"type": "a"}
 
                         attMove["x"] = iX
@@ -127,6 +144,8 @@ class Assembly:
             #print(ttl)
             #if ttl in sys_attachments:
                 #attachments_list.append((ttc, ttl, sys_attachments[ttl]))
+        print(len(attachments_list), " Attachments")
+
         return attachments_list     
                                     # ORIGINAL tuple of ((coord pair), (current labels), (transition labels))
     def set_attachments(self, att): # tuple of ((type: ), (x: ), (y: ), (state1: ))
@@ -175,17 +194,21 @@ class Assembly:
         # Check each tile in the assembly
         for iTile in self.tiles:
            # print(sys_h_tiles[iTile.get_label()])
-            if isinstance(sys_h_tiles[iTile.get_label()], tuple):
-                iHTranRules = sys_h_tr[sys_h_tiles[iTile.get_label()]]
-            else:
-                for tiles in sys_h_tiles[iTile.get_label()]:
-                    iHTranRules = sys_h_tr[tiles]
+            #if isinstance(sys_h_tiles[iTile.get_label()], tuple):
+            if sys_h_tiles != None:
+                if sys_h_tiles.get(iTile.get_label()) != None:
+                    iHTranRules = sys_h_tr[sys_h_tiles[iTile.get_label()]]
+                else:
+                    for tiles in sys_h_tiles[iTile.get_label()]:
+                        iHTranRules = sys_h_tr[tiles]
 
-            if isinstance(sys_v_tiles[iTile.get_label()], tuple):
-                iVTranRules = sys_v_tr[sys_v_tiles[iTile.get_label()]]
-            else:
-                for tiles in sys_v_tiles[iTile.get_label()]:
-                    iVTranRules = sys_v_tr[tiles]
+            #if isinstance(sys_v_tiles[iTile.get_label()], tuple):
+            if sys_v_tiles != None:
+                if sys_v_tiles.get(iTile.get_label()):
+                    iVTranRules = sys_v_tr[sys_v_tiles[iTile.get_label()]]
+                else:
+                    for tiles in sys_v_tiles[iTile.get_label()]:
+                        iVTranRules = sys_v_tr[tiles]
 
             # Get only the south and east neighbors of iTile
             neighborS = self.coords.get(toCoords(iTile.x, iTile.y - 1))
@@ -384,12 +407,12 @@ class System:
 
     # Getters
     def returnTemp(self):
-        return self.temp
+        return int(self.temp)
 
     def returnStates(self):
         return self.states
 
-    def returnInitalStates(self):
+    def returnInitialStates(self):
         return self.initial_states
 
     def returnSeedStates(self):
