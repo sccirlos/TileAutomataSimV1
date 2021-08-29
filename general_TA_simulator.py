@@ -97,7 +97,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         for tile in assembly.tiles: 
             #print(tile[0].color)
             pen.setColor(QtGui.QColor("black"))
-            brush.setColor(QtGui.QColor("#" + tile.state.color))
+            brush.setColor(QtGui.QColor("#" + tile.get_color()))
 
             painter.setPen(pen)
             painter.setBrush(brush)
@@ -106,12 +106,12 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         painter.end()
 
-        if self.step != 0:
-            self.label_2.setText("Time elapsed: " + str(self.time) + " seconds")
-            self.label_3.setText("Current step time: " + str(1/Assembler_Proto.TimeTaken[self.step]) + " seconds")
-        else:
-            self.label_2.setText("Time elapsed: 0 seconds")
-            self.label_3.setText("Current step time: 0 seconds")
+        #if self.step != 0:
+        #    self.label_2.setText("Time elapsed: " + str(self.time) + " seconds")
+        #    self.label_3.setText("Current step time: " + str(1/Assembler_Proto.TimeTaken[self.step]) + " seconds")
+        #else:
+        #    self.label_2.setText("Time elapsed: 0 seconds")
+        #    self.label_3.setText("Current step time: 0 seconds")
 
         self.update()
 

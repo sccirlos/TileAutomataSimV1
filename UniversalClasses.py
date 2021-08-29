@@ -45,6 +45,9 @@ class Tile:
     def set_label(self, l):
         self.state.label = l
 
+    def get_color(self):
+        return self.state.returnColor()
+
 class Assembly:
     def __init__(self):
         self.label = ""
@@ -127,7 +130,7 @@ class Assembly:
 
                         attMove["x"] = iX
                         attMove["y"] = iY
-                        attMove["state1"] = iTile.get_label()
+                        attMove["state1"] = iTile
 
                         attachments_list.append(attMove)
 
@@ -142,7 +145,7 @@ class Assembly:
                                     # ORIGINAL tuple of ((coord pair), (current labels), (transition labels))
     def set_attachments(self, att): # tuple of ((type: ), (x: ), (y: ), (state1: ))
         a = Assembly()
-        a.label = self.label + "A " + att["state1"] 
+        #a.label = self.label + "A " + att["state1"] 
         a.tiles = self.tiles
         #change = trans[0][0]
        # print(a.tiles[change][0])
