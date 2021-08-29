@@ -101,8 +101,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
             painter.setPen(pen)
             painter.setBrush(brush)
-            painter.drawRect((tile.x * 40) + 200, (tile.y * -40) + 500, 40, 40)
-            painter.drawText((tile.x * 40) + 210, (tile.y * -40) + 525, tile.state.label)
+            painter.drawRect((tile.x * 40) + 200, (tile.y * -40) + 300, 40, 40)
+            painter.drawText((tile.x * 40) + 210, (tile.y * -40) + 325, tile.state.label)
 
         painter.end()
 

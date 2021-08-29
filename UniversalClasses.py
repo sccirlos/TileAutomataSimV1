@@ -124,7 +124,7 @@ class Assembly:
                         stren = h_rules.get((neighborW.get_label(), iTile.get_label()))
                         if(stren != None): attStr += int(stren)
 
-                    print(iTile.get_label(), ": ", attStr)
+                    #print(iTile.get_label(), ": ", attStr)
                     if attStr >= sy.returnTemp():
                         attMove = {"type": "a"}
 
@@ -192,6 +192,11 @@ class Assembly:
         for iTile in self.tiles:
            # print(sys_h_tiles[iTile.get_label()])
             #if isinstance(sys_h_tiles[iTile.get_label()], tuple):
+
+            iHTranRules = None
+            iVTranRules = None
+
+
             if sys_h_tiles != None:
                 if sys_h_tiles.get(iTile.get_label()) != None:
                     iHTranRules = sys_h_tr[sys_h_tiles[iTile.get_label()]]
@@ -214,8 +219,8 @@ class Assembly:
             if(neighborS != None):
                 # second dictionary
                 # rules = iVTranRules.get(neighborS.get_label())
-                rules = []
-                rules.append(iVTranRules)
+                rules = sys_v_tr.get((iTile.get_label(), neighborS.get_label()))
+                #rules.append(iVTranRules)
                 if rules != None:
                     move = {"type": "t"}
                     move["x"] = iTile.x
@@ -233,8 +238,8 @@ class Assembly:
 
             if(neighborE != None):
                 #rules = iHTranRules[neighborE.get_label()]
-                rules = []
-                rules.append(iHTranRules)
+                rules = sys_v_tr.get((iTile.get_label(), neighborE.get_label()))
+                #rules.append(iHTranRules)
                 if rules != None:
                     move = {"type": "t"}
                     move["x"] = iTile.x
