@@ -216,9 +216,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def prev_step(self):
         self.stop_sequence()
         if self.step > 0:
-            self.time = self.time - (1/Assembler_Proto.TimeTaken[self.step]) #Might need to go below
+            #self.time = self.time - (1/Assembler_Proto.TimeTaken[self.step]) #Might need to go below
             self.step = self.step - 1
-            self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
+            self.draw_tiles(self.Engine.assemblyList[self.step])
 
     def next_step(self):
         self.stop_sequence()
@@ -230,32 +230,31 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def last_step(self):
         self.stop_sequence()
         current = self.step
-        self.step = len(Assembler_Proto.CompleteAssemblyHistory) - 1
-        while (current != self.step):
+        while (self.Engine.build() != -1):
             current = current + 1
-            self.time = self.time + (1/Assembler_Proto.TimeTaken[current]) 
+            #self.time = self.time + (1/Assembler_Proto.TimeTaken[current]) 
 
-        self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
+        self.draw_tiles(self.Engine.assemblyList[self.step])
        
 
     def play_sequence(self):
         self.play = True
-        print(len(Assembler_Proto.CompleteAssemblyHistory))
-        while(self.step < len(Assembler_Proto.CompleteAssemblyHistory) and self.play == True):
+        print(self.Engine.assemblyList)
+        while((self.Engine.build() != -1) and self.play == True):
             print(self.step)
-            self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
+            self.draw_tiles(self.Engine.assemblyList[self.step])
             
             loop = QtCore.QEventLoop()
-            if self.step != 0:
-                QtCore.QTimer.singleShot(int(1000 / Assembler_Proto.TimeTaken[self.step]), loop.quit)
-            else:
-                QtCore.QTimer.singleShot(1000, loop.quit)
+            #if self.step != 0:
+            #    QtCore.QTimer.singleShot(int(1000 / Assembler_Proto.TimeTaken[self.step]), loop.quit)
+            #else:
+            #    QtCore.QTimer.singleShot(1000, loop.quit)
             loop.exec_()
             self.step = self.step + 1
-            if self.step != 0 and self.step < len(Assembler_Proto.CompleteAssemblyHistory):
-                self.time = self.time + (1/Assembler_Proto.TimeTaken[self.step])
+            #if self.step != 0 and self.step < len(Assembler_Proto.CompleteAssemblyHistory):
+            #    self.time = self.time + (1/Assembler_Proto.TimeTaken[self.step])
 
-        self.step = len(Assembler_Proto.CompleteAssemblyHistory) - 1 #this line is here to prevent a crash that happens if you click last after play finishes
+        self.step = len(self.Engine.assemblyList) - 1 #this line is here to prevent a crash that happens if you click last after play finishes
         self.stop_sequence()
 
     def stop_sequence(self):
