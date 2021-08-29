@@ -160,14 +160,14 @@ class Assembly:
         a.coords[toCoords(att["x"], att["y"])] = att_tile
 
         # Update Boundaries
-        if(att["y"] > self.upMost):
+        if(int(att["y"]) > self.upMost):
             self.upMost = att["y"]
-        if(att["y"] < self.downMost):
+        if(int(att["y"]) < self.downMost):
             self.downMost = att["y"]
-        if(att["x"] > self.rightMost):
+        if(int(att["x"]) > self.rightMost):
             self.rightMost = att["x"]
-        if(att["x"] < self.leftMost):
-            self.leftMost + att["x"]
+        if(int(att["x"]) < self.leftMost):
+            self.leftMost = att["x"]
 
         return a
     
