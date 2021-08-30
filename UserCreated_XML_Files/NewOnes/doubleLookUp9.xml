@@ -108,7 +108,7 @@
             <Rule Label1="2B" Label2="1B" Dir="v" Strength="1"></Rule>
             <Rule Label1="0a" Label2="0A'" Dir="v" Strength="1"></Rule> 
             <Rule Label1="0a" Label2="1A'" Dir="v" Strength="1"></Rule>
-            <Rule Label1="0a" Label2="2B'" Dir="v" Strength="1"></Rule>             
+            <Rule Label1="0B" Label2="2B'" Dir="v" Strength="1"></Rule>             
         </AffinityRules>
         <TransitionRules>
             <!-- Transition Format: Label1 = The left's/top's starting label; Label2 = The right's/bottom's starting label.-->
