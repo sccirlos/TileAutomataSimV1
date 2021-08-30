@@ -149,7 +149,7 @@ class Assembly:
     def set_attachments(self, att): # tuple of ((type: ), (x: ), (y: ), (state1: ))
         a = Assembly()
         #a.label = self.label + "A " + att["state1"] 
-        a.tiles = self.tiles
+        a.set_tiles(self.tiles)
         #change = trans[0][0]
        # print(a.tiles[change][0])
         #print(trans[2][1])
@@ -257,8 +257,8 @@ class Assembly:
                     move["x"] = iTile.x
                     move["y"] = iTile.y
                     move["dir"] = "h"
-                    move["state1"] = iTile.get_label()
-                    move["state2"] = neighborE.get_label()
+                    move["state1"] = iTile.get_state()
+                    move["state2"] = neighborE.get_state()
 
                     for i in range(len(rules)):
                         #print(rules[i])
