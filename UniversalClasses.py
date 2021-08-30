@@ -67,19 +67,20 @@ class Assembly:
         return self.tiles
 
     def set_tiles(self, t):
-        self.tiles = t
 
-        for tileI in self.tiles:
-            self.coords["(" + str(tileI.x) + "," + str(tileI.y) + ")" ] = tileI
+        for tileI in t:
+            tile = Tile(tileI.state, tileI.x, tileI.y)
+            self.tiles.append(tile)
+            self.coords["(" + str(tile.x) + "," + str(tile.y) + ")" ] = tile
             # update boundaries
-            if(tileI.y > self.upMost):
-                self.upMost = tileI.y
-            if(tileI.y < self.downMost):
-                self.downMost = tileI.y
-            if(tileI.x > self.rightMost):
-                self.rightMost = tileI.x
-            if(tileI.x < self.leftMost):
-                self.leftMost = tileI.x
+            if(tile.y > self.upMost):
+                self.upMost = tile.y
+            if(tile.y < self.downMost):
+                self.downMost = tile.y
+            if(tile.x > self.rightMost):
+                self.rightMost = tile.x
+            if(tile.x < self.leftMost):
+                self.leftMost = tile.x
 
 
     # Sonya on attachments
