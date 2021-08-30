@@ -238,8 +238,8 @@ class Assembly:
                     move["x"] = iTile.x
                     move["y"] = iTile.y
                     move["dir"] = "v"
-                    move["state1"] = iTile.get_label()
-                    move["state2"] = neighborS.get_label()
+                    move["state1"] = iTile.get_state()
+                    move["state2"] = neighborS.get_state()
 
                     # a pair of states may have mutliple rules
                     for i in range(len(rules)):
@@ -271,17 +271,17 @@ class Assembly:
     def set_transition(self, trans): # tuple of {'type': 't', 'x': 0, 'y': 0, 'state1': 'S', 'state2': 'A', 'state1Final': 'S', 'state2Final': 'A'}
         a = Assembly()
         a.label = self.label + "T "+ trans["state1Final"] + trans["state2Final"] #originally trans[2][0] + trans[2][1]
-        a.tiles = self.tiles
+        a.set_tiles(self.tiles)
         change = trans["type"]
         
         #print(a.tiles[change])
         print(trans["state2Final"])
         print(trans["type"])
-        a.tiles[trans["x"]][trans["y"]] = trans["state1Final"]
+        a.tiles[trans["x"]][trans["y"]].setState(trans["state1Final"])
         if(trans["dir"] == "v"):
-            a.tiles[trans["x"]][trans["y"] - 1] = trans["state1Final"]
+            a.tiles[trans["x"]][trans["y"] - 1].setState(trans["state2Final"])
         if(trans["dir"] == "h"):
-            a.tiles[trans["x"] - 1][trans["y"]] = trans["state1Final"]
+            a.tiles[trans["x"] - 1][trans["y"]].setState(trans["state2Final"])
         print("New Assembly Tiles: ", a.tiles)
         return a
 
