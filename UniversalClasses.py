@@ -263,11 +263,10 @@ class Assembly:
                     move["state1"] = iTile.get_state()
                     move["state2"] = neighborE.get_state()
 
-                    for i in range(len(rules)):
-                        #print(rules[i])
-                        move["state1Final"] = rules[i][0] #.returnLabel1Final() 
-                        move["state2Final"] = rules[i][1] #.returnLabel2Final() 
-                        transitions_list.append(move)
+                    print(rules)
+                    move["state1Final"] = rules[0] #.returnLabel1Final() 
+                    move["state2Final"] = rules[1] #.returnLabel2Final() 
+                    transitions_list.append(move)
 
         return transitions_list      
                                      # ORIGINAL ((type: ), (current labels), (transition labels))
