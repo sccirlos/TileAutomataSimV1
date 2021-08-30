@@ -106,12 +106,12 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         painter.end()
 
-        #if self.step != 0:
-        #    self.label_2.setText("Time elapsed: " + str(self.time) + " seconds")
-        #    self.label_3.setText("Current step time: " + str(1/Assembler_Proto.TimeTaken[self.step]) + " seconds")
-        #else:
-        #    self.label_2.setText("Time elapsed: 0 seconds")
-        #    self.label_3.setText("Current step time: 0 seconds")
+        if self.Engine.currentIndex != 0:
+            self.label_2.setText("Time elapsed: " + str(self.time) + " seconds")
+            self.label_3.setText("Current step time: " + str(1/self.Engine.timeTaken()) + " seconds")
+        else:
+            self.label_2.setText("Time elapsed: 0 seconds")
+            self.label_3.setText("Current step time: 0 seconds")
 
         print(self.Engine.currentIndex)
         self.update()
@@ -216,7 +216,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.stop_sequence()
         if self.step > 0:
             self.Engine.back()
-            #self.time = self.time - (1/Assembler_Proto.TimeTaken[self.step]) #Might need to go below
+            self.time = self.time - (1/self.Engine.timeTaken()) #Might need to go below
             self.step = self.step - 1
             #for item in self.Engine.assemblyList:
             #    print(len(item.tiles))
@@ -226,7 +226,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.stop_sequence()
         if self.Engine.step() != -1:
             self.step = self.step + 1
-            #self.time = self.time + (1/Assembler_Proto.TimeTaken[self.step]) #Might need to go above
+            self.time = self.time + (1/self.Engine.timeTaken()) #Might need to go above
             self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def last_step(self):
@@ -234,23 +234,22 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         current = self.step
         while (self.Engine.build() != -1):
             current = current + 1
-            #self.time = self.time + (1/Assembler_Proto.TimeTaken[current]) 
+            self.time = self.time + (1/self.Engine.timeTaken()) 
 
         self.draw_tiles(self.Engine.getCurrentAssembly())
        
 
     def play_sequence(self):
         self.play = True
-        print(self.Engine.assemblyList)
         while((self.Engine.build() != -1) and self.play == True):
             print(self.Engine.currentIndex)
             self.draw_tiles(self.Engine.getCurrentAssembly())
             
             loop = QtCore.QEventLoop()
-            #if self.step != 0:
-            #    QtCore.QTimer.singleShot(int(1000 / Assembler_Proto.TimeTaken[self.step]), loop.quit)
-            #else:
-            #    QtCore.QTimer.singleShot(1000, loop.quit)
+            if self.step != 0:
+                QtCore.QTimer.singleShot(int(1000 / self.Engine.timeTaken()), loop.quit)
+            else:
+                QtCore.QTimer.singleShot(1000, loop.quit)
             loop.exec_()
             self.step = self.step + 1
             #if self.step != 0 and self.step < len(Assembler_Proto.CompleteAssemblyHistory):

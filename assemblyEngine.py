@@ -9,6 +9,7 @@ class Engine:
     def __init__(self, currentSystem):
         self.system = currentSystem
         self.assemblyList = []
+        self.TimeTaken = []
         self.currentIndex = 0
         self.lastIndex = 0
 
@@ -28,7 +29,6 @@ class Engine:
         else:
             return self.build()
                 
-
     def back(self):
         if(self.currentIndex > 0): self.currentIndex = self.currentIndex - 1
 
@@ -52,6 +52,7 @@ class Engine:
             print("Terminal")
             return -1
 
+        self.TimeTaken.append(len(moveList))
 
         # Update lastIndex
         self.lastIndex = self.lastIndex + 1
@@ -62,5 +63,9 @@ class Engine:
         newAssembly = cAssembly.performMove(move)
         self.assemblyList.append(newAssembly)
         return 0
+
+    def timeTaken(self):
+        if len(self.TimeTaken) > 0:
+            return self.TimeTaken[self.currentIndex - 1]
 
     
