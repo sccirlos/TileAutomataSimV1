@@ -280,11 +280,12 @@ class Assembly:
         #print(a.tiles[change])
         print(trans["state2Final"])
         print(trans["type"])
-        a.tiles[trans["x"]][trans["y"]].setState(trans["state1Final"])
+        a.coords[toCoords(trans["x"], trans["y"])].set_state(trans["state1Final"])
+        #a.tiles[trans["x"]][trans["y"]].setState(trans["state1Final"])
         if(trans["dir"] == "v"):
-            a.tiles[trans["x"]][trans["y"] - 1].setState(trans["state2Final"])
+            a.coords[toCoords(trans["x"], trans["y"] - 1)].set_state(trans["state2Final"])
         if(trans["dir"] == "h"):
-            a.tiles[trans["x"] - 1][trans["y"]].setState(trans["state2Final"])
+            a.coords[toCoords(trans["x"] + 1, trans["y"])].set_state(trans["state2Final"])
         print("New Assembly Tiles: ", a.tiles)
         return a
 
