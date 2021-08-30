@@ -100,15 +100,15 @@
         <AffinityRules>
             <!-- Affinity Format: Label1 = The left/top label; Label2 = The right/bottom label; Dir = h if it's a horizontal affinity, or v if it's a vertical affinity; Strength = The affinity's strength. -->
             <Rule Label1="SA" Label2="SB" Dir="h" Strength="1"></Rule>
-            <Rule Label1="SA" Label2="0a" Dir="v" Strength="1"></Rule>
-            <Rule Label1="0a" Label2="1a" Dir="v" Strength="1"></Rule>
-            <Rule Label1="1a" Label2="2a" Dir="v" Strength="1"></Rule>
-            <Rule Label1="SB" Label2="0B" Dir="v" Strength="1"></Rule>
-            <Rule Label1="0B" Label2="1B" Dir="v" Strength="1"></Rule>
-            <Rule Label1="1B" Label2="2B" Dir="v" Strength="1"></Rule>
-            <Rule Label1="0A'" Label2="0a" Dir="v" Strength="1"></Rule> 
-            <Rule Label1="1A'" Label2="0a" Dir="v" Strength="1"></Rule>
-            <Rule Label1="2B'" Label2="0B" Dir="v" Strength="1"></Rule>             
+            <Rule Label1="0a" Label2="SA" Dir="v" Strength="1"></Rule>
+            <Rule Label1="1a" Label2="0a" Dir="v" Strength="1"></Rule>
+            <Rule Label1="2a" Label2="1a" Dir="v" Strength="1"></Rule>
+            <Rule Label1="0B" Label2="SB" Dir="v" Strength="1"></Rule>
+            <Rule Label1="1B" Label2="0B" Dir="v" Strength="1"></Rule>
+            <Rule Label1="2B" Label2="1B" Dir="v" Strength="1"></Rule>
+            <Rule Label1="0a" Label2="0A'" Dir="v" Strength="1"></Rule> 
+            <Rule Label1="0a" Label2="1A'" Dir="v" Strength="1"></Rule>
+            <Rule Label1="0a" Label2="2B'" Dir="v" Strength="1"></Rule>             
         </AffinityRules>
         <TransitionRules>
             <!-- Transition Format: Label1 = The left's/top's starting label; Label2 = The right's/bottom's starting label.-->
