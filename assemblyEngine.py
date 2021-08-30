@@ -66,6 +66,8 @@ class Engine:
 
     def timeTaken(self):
         if len(self.TimeTaken) > 0:
-            return self.TimeTaken[self.currentIndex - 1]
+            return 1 / self.TimeTaken[self.currentIndex - 1]
+        else:
+            return 0
 
     
