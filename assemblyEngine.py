@@ -32,6 +32,9 @@ class Engine:
     def back(self):
         if(self.currentIndex > 0): self.currentIndex = self.currentIndex - 1
 
+    def first(self):
+        self.currentIndex = 0
+
     def getCurrentAssembly(self):
         return self.assemblyList[self.currentIndex]
 

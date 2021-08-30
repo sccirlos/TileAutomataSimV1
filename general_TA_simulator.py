@@ -113,6 +113,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         #    self.label_2.setText("Time elapsed: 0 seconds")
         #    self.label_3.setText("Current step time: 0 seconds")
 
+        print(self.Engine.currentIndex)
         self.update()
 
     def Click_Run_Simulation(self):  # Run application if everythings good
@@ -206,9 +207,10 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
     def first_step(self):
         self.stop_sequence()
-        self.step = 0
+        self.Engine.first()
         self.time = 0
-        self.draw_tiles(self.Engine.assemblyList[self.step])
+        #print(self.Engine.currentIndex)
+        self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def prev_step(self):
         self.stop_sequence()
@@ -234,15 +236,15 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             current = current + 1
             #self.time = self.time + (1/Assembler_Proto.TimeTaken[current]) 
 
-        self.draw_tiles(self.Engine.assemblyList[self.step])
+        self.draw_tiles(self.Engine.getCurrentAssembly())
        
 
     def play_sequence(self):
         self.play = True
         print(self.Engine.assemblyList)
         while((self.Engine.build() != -1) and self.play == True):
-            print(self.step)
-            self.draw_tiles(self.Engine.assemblyList[self.step])
+            print(self.Engine.currentIndex)
+            self.draw_tiles(self.Engine.getCurrentAssembly())
             
             loop = QtCore.QEventLoop()
             #if self.step != 0:
