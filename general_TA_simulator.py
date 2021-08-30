@@ -138,9 +138,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         LoadFile.readxml(file[0])
 
-        if self.Engine != None:
-            self.Engine.clear()
-
            # Creating global variables
         global temp
         global states
@@ -219,12 +216,13 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.Engine.back()
             #self.time = self.time - (1/Assembler_Proto.TimeTaken[self.step]) #Might need to go below
             self.step = self.step - 1
+            #for item in self.Engine.assemblyList:
+             #   print(len(item.tiles))
             self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def next_step(self):
         self.stop_sequence()
         if self.Engine.step() != -1:
-            
             self.step = self.step + 1
             #self.time = self.time + (1/Assembler_Proto.TimeTaken[self.step]) #Might need to go above
             self.draw_tiles(self.Engine.getCurrentAssembly())

@@ -94,7 +94,6 @@ class Assembly:
         for iX in range(self.leftMost - 1, self.rightMost + 2):
             for iY in range(self.downMost - 1, self.upMost + 2):
 
-                
 
                 # Check if position is empty
                 if self.coords.get(toCoords(iX, iY)) != None: continue
@@ -120,9 +119,13 @@ class Assembly:
                     if(neighborE != None):
                         stren = h_rules.get((iTile.get_label(), neighborE.get_label()))
                         if(stren != None): attStr += int(stren)
+                    #else:
+                    #    print("East of "+ str(iX) + " : " + str(iY) + " is empty")
                     if(neighborW != None):
                         stren = h_rules.get((neighborW.get_label(), iTile.get_label()))
                         if(stren != None): attStr += int(stren)
+                    #else:
+                    #    print("West of "+ str(iX) + " : " + str(iY) + " is empty")
 
                     #print(iTile.get_label(), ": ", attStr)
                     if attStr >= sy.returnTemp():
@@ -152,6 +155,7 @@ class Assembly:
         #print(trans[2][1])
        # print(trans[0])
         #a.tiles[change] = trans[2][1]
+        print("attaching at " + str(att["x"]) + " : " + str(att["y"]))
         print("New Assembly Tiles: ", a.tiles)
 
         
@@ -162,12 +166,20 @@ class Assembly:
         # Update Boundaries
         if(int(att["y"]) > self.upMost):
             a.upMost = att["y"]
+        else:
+            a.upMost = self.upMost
         if(int(att["y"]) < self.downMost):
             a.downMost = att["y"]
+        else:
+            a.downMost = self.downMost
         if(int(att["x"]) > self.rightMost):
             a.rightMost = att["x"]
+        else:
+            a.rightMost = self.rightMost
         if(int(att["x"]) < self.leftMost):
             a.leftMost = att["x"]
+        else:
+            a.leftMost = self.leftMost
 
         return a
     
