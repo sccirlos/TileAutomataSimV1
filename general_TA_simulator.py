@@ -104,7 +104,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         if self.Engine.currentIndex != 0:
             self.label_2.setText("Time elapsed: " + str(self.time) + " seconds")
-            self.label_3.setText("Current step time: " + str(1/self.Engine.timeTaken()) + " seconds")
+            self.label_3.setText("Current step time: " + str(self.Engine.timeTaken()) + " seconds")
         else:
             self.label_2.setText("Time elapsed: 0 seconds")
             self.label_3.setText("Current step time: 0 seconds")
@@ -212,19 +212,19 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.stop_sequence()
         if self.Engine.currentIndex > 0:
             self.Engine.back()
-            self.time = self.time - (1/self.Engine.timeTaken()) #Might need to go below
+            self.time = self.time - (self.Engine.timeTaken()) #Might need to go below
             self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def next_step(self):
         self.stop_sequence()
         if self.Engine.step() != -1:
-            self.time = self.time + (1/self.Engine.timeTaken()) #Might need to go above
+            self.time = self.time + (self.Engine.timeTaken()) #Might need to go above
             self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def last_step(self):
         self.stop_sequence()
         while (self.Engine.build() != -1):
-            self.time = self.time + (1/self.Engine.timeTaken()) 
+            self.time = self.time + (self.Engine.timeTaken()) 
 
         self.draw_tiles(self.Engine.getCurrentAssembly())
        
@@ -233,12 +233,12 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.play = True
         while((self.Engine.build() != -1) and self.play == True):
             print(self.Engine.currentIndex)
-            self.time = self.time + (1/self.Engine.timeTaken())
+            self.time = self.time + (self.Engine.timeTaken())
             
             
             loop = QtCore.QEventLoop()
             if self.Engine.currentIndex != 0:
-                QtCore.QTimer.singleShot(int(1000 / self.Engine.timeTaken()), loop.quit)
+                QtCore.QTimer.singleShot(int(1000 * self.Engine.timeTaken()), loop.quit)
             else:
                 QtCore.QTimer.singleShot(1000, loop.quit)
             loop.exec_()
