@@ -250,9 +250,12 @@ class Assembly:
 
             if(neighborE != None):
                 #rules = iHTranRules[neighborE.get_label()]
-                rules = sys_v_tr.get((iTile.get_label(), neighborE.get_label()))
+                rules = sys_h_tr.get((iTile.get_label(), neighborE.get_label()))
+                print(sys_h_tr)
                 #rules.append(iHTranRules)
+                
                 if rules != None:
+                    print(iTile.get_label() + " : " + str(len(rules)))
                     move = {"type": "t"}
                     move["x"] = iTile.x
                     move["y"] = iTile.y
@@ -286,6 +289,7 @@ class Assembly:
         return a
 
     def getMoves(self, sy):
+        #print("attachments: " + str(len(self.get_attachments(sy))) + " transitions: " + str(len(self.get_transitions(sy))))
         return self.get_attachments(sy) + self.get_transitions(sy)
 
     def performMove(self, move):
