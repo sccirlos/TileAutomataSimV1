@@ -149,7 +149,7 @@ class Assembly:
     def set_attachments(self, att): # tuple of ((type: ), (x: ), (y: ), (state1: ))
         a = Assembly()
         #a.label = self.label + "A " + att["state1"] 
-        a.set_tiles(self.tiles)
+        a.set_tiles(self.tiles.copy())
         #change = trans[0][0]
        # print(a.tiles[change][0])
         #print(trans[2][1])
@@ -263,7 +263,8 @@ class Assembly:
                     move["state1"] = iTile.get_state()
                     move["state2"] = neighborE.get_state()
 
-                    print(rules)
+                    #print(rules)
+                    #NEED TO MAKE THE RULES HERE STATES
                     move["state1Final"] = rules[0] #.returnLabel1Final() 
                     move["state2Final"] = rules[1] #.returnLabel2Final() 
                     transitions_list.append(move)
@@ -273,7 +274,7 @@ class Assembly:
     def set_transition(self, trans): # tuple of {'type': 't', 'x': 0, 'y': 0, 'state1': 'S', 'state2': 'A', 'state1Final': 'S', 'state2Final': 'A'}
         a = Assembly()
         a.label = self.label + "T "+ trans["state1Final"] + trans["state2Final"] #originally trans[2][0] + trans[2][1]
-        a.set_tiles(self.tiles)
+        a.set_tiles(self.tiles.copy())
         change = trans["type"]
         
         #print(a.tiles[change])

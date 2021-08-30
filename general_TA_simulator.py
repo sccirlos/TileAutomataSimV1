@@ -217,7 +217,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             #self.time = self.time - (1/Assembler_Proto.TimeTaken[self.step]) #Might need to go below
             self.step = self.step - 1
             #for item in self.Engine.assemblyList:
-             #   print(len(item.tiles))
+            #    print(len(item.tiles))
             self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def next_step(self):
