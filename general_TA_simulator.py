@@ -48,7 +48,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.time = 0
         self.Engine = None
         self.play = True
-        canvas = QtGui.QPixmap(850, 600)
+        canvas = QtGui.QPixmap(1000, 600)
         canvas.fill(Qt.white)
         self.label.setPixmap(canvas)
 
@@ -59,9 +59,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         # "Save" from the "File" menu
         self.actionSave.triggered.connect(self.Click_SaveFile)
-
-        # this button executes the simulation. Afterwards the window updates to show results
-        self.pushButton.clicked.connect(self.Click_Run_Simulation)
 
         self.actionFirst.triggered.connect(self.first_step)
 
@@ -101,8 +98,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
             painter.setPen(pen)
             painter.setBrush(brush)
-            painter.drawRect((tile.x * 40) + 200, (tile.y * -40) + 300, 40, 40)
-            painter.drawText((tile.x * 40) + 210, (tile.y * -40) + 325, tile.state.label)
+            painter.drawRect((tile.x * 40) + 200, (tile.y * -40) + 500, 40, 40)
+            painter.drawText((tile.x * 40) + 210, (tile.y * -40) + 525, tile.state.label)
 
         painter.end()
 
@@ -243,7 +240,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.play = True
         while((self.Engine.build() != -1) and self.play == True):
             print(self.Engine.currentIndex)
-            self.draw_tiles(self.Engine.getCurrentAssembly())
+            self.time = self.time + (1/self.Engine.timeTaken())
+            
             
             loop = QtCore.QEventLoop()
             if self.step != 0:
@@ -251,9 +249,11 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             else:
                 QtCore.QTimer.singleShot(1000, loop.quit)
             loop.exec_()
+
+            self.draw_tiles(self.Engine.getCurrentAssembly())
             self.step = self.step + 1
-            #if self.step != 0 and self.step < len(Assembler_Proto.CompleteAssemblyHistory):
-            #    self.time = self.time + (1/Assembler_Proto.TimeTaken[self.step])
+            #if self.Engine.currentIndex != 0: #and self.Engine.currentIndex < self.Engine.lastIndex:
+            
 
         self.step = len(self.Engine.assemblyList) - 1 #this line is here to prevent a crash that happens if you click last after play finishes
         self.stop_sequence()
