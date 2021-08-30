@@ -67,7 +67,6 @@ class Assembly:
         return self.tiles
 
     def set_tiles(self, t):
-
         for tileI in t:
             tile = Tile(tileI.state, tileI.x, tileI.y)
             self.tiles.append(tile)
@@ -243,11 +242,11 @@ class Assembly:
                     move["state2"] = neighborS.get_state()
 
                     # a pair of states may have mutliple rules
-                    for i in range(len(rules)):
+         
                         #class is in universal classes
-                        move["state1Final"] = rules[i][0] #.returnLabel1Final() 
-                        move["state2Final"] = rules[i][1] #.returnLabel2Final() 
-                        transitions_list.append(move)
+                    move["state1Final"] = sy.get_state(rules[0]) #.returnLabel1Final() 
+                    move["state2Final"] = sy.get_state(rules[1]) #.returnLabel2Final() 
+                    transitions_list.append(move)
 
             if(neighborE != None):
                 #rules = iHTranRules[neighborE.get_label()]
@@ -264,7 +263,6 @@ class Assembly:
                     move["state1"] = iTile.get_state()
                     move["state2"] = neighborE.get_state()
 
-                    #NEED TO MAKE THE RULES HERE STATES
                     move["state1Final"] = sy.get_state(rules[0]) #.returnLabel1Final() 
                     move["state2Final"] = sy.get_state(rules[1]) #.returnLabel2Final() 
                     transitions_list.append(move)
