@@ -216,16 +216,18 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def prev_step(self):
         self.stop_sequence()
         if self.step > 0:
+            self.Engine.back()
             #self.time = self.time - (1/Assembler_Proto.TimeTaken[self.step]) #Might need to go below
             self.step = self.step - 1
-            self.draw_tiles(self.Engine.assemblyList[self.step])
+            self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def next_step(self):
         self.stop_sequence()
-        if self.Engine.build() != -1:
+        if self.Engine.step() != -1:
+            
             self.step = self.step + 1
             #self.time = self.time + (1/Assembler_Proto.TimeTaken[self.step]) #Might need to go above
-            self.draw_tiles(self.Engine.assemblyList[self.step])
+            self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def last_step(self):
         self.stop_sequence()

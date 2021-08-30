@@ -161,13 +161,13 @@ class Assembly:
 
         # Update Boundaries
         if(int(att["y"]) > self.upMost):
-            self.upMost = att["y"]
+            a.upMost = att["y"]
         if(int(att["y"]) < self.downMost):
-            self.downMost = att["y"]
+            a.downMost = att["y"]
         if(int(att["x"]) > self.rightMost):
-            self.rightMost = att["x"]
+            a.rightMost = att["x"]
         if(int(att["x"]) < self.leftMost):
-            self.leftMost = att["x"]
+            a.leftMost = att["x"]
 
         return a
     
