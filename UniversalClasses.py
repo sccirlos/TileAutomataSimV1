@@ -263,17 +263,16 @@ class Assembly:
                     move["state1"] = iTile.get_state()
                     move["state2"] = neighborE.get_state()
 
-                    #print(rules)
                     #NEED TO MAKE THE RULES HERE STATES
-                    move["state1Final"] = rules[0] #.returnLabel1Final() 
-                    move["state2Final"] = rules[1] #.returnLabel2Final() 
+                    move["state1Final"] = sy.get_state(rules[0]) #.returnLabel1Final() 
+                    move["state2Final"] = sy.get_state(rules[1]) #.returnLabel2Final() 
                     transitions_list.append(move)
 
         return transitions_list      
                                      # ORIGINAL ((type: ), (current labels), (transition labels))
     def set_transition(self, trans): # tuple of {'type': 't', 'x': 0, 'y': 0, 'state1': 'S', 'state2': 'A', 'state1Final': 'S', 'state2Final': 'A'}
         a = Assembly()
-        a.label = self.label + "T "+ trans["state1Final"] + trans["state2Final"] #originally trans[2][0] + trans[2][1]
+        a.label = self.label + "T "+ trans["state1Final"].get_label() + trans["state2Final"].get_label() #originally trans[2][0] + trans[2][1]
         a.set_tiles(self.tiles.copy())
         change = trans["type"]
         
@@ -423,6 +422,12 @@ class System:
 
             self.horizontal_transitions_dict[label1, label2] = (
                 label1Final, label2Final)
+
+
+    def get_state(self, label):
+        for state in self.states:
+            if state.get_label() == label:
+                return state
 
     # Getters
     def returnTemp(self):
