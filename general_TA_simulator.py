@@ -126,63 +126,64 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.stop_sequence()
         self.SysLoaded = False
         file = QFileDialog.getOpenFileName(self, "Select XML Document", "", "XML Files (*.xml)")
-        # Simulator must clear all of LoadFile's global variables when the user attempts to load something.
-        LoadFile.HorizontalAffinityRules.clear()
-        LoadFile.VerticalAffinityRules.clear()
-        LoadFile.HorizontalTransitionRules.clear()
-        LoadFile.VerticalTransitionRules.clear()
-        LoadFile.SeedAssembly.clear()
-        LoadFile.SeedStateSet.clear()
-        LoadFile.InitialStateSet.clear()
-        LoadFile.CompleteStateSet.clear()
+        if file[0] != '':
+            # Simulator must clear all of LoadFile's global variables when the user attempts to load something.
+            LoadFile.HorizontalAffinityRules.clear()
+            LoadFile.VerticalAffinityRules.clear()
+            LoadFile.HorizontalTransitionRules.clear()
+            LoadFile.VerticalTransitionRules.clear()
+            LoadFile.SeedAssembly.clear()
+            LoadFile.SeedStateSet.clear()
+            LoadFile.InitialStateSet.clear()
+            LoadFile.CompleteStateSet.clear()
 
-        LoadFile.readxml(file[0])
+            LoadFile.readxml(file[0])
 
-           # Creating global variables
-        global temp
-        global states
-        global inital_states
-        global seed_assembly
-        global seed_states
-        global vertical_affinities
-        global horizontal_affinities
-        global vertical_transitions
-        global horizontal_transitions
+               # Creating global variables
+            global temp
+            global states
+            global inital_states
+            global seed_assembly
+            global seed_states
+            global vertical_affinities
+            global horizontal_affinities
+            global vertical_transitions
+            global horizontal_transitions
 
-         # Creating a System object from data read.
-        temp = LoadFile.Temp
-        states = LoadFile.CompleteStateSet
-        inital_states = LoadFile.InitialStateSet
-        seed_assembly = LoadFile.SeedAssembly
-        seed_states = LoadFile.SeedStateSet
-        vertical_affinities = LoadFile.VerticalAffinityRules
-        horizontal_affinities = LoadFile.HorizontalAffinityRules
-        vertical_transitions = LoadFile.VerticalTransitionRules
-        horizontal_transitions = LoadFile.HorizontalTransitionRules
+             # Creating a System object from data read.
+            temp = LoadFile.Temp
+            states = LoadFile.CompleteStateSet
+            inital_states = LoadFile.InitialStateSet
+            seed_assembly = LoadFile.SeedAssembly
+            seed_states = LoadFile.SeedStateSet
+            vertical_affinities = LoadFile.VerticalAffinityRules
+            horizontal_affinities = LoadFile.HorizontalAffinityRules
+            vertical_transitions = LoadFile.VerticalTransitionRules
+            horizontal_transitions = LoadFile.HorizontalTransitionRules
 
-        self.SysLoaded = True
+            self.SysLoaded = True
 
-        # Establish the current system we're working with
-        currentSystem = System(temp, states, inital_states, seed_assembly, seed_states, vertical_affinities,
-                               horizontal_affinities, vertical_transitions, horizontal_transitions)
-        print("\nSystem Dictionaries:")
-        print("Vertical Affinities:")
-        currentSystem.displayVerticalAffinityDict()
-        print("Horizontal Affinities:")
-        currentSystem.displayHorizontalAffinityDict()
-        print("Vertical Transitions:")
-        currentSystem.displayVerticalTransitionDict()
-        print("Horizontal Transitions:")
-        currentSystem.displayHorizontalTransitionDict()
+            # Establish the current system we're working with
+            currentSystem = System(temp, states, inital_states, seed_assembly, seed_states, vertical_affinities,
+                                   horizontal_affinities, vertical_transitions, horizontal_transitions)
+            print("\nSystem Dictionaries:")
+            print("Vertical Affinities:")
+            currentSystem.displayVerticalAffinityDict()
+            print("Horizontal Affinities:")
+            currentSystem.displayHorizontalAffinityDict()
+            print("Vertical Transitions:")
+            currentSystem.displayVerticalTransitionDict()
+            print("Horizontal Transitions:")
+            currentSystem.displayHorizontalTransitionDict()
 
-        self.time = 0
-        self.Engine = Engine(currentSystem)
-        #a = Assembly()
-        #t = Tile(currentSystem.returnSeedStates(), 0, 0)
-        #a.tiles.append(t)
-        #currentAssemblyHistory.append(a)
-        #Assembler_Proto.Main()
-        self.draw_tiles(self.Engine.getCurrentAssembly())
+            self.time = 0
+            self.Engine = Engine(currentSystem)
+            #a = Assembly()
+            #t = Tile(currentSystem.returnSeedStates(), 0, 0)
+            #a.tiles.append(t)
+            #currentAssemblyHistory.append(a)
+            #Assembler_Proto.Main()
+            self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def Click_SaveFile(self):
         # Creating a System object from data read.
