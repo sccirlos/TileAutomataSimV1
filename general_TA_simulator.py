@@ -46,6 +46,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         #self.label = QtWidgets.QLabel()
         self.time = 0
         self.Engine = None
+        self.SysLoaded = False
         self.play = True
         canvas = QtGui.QPixmap(1000, 600)
         canvas.fill(Qt.white)
@@ -123,6 +124,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
     def Click_FileSearch(self, id):
         self.stop_sequence()
+        self.SysLoaded = False
         file = QFileDialog.getOpenFileName(self, "Select XML Document", "", "XML Files (*.xml)")
         # Simulator must clear all of LoadFile's global variables when the user attempts to load something.
         LoadFile.HorizontalAffinityRules.clear()
@@ -157,6 +159,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         horizontal_affinities = LoadFile.HorizontalAffinityRules
         vertical_transitions = LoadFile.VerticalTransitionRules
         horizontal_transitions = LoadFile.HorizontalTransitionRules
+
+        self.SysLoaded = True
 
         # Establish the current system we're working with
         currentSystem = System(temp, states, inital_states, seed_assembly, seed_states, vertical_affinities,
@@ -202,53 +206,58 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         
 
     def first_step(self):
-        self.stop_sequence()
-        self.Engine.first()
-        self.time = 0
-        #print(self.Engine.currentIndex)
-        self.draw_tiles(self.Engine.getCurrentAssembly())
+        if self.SysLoaded == True:
+            self.stop_sequence()
+            self.Engine.first()
+            self.time = 0
+            #print(self.Engine.currentIndex)
+            self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def prev_step(self):
         self.stop_sequence()
-        if self.Engine.currentIndex > 0:
-            self.Engine.back()
-            self.time = self.time - (self.Engine.timeTaken()) #Might need to go below
-            self.draw_tiles(self.Engine.getCurrentAssembly())
+        if self.SysLoaded == True:
+            if self.Engine.currentIndex > 0:
+                self.Engine.back()
+                self.time = self.time - (self.Engine.timeTaken()) #Might need to go below
+                self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def next_step(self):
         self.stop_sequence()
-        if self.Engine.step() != -1:
-            self.time = self.time + (self.Engine.timeTaken()) #Might need to go above
-            self.draw_tiles(self.Engine.getCurrentAssembly())
+        if self.SysLoaded == True:
+            if self.Engine.step() != -1:
+                self.time = self.time + (self.Engine.timeTaken()) #Might need to go above
+                self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def last_step(self):
         self.stop_sequence()
-        while (self.Engine.build() != -1):
-            self.time = self.time + (self.Engine.timeTaken()) 
+        if self.SysLoaded == True:
+            while (self.Engine.build() != -1):
+                self.time = self.time + (self.Engine.timeTaken()) 
 
-        self.draw_tiles(self.Engine.getCurrentAssembly())
+            self.draw_tiles(self.Engine.getCurrentAssembly())
        
 
     def play_sequence(self):
-        self.play = True
-        while((self.Engine.build() != -1) and self.play == True):
-            print(self.Engine.currentIndex)
-            self.time = self.time + (self.Engine.timeTaken())
+        if self.SysLoaded == True:
+            self.play = True
+            while((self.Engine.build() != -1) and self.play == True):
+                print(self.Engine.currentIndex)
+                self.time = self.time + (self.Engine.timeTaken())
             
             
-            loop = QtCore.QEventLoop()
-            if self.Engine.currentIndex != 0:
-                QtCore.QTimer.singleShot(int(1000 * self.Engine.timeTaken()), loop.quit)
-            else:
-                QtCore.QTimer.singleShot(1000, loop.quit)
-            loop.exec_()
+                loop = QtCore.QEventLoop()
+                if self.Engine.currentIndex != 0:
+                    QtCore.QTimer.singleShot(int(1000 * self.Engine.timeTaken()), loop.quit)
+                else:
+                    QtCore.QTimer.singleShot(1000, loop.quit)
+                loop.exec_()
 
-            self.draw_tiles(self.Engine.getCurrentAssembly())
-            #if self.Engine.currentIndex != 0: #and self.Engine.currentIndex < self.Engine.lastIndex:
+                self.draw_tiles(self.Engine.getCurrentAssembly())
+                #if self.Engine.currentIndex != 0: #and self.Engine.currentIndex < self.Engine.lastIndex:
             
 
-        #self.step = len(self.Engine.assemblyList) - 1 #this line is here to prevent a crash that happens if you click last after play finishes
-        self.stop_sequence()
+            #self.step = len(self.Engine.assemblyList) - 1 #this line is here to prevent a crash that happens if you click last after play finishes
+            self.stop_sequence()
 
     def stop_sequence(self):
         self.play = False
