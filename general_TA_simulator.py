@@ -210,6 +210,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         currentSystem = System(temp, states, inital_states, seed_assembly, seed_states, vertical_affinities,
                                horizontal_affinities, vertical_transitions, horizontal_transitions)
 
+        fileName = QFileDialog.getSaveFileName(self, "QFileDialog.getSaveFileName()","","XML Files (*.xml)")
+               
+
         SaveFile.main(currentSystem)
 
     # self.draw_tiles(LoadFile.) #starting assembly goes here
