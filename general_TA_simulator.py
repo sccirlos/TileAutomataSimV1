@@ -92,29 +92,34 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         brush.setStyle(Qt.SolidPattern)
 
         pen.setColor(QtGui.QColor("white"))
-        brush.setColor(QtGui.QColor("white")) 
+        brush.setColor(QtGui.QColor("white"))
         painter.setPen(pen)
         painter.setBrush(brush)
-        painter.drawRect(0, 0, 1000, 1000) #this block is drawing a big white rectangle across the screen to "clear" it
+        # this block is drawing a big white rectangle across the screen to "clear" it
+        painter.drawRect(0, 0, 1000, 1000)
 
         font.setFamily("Times")
         font.setBold(True)
         painter.setFont(font)
-        for tile in assembly.tiles: 
-            #print(tile[0].color)
+        for tile in assembly.tiles:
+            # print(tile[0].color)
             pen.setColor(QtGui.QColor("black"))
             brush.setColor(QtGui.QColor("#" + tile.get_color()))
 
             painter.setPen(pen)
             painter.setBrush(brush)
-            painter.drawRect((tile.x * self.tileSize) + self.seedX, (tile.y * -self.tileSize) + self.seedY, self.tileSize, self.tileSize)
-            painter.drawText((tile.x * self.tileSize) + self.textX, (tile.y * -self.tileSize) + self.textY, tile.state.label)
+            painter.drawRect((tile.x * self.tileSize) + self.seedX, (tile.y * -
+                             self.tileSize) + self.seedY, self.tileSize, self.tileSize)
+            painter.drawText((tile.x * self.tileSize) + self.textX,
+                             (tile.y * -self.tileSize) + self.textY, tile.state.label)
 
         painter.end()
 
         if self.Engine.currentIndex != 0:
-            self.label_2.setText("Time elapsed: " + str(self.time) + " seconds")
-            self.label_3.setText("Current step time: " + str(self.Engine.timeTaken()) + " seconds")
+            self.label_2.setText("Time elapsed: " +
+                                 str(self.time) + " seconds")
+            self.label_3.setText("Current step time: " +
+                                 str(self.Engine.timeTaken()) + " seconds")
         else:
             self.label_2.setText("Time elapsed: 0 seconds")
             self.label_3.setText("Current step time: 0 seconds")
@@ -128,13 +133,14 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         if(err_flag == False):
             self.step = 0
             self.time = 0
-            #Assembler_Proto.Main()
+            # Assembler_Proto.Main()
             self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
 
     def Click_FileSearch(self, id):
         self.stop_sequence()
         self.SysLoaded = False
-        file = QFileDialog.getOpenFileName(self, "Select XML Document", "", "XML Files (*.xml)")
+        file = QFileDialog.getOpenFileName(
+            self, "Select XML Document", "", "XML Files (*.xml)")
         if file[0] != '':
             # Simulator must clear all of LoadFile's global variables when the user attempts to load something.
             LoadFile.HorizontalAffinityRules.clear()
@@ -148,7 +154,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
             LoadFile.readxml(file[0])
 
-               # Creating global variables
+            # Creating global variables
             global temp
             global states
             global inital_states
@@ -159,7 +165,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             global vertical_transitions
             global horizontal_transitions
 
-             # Creating a System object from data read.
+            # Creating a System object from data read.
             temp = LoadFile.Temp
             states = LoadFile.CompleteStateSet
             inital_states = LoadFile.InitialStateSet
@@ -189,9 +195,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.Engine = Engine(currentSystem)
             #a = Assembly()
             #t = Tile(currentSystem.returnSeedStates(), 0, 0)
-            #a.tiles.append(t)
-            #currentAssemblyHistory.append(a)
-            #Assembler_Proto.Main()
+            # a.tiles.append(t)
+            # currentAssemblyHistory.append(a)
+            # Assembler_Proto.Main()
             self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def Click_SaveFile(self):
@@ -210,20 +216,19 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         currentSystem = System(temp, states, inital_states, seed_assembly, seed_states, vertical_affinities,
                                horizontal_affinities, vertical_transitions, horizontal_transitions)
 
-        fileName = QFileDialog.getSaveFileName(self, "QFileDialog.getSaveFileName()","","XML Files (*.xml)")
-               
+        fileName = QFileDialog.getSaveFileName(
+            self, "QFileDialog.getSaveFileName()", "", "XML Files (*.xml)")
 
-        SaveFile.main(currentSystem)
+        SaveFile.main(currentSystem, fileName)
 
     # self.draw_tiles(LoadFile.) #starting assembly goes here
-        
 
     def first_step(self):
         if self.SysLoaded == True:
             self.stop_sequence()
             self.Engine.first()
             self.time = 0
-            #print(self.Engine.currentIndex)
+            # print(self.Engine.currentIndex)
             self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def prev_step(self):
@@ -231,24 +236,25 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         if self.SysLoaded == True:
             if self.Engine.currentIndex > 0:
                 self.Engine.back()
-                self.time = self.time - (self.Engine.timeTaken()) #Might need to go below
+                # Might need to go below
+                self.time = self.time - (self.Engine.timeTaken())
                 self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def next_step(self):
         self.stop_sequence()
         if self.SysLoaded == True:
             if self.Engine.step() != -1:
-                self.time = self.time + (self.Engine.timeTaken()) #Might need to go above
+                # Might need to go above
+                self.time = self.time + (self.Engine.timeTaken())
                 self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def last_step(self):
         self.stop_sequence()
         if self.SysLoaded == True:
             while (self.Engine.build() != -1):
-                self.time = self.time + (self.Engine.timeTaken()) 
+                self.time = self.time + (self.Engine.timeTaken())
 
             self.draw_tiles(self.Engine.getCurrentAssembly())
-       
 
     def play_sequence(self):
         if self.SysLoaded == True:
@@ -256,20 +262,19 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             while((self.Engine.build() != -1) and self.play == True):
                 print(self.Engine.currentIndex)
                 self.time = self.time + (self.Engine.timeTaken())
-            
-            
+
                 loop = QtCore.QEventLoop()
                 if self.Engine.currentIndex != 0:
-                    QtCore.QTimer.singleShot(int(self.delay * self.Engine.timeTaken()), loop.quit)
+                    QtCore.QTimer.singleShot(
+                        int(self.delay * self.Engine.timeTaken()), loop.quit)
                 else:
                     QtCore.QTimer.singleShot(self.delay, loop.quit)
                 loop.exec_()
 
                 self.draw_tiles(self.Engine.getCurrentAssembly())
-                #if self.Engine.currentIndex != 0: #and self.Engine.currentIndex < self.Engine.lastIndex:
-            
+                # if self.Engine.currentIndex != 0: #and self.Engine.currentIndex < self.Engine.lastIndex:
 
-            #self.step = len(self.Engine.assemblyList) - 1 #this line is here to prevent a crash that happens if you click last after play finishes
+            # self.step = len(self.Engine.assemblyList) - 1 #this line is here to prevent a crash that happens if you click last after play finishes
             self.stop_sequence()
 
     def stop_sequence(self):
@@ -277,11 +282,11 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
 
 if __name__ == "__main__":
-    
-    #App Stuff
+
+    # App Stuff
     app = QApplication(sys.argv)
     w = Ui_MainWindow()
     w.show()
-   
+
     sys.exit(app.exec_())
 #

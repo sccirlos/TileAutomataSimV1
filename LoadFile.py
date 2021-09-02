@@ -27,7 +27,7 @@ def readxml(file):
     tree = ET.parse(file)
     treeroot = tree.getroot()
 
-    # If the system has a single tile for its seed:
+    # If the system is user-generated and has a single tile for its seed:
     if(treeroot.tag == "SingleTile"):
         # Read and record the system's states
         for state_tag in treeroot.findall('StateTypes/State'):
@@ -83,7 +83,7 @@ def readxml(file):
                 HorizontalTransitionRules.append(tempRule)
             else:
                 VerticalTransitionRules.append(tempRule)
-    # Note: Add an elif if the seed is an assembly
+    # Note: Add an elif if the seed is an assembly and/or system-generated
 
     # Checking Temp:
     print("System Temperature: "+Temp)
