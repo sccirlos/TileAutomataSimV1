@@ -9,6 +9,9 @@ class State:
     def returnLabel(self):
         return self.label
 
+    def get_label(self):  # NOTICE: LEAVE THIS HERE FOR THE ASSEMBLER
+        return self.label
+
     def returnColor(self):
         return self.color
 

@@ -32,16 +32,15 @@ def readxml(file):
     Temp = treeroot.get("Temp")
 
     # Record All States
-    for state_tag in treeroot.find("AllStates/State"):
+    for state_tag in treeroot.findall('AllStates/State'):
         label = state_tag.get("Label")
         color = state_tag.get("Color")
-        print("Label: "+label+"; Color: "+color)
 
         tempState = State(label, color)
         CompleteStateSet.append(tempState)
 
     # Record Initial States
-    for state_tag in treeroot.find("InitialStates/State"):
+    for state_tag in treeroot.findall("InitialStates/State"):
         label = state_tag.get("Label")
         color = state_tag.get("Color")
 
@@ -49,7 +48,7 @@ def readxml(file):
         InitialStateSet.append(tempState)
 
     # Record Seed States
-    for state_tag in treeroot.find("SeedStates/State"):
+    for state_tag in treeroot.findall("SeedStates/State"):
         label = state_tag.get("Label")
         color = state_tag.get("Color")
 
@@ -57,47 +56,39 @@ def readxml(file):
         SeedStateSet.append(tempState)
 
     # Record Vertical Transitions
-    if(treeroot.find("VerticalTransitions/Rule") != None):
-        for rule_tag in treeroot.find("VerticalTransitions/Rule"):
-            label1 = rule_tag.get("Label1")
-            label2 = rule_tag.get("Label2")
-            label1Final = rule_tag.get("Label1Final")
-            label2Final = rule_tag.get("Label2Final")
+    for rule_tag in treeroot.findall("VerticalTransitions/Rule"):
+        label1 = rule_tag.get("Label1")
+        label2 = rule_tag.get("Label2")
+        label1Final = rule_tag.get("Label1Final")
+        label2Final = rule_tag.get("Label2Final")
 
-            tempRule = TransitionRule(label1, label2, label1Final, label2Final)
-            VerticalTransitionRules.append(tempRule)
+        tempRule = TransitionRule(label1, label2, label1Final, label2Final)
+        VerticalTransitionRules.append(tempRule)
 
     # Record Horizontal Transitions
-    if(treeroot.find("HorizontalTransitions/Rule") != None):
-        for rule_tag in treeroot.find("HorizontalTransitions/Rule"):
-            label1 = rule_tag.get("Label1")
-            label2 = rule_tag.get("Label2")
-            label1Final = rule_tag("Label1Final")
-            label2Final = rule_tag("Label2Final")
+    for rule_tag in treeroot.findall("HorizontalTransitions/Rule"):
+        label1 = rule_tag.get("Label1")
+        label2 = rule_tag.get("Label2")
+        label1Final = rule_tag.get("Label1Final")
+        label2Final = rule_tag.get("Label2Final")
 
-            tempRule = TransitionRule(label1, label2, label1Final, label2Final)
-            HorizontalTransitionRules.append(tempRule)
+        tempRule = TransitionRule(label1, label2, label1Final, label2Final)
+        HorizontalTransitionRules.append(tempRule)
 
     # Record Vertical Affinities
-    if(treeroot.find("VerticalAffinities/Rule") != None):
-        for rule_tag in treeroot.find("Vertical Affinities/Rule"):
-            label1 = rule_tag.get("Label1")
-            label2 = rule_tag.get("Label2")
-            strength = rule_tag.get("Strength")
+    for rule_tag in treeroot.findall("Vertical Affinities/Rule"):
+        label1 = rule_tag.get("Label1")
+        label2 = rule_tag.get("Label2")
+        strength = rule_tag.get("Strength")
 
-            tempRule = AffinityRule(label1, label2, strength)
-            VerticalAffinityRules.append(tempRule)
+        tempRule = AffinityRule(label1, label2, strength)
+        VerticalAffinityRules.append(tempRule)
 
     # Record Horizontal Affinities
-    if(treeroot.find("HorizontalAffinities/Rule") != None):
-        for rule_tag in treeroot.find("HorizontalAffinities/Rule"):
-            label1 = rule_tag.get("Label1")
-            label2 = rule_tag.get("Label2")
-            strength = rule_tag.get("Strength")
+    for rule_tag in treeroot.findall("HorizontalAffinities/Rule"):
+        label1 = rule_tag.get("Label1")
+        label2 = rule_tag.get("Label2")
+        strength = rule_tag.get("Strength")
 
-            tempRule = AffinityRule(label1, label2, strength)
-            HorizontalAffinityRules.append(tempRule)
-
-    print(CompleteStateSet)
-    print(InitialStateSet)
-    print(SeedStateSet)
+        tempRule = AffinityRule(label1, label2, strength)
+        HorizontalAffinityRules.append(tempRule)

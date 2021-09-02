@@ -191,14 +191,14 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             print("Horizontal Transitions:")
             currentSystem.displayHorizontalTransitionDict()
 
-            #UNCOMMENT: self.time = 0
-            #UNCOMMENT: self.Engine = Engine(currentSystem)
+            self.time = 0
+            self.Engine = Engine(currentSystem)
             #a = Assembly()
             #t = Tile(currentSystem.returnSeedStates(), 0, 0)
             # a.tiles.append(t)
             # currentAssemblyHistory.append(a)
             # Assembler_Proto.Main()
-            #UNCOMMENT: self.draw_tiles(self.Engine.getCurrentAssembly())
+            self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def Click_SaveFile(self):
         # Creating a System object from data read.
