@@ -179,7 +179,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.SysLoaded = True
 
             # Establish the current system we're working with
-            currentSystem = System(temp, states, inital_states, seed_assembly, seed_states, vertical_affinities,
+            currentSystem = System(temp, states, inital_states, seed_states, vertical_affinities,
                                    horizontal_affinities, vertical_transitions, horizontal_transitions)
             print("\nSystem Dictionaries:")
             print("Vertical Affinities:")
@@ -191,14 +191,14 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             print("Horizontal Transitions:")
             currentSystem.displayHorizontalTransitionDict()
 
-            self.time = 0
-            self.Engine = Engine(currentSystem)
+            #UNCOMMENT: self.time = 0
+            #UNCOMMENT: self.Engine = Engine(currentSystem)
             #a = Assembly()
             #t = Tile(currentSystem.returnSeedStates(), 0, 0)
             # a.tiles.append(t)
             # currentAssemblyHistory.append(a)
             # Assembler_Proto.Main()
-            self.draw_tiles(self.Engine.getCurrentAssembly())
+            #UNCOMMENT: self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def Click_SaveFile(self):
         # Creating a System object from data read.

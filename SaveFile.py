@@ -116,4 +116,4 @@ def main(system, fileName):
 
     tree = ET.ElementTree(root)
     with open(fileName[0], "wb") as file:
-        tree.write(file)
+        tree.write(file, encoding='utf-8', xml_declaration=True)
