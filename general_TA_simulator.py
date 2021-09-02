@@ -45,6 +45,15 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         #self.label = QtWidgets.QLabel()
         self.time = 0
+        self.delay = 0
+        self.seedX = 25
+        self.seedY = 500
+
+        self.textX = self.seedX + 10
+        self.textY = self.seedY + 25
+
+        self.tileSize = 40
+
         self.Engine = None
         self.SysLoaded = False
         self.play = True
@@ -98,8 +107,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
             painter.setPen(pen)
             painter.setBrush(brush)
-            painter.drawRect((tile.x * 40) + 200, (tile.y * -40) + 500, 40, 40)
-            painter.drawText((tile.x * 40) + 210, (tile.y * -40) + 525, tile.state.label)
+            painter.drawRect((tile.x * self.tileSize) + self.seedX, (tile.y * -self.tileSize) + self.seedY, self.tileSize, self.tileSize)
+            painter.drawText((tile.x * self.tileSize) + self.textX, (tile.y * -self.tileSize) + self.textY, tile.state.label)
 
         painter.end()
 
@@ -248,9 +257,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             
                 loop = QtCore.QEventLoop()
                 if self.Engine.currentIndex != 0:
-                    QtCore.QTimer.singleShot(int(1000 * self.Engine.timeTaken()), loop.quit)
+                    QtCore.QTimer.singleShot(int(self.delay * self.Engine.timeTaken()), loop.quit)
                 else:
-                    QtCore.QTimer.singleShot(1000, loop.quit)
+                    QtCore.QTimer.singleShot(self.delay, loop.quit)
                 loop.exec_()
 
                 self.draw_tiles(self.Engine.getCurrentAssembly())
