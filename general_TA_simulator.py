@@ -147,7 +147,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             LoadFile.VerticalAffinityRules.clear()
             LoadFile.HorizontalTransitionRules.clear()
             LoadFile.VerticalTransitionRules.clear()
-            LoadFile.SeedAssembly.clear()
             LoadFile.SeedStateSet.clear()
             LoadFile.InitialStateSet.clear()
             LoadFile.CompleteStateSet.clear()
@@ -169,7 +168,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             temp = LoadFile.Temp
             states = LoadFile.CompleteStateSet
             inital_states = LoadFile.InitialStateSet
-            seed_assembly = LoadFile.SeedAssembly
             seed_states = LoadFile.SeedStateSet
             vertical_affinities = LoadFile.VerticalAffinityRules
             horizontal_affinities = LoadFile.HorizontalAffinityRules
@@ -179,7 +177,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.SysLoaded = True
 
             # Establish the current system we're working with
-            currentSystem = System(temp, states, inital_states, seed_assembly, seed_states, vertical_affinities,
+            currentSystem = System(temp, states, inital_states, seed_states, vertical_affinities,
                                    horizontal_affinities, vertical_transitions, horizontal_transitions)
             print("\nSystem Dictionaries:")
             print("Vertical Affinities:")
@@ -202,24 +200,25 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
     def Click_SaveFile(self):
         # Creating a System object from data read.
-        temp = LoadFile.Temp
-        states = LoadFile.CompleteStateSet
-        inital_states = LoadFile.InitialStateSet
-        seed_assembly = LoadFile.SeedAssembly
-        seed_states = LoadFile.SeedStateSet
-        vertical_affinities = LoadFile.VerticalAffinityRules
-        horizontal_affinities = LoadFile.HorizontalAffinityRules
-        vertical_transitions = LoadFile.VerticalTransitionRules
-        horizontal_transitions = LoadFile.HorizontalTransitionRules
+        if(self.SysLoaded == True):
+            temp = LoadFile.Temp
+            states = LoadFile.CompleteStateSet
+            inital_states = LoadFile.InitialStateSet
+            seed_states = LoadFile.SeedStateSet
+            vertical_affinities = LoadFile.VerticalAffinityRules
+            horizontal_affinities = LoadFile.HorizontalAffinityRules
+            vertical_transitions = LoadFile.VerticalTransitionRules
+            horizontal_transitions = LoadFile.HorizontalTransitionRules
 
-        # Establish the current system we're working with
-        currentSystem = System(temp, states, inital_states, seed_assembly, seed_states, vertical_affinities,
-                               horizontal_affinities, vertical_transitions, horizontal_transitions)
+            # Establish the current system we're working with
+            currentSystem = System(temp, states, inital_states, seed_states, vertical_affinities,
+                                   horizontal_affinities, vertical_transitions, horizontal_transitions)
 
-        fileName = QFileDialog.getSaveFileName(
-            self, "QFileDialog.getSaveFileName()", "", "XML Files (*.xml)")
+            fileName = QFileDialog.getSaveFileName(
+                self, "QFileDialog.getSaveFileName()", "", "XML Files (*.xml)")
 
-        SaveFile.main(currentSystem, fileName)
+            if(fileName[0] != ''):
+                SaveFile.main(currentSystem, fileName)
 
     # self.draw_tiles(LoadFile.) #starting assembly goes here
 
