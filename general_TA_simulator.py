@@ -217,9 +217,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             fileName = QFileDialog.getSaveFileName(
                 self, "QFileDialog.getSaveFileName()", "", "XML Files (*.xml)")
 
-            if(fileName == ''):
-                fileName = "Default.xml"
-            SaveFile.main(currentSystem, fileName)
+            if(fileName[0] != ''):
+                SaveFile.main(currentSystem, fileName)
 
     # self.draw_tiles(LoadFile.) #starting assembly goes here
 
