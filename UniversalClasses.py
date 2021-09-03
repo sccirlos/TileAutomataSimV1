@@ -527,9 +527,5 @@ class System:
             self.vertical_affinities_list.append(a)
             self.vertical_affinities_dict[(label1, label2)] = stren
         else:
-<<<<<<< HEAD
             self.horizontal_affinities_list.append(a)
             self.horizontal_affinities_dict[(label1, label2)] = stren
-=======
-            self.horizontal_affinities.append(a)
->>>>>>> 62e05c19bbbac7f006530bec3af531a88e16e451
