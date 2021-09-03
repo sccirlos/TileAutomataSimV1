@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The system starts with a single tile. -->
+<SingleTile>
+    <!-- List of states the system works with. -->
+    <StateTypes>
+        <!-- State's label -->
+        <State Label="SA">
+            <color>323031</color> <!-- State's color -->
+            <initial>true</initial> <!-- Is this state an initial state? AKA. Is this state floating around looking for something to attach to? -->
+            <seed>true</seed> <!-- Can this state be placed as the seed? AKA. Can this state be used on the 1st move? -->
+        </State>
+        <State Label="SB">
+            <color>323031</color>
+            <initial>true</initial>
+            <seed>false</seed>
+        </State>
+        <State Label="0a">
+            <color>f03a47</color>
+            <initial>true</initial>
+            <seed>false</seed>
+        </State>
+        <State Label="1a">
+            <color>f03a47</color> 
+            <initial>true</initial> 
+            <seed>false</seed> 
+        </State>
+        <State Label="2a">
+            <color>f03a47</color>
+            <initial>true</initial>
+            <seed>false</seed>
+        </State>
+        <State Label="0A">
+            <color>f03a47</color>
+            <initial>false</initial>
+            <seed>false</seed>
+        </State>
+        <State Label="1A">
+            <color>f03a47</color> 
+            <initial>false</initial> 
+            <seed>false</seed> 
+        </State>
+        <State Label="2A">
+            <color>f03a47</color>
+            <initial>false</initial>
+            <seed>false</seed>
+        </State>
+        <State Label="0A'">
+            <color>f03a47</color>
+            <initial>false</initial>
+            <seed>false</seed>
+        </State>
+        <State Label="1A'">
+            <color>f03a47</color> 
+            <initial>false</initial> 
+            <seed>false</seed> 
+        </State>
+        <State Label="0B">
+            <color>3f88c5</color>
+            <initial>true</initial>
+            <seed>false</seed>
+        </State>
+        <State Label="A">
+            <color>f03a47</color>
+            <initial>false</initial>
+            <seed>false</seed>
+        </State>
+        <State Label="A'">
+            <color>f03a47</color>
+            <initial>false</initial>
+            <seed>false</seed>
+        </State>
+        <State Label="1B">
+            <color>3f88c5</color>
+            <initial>true</initial>
+            <seed>false</seed>
+        </State>
+        <State Label="2B">
+            <color>3f88c5</color>
+            <initial>true</initial>
+            <seed>false</seed>
+        </State>
+        <State Label="2B'">
+            <color>3f88c5</color>
+            <initial>false</initial>
+            <seed>false</seed>
+        </State>
+        <State Label="1">
+            <color>0ead69</color>
+            <initial>false</initial>
+            <seed>false</seed>
+        </State>
+        <State Label="0">
+            <color>f39237</color>
+            <initial>false</initial>
+            <seed>false</seed>
+        </State>
+    </StateTypes>
+    <!-- System Rules = Affinity Rules + Transition Rules -->
+    <System Temp="1">
+        <AffinityRules>
+            <!-- Affinity Format: Label1 = The left/top label; Label2 = The right/bottom label; Dir = h if it's a horizontal affinity, or v if it's a vertical affinity; Strength = The affinity's strength. -->
+            <Rule Label1="SA" Label2="SB" Dir="h" Strength="1"></Rule>
+            <Rule Label1="0a" Label2="SA" Dir="v" Strength="1"></Rule>
+            <Rule Label1="1a" Label2="0a" Dir="v" Strength="1"></Rule>
+            <Rule Label1="2a" Label2="1a" Dir="v" Strength="1"></Rule>
+            <Rule Label1="0B" Label2="SB" Dir="v" Strength="1"></Rule>
+            <Rule Label1="1B" Label2="0B" Dir="v" Strength="1"></Rule>
+            <Rule Label1="2B" Label2="1B" Dir="v" Strength="1"></Rule>
+            <Rule Label1="0a" Label2="0A'" Dir="v" Strength="1"></Rule> 
+            <Rule Label1="0a" Label2="1A'" Dir="v" Strength="1"></Rule>
+            <Rule Label1="0B" Label2="2B'" Dir="v" Strength="1"></Rule>             
+        </AffinityRules>
+        <TransitionRules>
+            <!-- Transition Format: Label1 = The left's/top's starting label; Label2 = The right's/bottom's starting label.-->
+            <!-- Label1Final = The left's/top's final state; Label2Final = The right's/bottom's final state; Dir = h if it's a vertical transition, or v if it's a vertical transition. -->
+            <Rule Label1="2a" Label2="2B" Label1Final="A'" Label2Final="2B" Dir="h"></Rule>
+            <Rule Label1="A'" Label2="1a" Label1Final="A'" Label2Final="A" Dir="v"></Rule>
+            <Rule Label1="A" Label2="0a" Label1Final="A" Label2Final="A" Dir="v"></Rule>
+            <Rule Label1="A" Label2="SA" Label1Final="0A" Label2Final="SA" Dir="v"></Rule>
+            <Rule Label1="A" Label2="0A'" Label1Final="1A" Label2Final="0A'" Dir="v"></Rule>
+            <Rule Label1="A" Label2="1A'" Label1Final="2A" Label2Final="1A'" Dir="v"></Rule>
+            <Rule Label1="A" Label2="0A" Label1Final="0A" Label2Final="0A" Dir="v"></Rule>
+            <Rule Label1="A" Label2="1A" Label1Final="1A" Label2Final="1A" Dir="v"></Rule>
+            <Rule Label1="A" Label2="2A" Label1Final="2A" Label2Final="2A" Dir="v"></Rule>
+            <Rule Label1="A'" Label2="0A" Label1Final="0A'" Label2Final="0A" Dir="v"></Rule>
+            <Rule Label1="A'" Label2="1A" Label1Final="1A'" Label2Final="1A" Dir="v"></Rule>
+            <Rule Label1="A'" Label2="2A" Label1Final="2A" Label2Final="2A" Dir="v"></Rule>
+            <Rule Label1="0A'" Label2="2B" Label1Final="0A'" Label2Final="2B'" Dir="h"></Rule>
+            <Rule Label1="1A'" Label2="2B" Label1Final="1A'" Label2Final="2B'" Dir="h"></Rule>
+        </TransitionRules>
+    </System>
+</SingleTile>

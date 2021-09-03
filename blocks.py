@@ -2,10 +2,10 @@ import tkinter as tk
 
 class Tile:
     state_type = None
-    tile_num = 0     
+    tile_num = None     
         
-    def __init__(self, type):
-      self.state_type = type
+    def __init__(self, t):
+      self.state_type = t
             
 class SeedTile(Tile):
     
@@ -15,15 +15,15 @@ class SeedTile(Tile):
 
 class ReseedTile(Tile):
     def __init__(self, st, num, stop):
-        self.tile_num = num
-        self.state_type = st
+        super().__init__(st)
+        self.reseed_num = num
         self.stop_num = stop        
         
 class NumberedTile(Tile):
       state_number = None
       
-      def __init__(self, type, num):
-        self.state_type = type
+      def __init__(self, st, num):
+        super().__init__(st)  
         self.state_number = num
 
        
@@ -118,7 +118,7 @@ def main():
         print("Length: ", len(a.tiles) - 1)
         display_assembly(a)        
     print("Length: ", quit_num)
-    #print("Bit Length: ", quit_num.bit_length())
+    print("Bit Length: ", quit_num.bit_length())
     print("Total number of states: ", quit_num.bit_length()*2 + 1)
     
 main()    

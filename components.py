@@ -8,9 +8,13 @@ def increment_string(stri):
             num = num+ stri[i]
         else:
             strings += stri[i]
-    inc = int(num) + 1
-    fin = strings + str(inc)
-    return fin
+    if(num.isEmpty()):
+       strings += "1"
+       return strings
+    else:            
+        inc = int(num) + 1
+        fin = strings + str(inc)
+        return fin
 
 def make_prime(stri):
     strings = ""
