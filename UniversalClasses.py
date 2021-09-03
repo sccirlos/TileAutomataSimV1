@@ -9,21 +9,23 @@ class State:
     def returnLabel(self):
         return self.label
 
-    def get_label(self):
+    def get_label(self):  # NOTICE: LEAVE THIS HERE FOR THE ASSEMBLER
         return self.label
 
     def returnColor(self):
         return self.color
 
+
 def toCoords(x, y):
     return "(" + str(x) + "," + str(y) + ")"
+
 
 class Tile:
     # label
     # # changes or list of changes (start num)
     # maybe list of affinities pairs (state, direction)
     # boolean can_change
-    
+
     def __init__(self, s, _x, _y):
         self.state = s
         self.x = _x
@@ -48,11 +50,12 @@ class Tile:
     def get_color(self):
         return self.state.returnColor()
 
+
 class Assembly:
     def __init__(self):
         self.label = ""
-        self.tiles = [] #tuple of (label, x, y)
-        self.coords = {} #mapping of strings (x, y) to tiles
+        self.tiles = []  # tuple of (label, x, y)
+        self.coords = {}  # mapping of strings (x, y) to tiles
         self.leftMost = 0
         self.rightMost = 0
         self.upMost = 0
@@ -60,9 +63,10 @@ class Assembly:
 
     def get_label(self):
         return self.label
+
     def set_label(self, l):
         self.label = l
-            
+
     def get_tiles(self):
         return self.tiles
 
@@ -70,7 +74,7 @@ class Assembly:
         for tileI in t:
             tile = Tile(tileI.state, tileI.x, tileI.y)
             self.tiles.append(tile)
-            self.coords["(" + str(tile.x) + "," + str(tile.y) + ")" ] = tile
+            self.coords["(" + str(tile.x) + "," + str(tile.y) + ")"] = tile
             # update boundaries
             if(tile.y > self.upMost):
                 self.upMost = tile.y
@@ -81,22 +85,21 @@ class Assembly:
             if(tile.x < self.leftMost):
                 self.leftMost = tile.x
 
-
     # Sonya on attachments
-    def get_attachments(self, sy): #takes in a system
+    def get_attachments(self, sy):  # takes in a system
         attachments_list = []
         # sys_attachments = sy.get_initial_states()
         # sys_v_transition_rules = sy.get_vertical_transition_rules
-        
+
         v_rules = sy.returnVerticalAffinityDict()
         h_rules = sy.returnHorizontalAffinityDict()
-        
+
         for iX in range(self.leftMost - 1, self.rightMost + 2):
             for iY in range(self.downMost - 1, self.upMost + 2):
 
-
                 # Check if position is empty
-                if self.coords.get(toCoords(iX, iY)) != None: continue
+                if self.coords.get(toCoords(iX, iY)) != None:
+                    continue
                 print("Testing ", iX, ", ", iY)
 
                 # Get each neighbor
@@ -105,26 +108,33 @@ class Assembly:
                 neighborE = self.coords.get(toCoords(iX + 1, iY))
                 neighborW = self.coords.get(toCoords(iX - 1, iY))
 
-
                 # Calcuate the str of each tile attaching at this position
                 for iTile in sy.returnInitialStates():
                     attStr = 0
-                    
+
                     if(neighborN != None):
-                        stren = v_rules.get((neighborN.get_label(), iTile.get_label()))
-                        if(stren != None): attStr += int(stren)
+                        stren = v_rules.get(
+                            (neighborN.get_label(), iTile.get_label()))
+                        if(stren != None):
+                            attStr += int(stren)
                     if(neighborS != None):
-                        stren = v_rules.get((iTile.get_label(), neighborS.get_label()))
-                        if(stren != None): attStr += int(stren)
+                        stren = v_rules.get(
+                            (iTile.get_label(), neighborS.get_label()))
+                        if(stren != None):
+                            attStr += int(stren)
                     if(neighborE != None):
-                        stren = h_rules.get((iTile.get_label(), neighborE.get_label()))
-                        if(stren != None): attStr += int(stren)
-                    #else:
+                        stren = h_rules.get(
+                            (iTile.get_label(), neighborE.get_label()))
+                        if(stren != None):
+                            attStr += int(stren)
+                    # else:
                     #    print("East of "+ str(iX) + " : " + str(iY) + " is empty")
                     if(neighborW != None):
-                        stren = h_rules.get((neighborW.get_label(), iTile.get_label()))
-                        if(stren != None): attStr += int(stren)
-                    #else:
+                        stren = h_rules.get(
+                            (neighborW.get_label(), iTile.get_label()))
+                        if(stren != None):
+                            attStr += int(stren)
+                    # else:
                     #    print("West of "+ str(iX) + " : " + str(iY) + " is empty")
 
                     #print(iTile.get_label(), ": ", attStr)
@@ -139,26 +149,26 @@ class Assembly:
 
             #ttc = (i-1, i)
             #ttl = (t1, t2)
-            #print(ttl)
-            #if ttl in sys_attachments:
+            # print(ttl)
+            # if ttl in sys_attachments:
                 #attachments_list.append((ttc, ttl, sys_attachments[ttl]))
         print(len(attachments_list), " Attachments")
 
-        return attachments_list     
-                                    # ORIGINAL tuple of ((coord pair), (current labels), (transition labels))
-    def set_attachments(self, att): # tuple of ((type: ), (x: ), (y: ), (state1: ))
+        return attachments_list
+        # ORIGINAL tuple of ((coord pair), (current labels), (transition labels))
+
+    def set_attachments(self, att):  # tuple of ((type: ), (x: ), (y: ), (state1: ))
         a = Assembly()
-        #a.label = self.label + "A " + att["state1"] 
+        #a.label = self.label + "A " + att["state1"]
         a.set_tiles(self.tiles.copy())
         #change = trans[0][0]
        # print(a.tiles[change][0])
-        #print(trans[2][1])
+        # print(trans[2][1])
        # print(trans[0])
         #a.tiles[change] = trans[2][1]
         print("attaching at " + str(att["x"]) + " : " + str(att["y"]))
         print("New Assembly Tiles: ", a.tiles)
 
-        
         att_tile = Tile(att["state1"], att["x"], att["y"])
         a.tiles.append(att_tile)
         a.coords[toCoords(att["x"], att["y"])] = att_tile
@@ -182,18 +192,18 @@ class Assembly:
             a.leftMost = self.leftMost
 
         return a
-    
-    #Elise on transitions    
-    def get_transitions(self, sy): #takes in a system
-            #t1 = (self.tiles[i-1][0])
-            #t2 = (self.tiles[i][0])
-            #ttc = (i-1, i)
-            #ttl = (t1, t2)
-            
-            #print(ttl)
-            #if ttl in sys_h_tr:
-                #transitions_list.append((ttc, ttl, sys_h_transition_rules[ttl]))
-        
+
+    # Elise on transitions
+    def get_transitions(self, sy):  # takes in a system
+        #t1 = (self.tiles[i-1][0])
+        #t2 = (self.tiles[i][0])
+        #ttc = (i-1, i)
+        #ttl = (t1, t2)
+
+        # print(ttl)
+        # if ttl in sys_h_tr:
+        #transitions_list.append((ttc, ttl, sys_h_transition_rules[ttl]))
+
         transitions_list = []
         sys_h_tr = sy.returnHorizontalTransitionDict()
         sys_v_tr = sy.returnVerticalTransitionDict()
@@ -203,11 +213,10 @@ class Assembly:
         # Check each tile in the assembly
         for iTile in self.tiles:
            # print(sys_h_tiles[iTile.get_label()])
-            #if isinstance(sys_h_tiles[iTile.get_label()], tuple):
+            # if isinstance(sys_h_tiles[iTile.get_label()], tuple):
 
             iHTranRules = None
             iVTranRules = None
-
 
             if sys_h_tiles != None:
                 if sys_h_tiles.get(iTile.get_label()) != None:
@@ -216,7 +225,7 @@ class Assembly:
                     for tiles in sys_h_tiles[iTile.get_label()]:
                         iHTranRules = sys_h_tr[tiles]
 
-            #if isinstance(sys_v_tiles[iTile.get_label()], tuple):
+            # if isinstance(sys_v_tiles[iTile.get_label()], tuple):
             if sys_v_tiles != None:
                 if sys_v_tiles.get(iTile.get_label()):
                     iVTranRules = sys_v_tr[sys_v_tiles[iTile.get_label()]]
@@ -231,8 +240,9 @@ class Assembly:
             if(neighborS != None):
                 # second dictionary
                 # rules = iVTranRules.get(neighborS.get_label())
-                rules = sys_v_tr.get((iTile.get_label(), neighborS.get_label()))
-                #rules.append(iVTranRules)
+                rules = sys_v_tr.get(
+                    (iTile.get_label(), neighborS.get_label()))
+                # rules.append(iVTranRules)
                 if rules != None:
                     move = {"type": "t"}
                     move["x"] = iTile.x
@@ -242,18 +252,21 @@ class Assembly:
                     move["state2"] = neighborS.get_state()
 
                     # a pair of states may have mutliple rules
-         
-                        #class is in universal classes
-                    move["state1Final"] = sy.get_state(rules[0]) #.returnLabel1Final() 
-                    move["state2Final"] = sy.get_state(rules[1]) #.returnLabel2Final() 
+
+                    # class is in universal classes
+                    move["state1Final"] = sy.get_state(
+                        rules[0])  # .returnLabel1Final()
+                    move["state2Final"] = sy.get_state(
+                        rules[1])  # .returnLabel2Final()
                     transitions_list.append(move)
 
             if(neighborE != None):
                 #rules = iHTranRules[neighborE.get_label()]
-                rules = sys_h_tr.get((iTile.get_label(), neighborE.get_label()))
+                rules = sys_h_tr.get(
+                    (iTile.get_label(), neighborE.get_label()))
                 print(sys_h_tr)
-                #rules.append(iHTranRules)
-                
+                # rules.append(iHTranRules)
+
                 if rules != None:
                     print(iTile.get_label() + " : " + str(len(rules)))
                     move = {"type": "t"}
@@ -263,27 +276,36 @@ class Assembly:
                     move["state1"] = iTile.get_state()
                     move["state2"] = neighborE.get_state()
 
-                    move["state1Final"] = sy.get_state(rules[0]) #.returnLabel1Final() 
-                    move["state2Final"] = sy.get_state(rules[1]) #.returnLabel2Final() 
+                    move["state1Final"] = sy.get_state(
+                        rules[0])  # .returnLabel1Final()
+                    move["state2Final"] = sy.get_state(
+                        rules[1])  # .returnLabel2Final()
                     transitions_list.append(move)
 
-        return transitions_list      
-                                     # ORIGINAL ((type: ), (current labels), (transition labels))
-    def set_transition(self, trans): # tuple of {'type': 't', 'x': 0, 'y': 0, 'state1': 'S', 'state2': 'A', 'state1Final': 'S', 'state2Final': 'A'}
+        return transitions_list
+        # ORIGINAL ((type: ), (current labels), (transition labels))
+
+    # tuple of {'type': 't', 'x': 0, 'y': 0, 'state1': 'S', 'state2': 'A', 'state1Final': 'S', 'state2Final': 'A'}
+    def set_transition(self, trans):
         a = Assembly()
-        a.label = self.label + "T "+ trans["state1Final"].get_label() + trans["state2Final"].get_label() #originally trans[2][0] + trans[2][1]
+        # originally trans[2][0] + trans[2][1]
+        a.label = self.label + "T " + \
+            trans["state1Final"].get_label() + trans["state2Final"].get_label()
         a.set_tiles(self.tiles.copy())
         change = trans["type"]
-        
-        #print(a.tiles[change])
+
+        # print(a.tiles[change])
         print(trans["state2Final"])
         print(trans["type"])
-        a.coords[toCoords(trans["x"], trans["y"])].set_state(trans["state1Final"])
-        #a.tiles[trans["x"]][trans["y"]].setState(trans["state1Final"])
+        a.coords[toCoords(trans["x"], trans["y"])].set_state(
+            trans["state1Final"])
+        # a.tiles[trans["x"]][trans["y"]].setState(trans["state1Final"])
         if(trans["dir"] == "v"):
-            a.coords[toCoords(trans["x"], trans["y"] - 1)].set_state(trans["state2Final"])
+            a.coords[toCoords(trans["x"], trans["y"] - 1)
+                     ].set_state(trans["state2Final"])
         if(trans["dir"] == "h"):
-            a.coords[toCoords(trans["x"] + 1, trans["y"])].set_state(trans["state2Final"])
+            a.coords[toCoords(trans["x"] + 1, trans["y"])
+                     ].set_state(trans["state2Final"])
         print("New Assembly Tiles: ", a.tiles)
         return a
 
@@ -298,9 +320,6 @@ class Assembly:
             return self.set_transition(move)
 
 
-
-
-
 # Not in use right now.
 class SeedAssemblyTile:
     def __init__(self, label, x, y):
@@ -310,10 +329,9 @@ class SeedAssemblyTile:
 
 
 class AffinityRule:
-    def __init__(self, label1, label2, dir, strength):
+    def __init__(self, label1, label2, strength):
         self.label1 = label1  # Left/Upper label
         self.label2 = label2  # Right/Bottom label
-        self.dir = dir  # Horizontal or Vertical
         self.strength = strength  # Bond Strength (as a string)
 
     # Getters
@@ -323,20 +341,16 @@ class AffinityRule:
     def returnLabel2(self):
         return self.label2
 
-    def returnDir(self):
-        return self.dir
-
     def returnStr(self):
         return self.strength
 
 
 class TransitionRule:
-    def __init__(self, label1, label2, label1Final, label2Final, dir):
+    def __init__(self, label1, label2, label1Final, label2Final):
         self.label1 = label1
         self.label2 = label2
         self.label1Final = label1Final
         self.label2Final = label2Final
-        self.dir = dir
 
     # Getters
     def returnLabel1(self):
@@ -351,9 +365,6 @@ class TransitionRule:
     def returnLabel2Final(self):
         return self.label2Final
 
-    def returnDir(self):
-        return self.dir
-
 
 # System is used for the assembler; represents the data in the XML
 class System:
@@ -364,11 +375,10 @@ class System:
     # Temp int
     # Initial List of States
     # Seed Assembly Object
-    def __init__(self, temp, states, initial_states, seed_assembly, seed_states=None, vertical_affinities_list=None, horizontal_affinities_list=None, vertical_transitions_list=None, horizontal_transitions_list=None, tile_vertical_transitions=None, tile_horizontal_transitions=None):
+    def __init__(self, temp, states, initial_states, seed_states=None, vertical_affinities_list=None, horizontal_affinities_list=None, vertical_transitions_list=None, horizontal_transitions_list=None, tile_vertical_transitions=None, tile_horizontal_transitions=None):
         self.temp = temp
         self.states = states
         self.initial_states = initial_states
-        self.seed_assembly = seed_assembly
         self.seed_states = seed_states
 
         # List versions of rules
@@ -381,10 +391,10 @@ class System:
         # Takes 2 tiles [W][E] and returns the transition pair
         self.horizontal_transitions_list = horizontal_transitions_list
 
-        #Takes tile and returns vertical transition pairs
-        self.tile_vertical_transitions = tile_vertical_transitions 
-        #Takes tile and returns horizontal transition pairs
-        self.tile_horizontal_transitions = tile_horizontal_transitions 
+        # Takes tile and returns vertical transition pairs
+        self.tile_vertical_transitions = tile_vertical_transitions
+        # Takes tile and returns horizontal transition pairs
+        self.tile_horizontal_transitions = tile_horizontal_transitions
 
         # Establish dictionaries
         self.vertical_affinities_dict = {}
@@ -421,7 +431,6 @@ class System:
 
             self.horizontal_transitions_dict[label1, label2] = (
                 label1Final, label2Final)
-
 
     def get_state(self, label):
         for state in self.states:
@@ -518,5 +527,9 @@ class System:
             self.vertical_affinities_list.append(a)
             self.vertical_affinities_dict[(label1, label2)] = stren
         else:
+<<<<<<< HEAD
             self.horizontal_affinities_list.append(a)
             self.horizontal_affinities_dict[(label1, label2)] = stren
+=======
+            self.horizontal_affinities.append(a)
+>>>>>>> 62e05c19bbbac7f006530bec3af531a88e16e451

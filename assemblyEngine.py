@@ -35,6 +35,9 @@ class Engine:
     def first(self):
         self.currentIndex = 0
 
+    def last(self):
+        self.currentIndex = self.lastIndex
+
     def getCurrentAssembly(self):
         return self.assemblyList[self.currentIndex]
 

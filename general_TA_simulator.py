@@ -45,7 +45,17 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         #self.label = QtWidgets.QLabel()
         self.time = 0
+        self.delay = 0
+        self.seedX = 25
+        self.seedY = 500
+
+        self.textX = self.seedX + 10
+        self.textY = self.seedY + 25
+
+        self.tileSize = 40
+
         self.Engine = None
+        self.SysLoaded = False
         self.play = True
         canvas = QtGui.QPixmap(1000, 600)
         canvas.fill(Qt.white)
@@ -82,29 +92,34 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         brush.setStyle(Qt.SolidPattern)
 
         pen.setColor(QtGui.QColor("white"))
-        brush.setColor(QtGui.QColor("white")) 
+        brush.setColor(QtGui.QColor("white"))
         painter.setPen(pen)
         painter.setBrush(brush)
-        painter.drawRect(0, 0, 1000, 1000) #this block is drawing a big white rectangle across the screen to "clear" it
+        # this block is drawing a big white rectangle across the screen to "clear" it
+        painter.drawRect(0, 0, 1000, 1000)
 
         font.setFamily("Times")
         font.setBold(True)
         painter.setFont(font)
-        for tile in assembly.tiles: 
-            #print(tile[0].color)
+        for tile in assembly.tiles:
+            # print(tile[0].color)
             pen.setColor(QtGui.QColor("black"))
             brush.setColor(QtGui.QColor("#" + tile.get_color()))
 
             painter.setPen(pen)
             painter.setBrush(brush)
-            painter.drawRect((tile.x * 40) + 200, (tile.y * -40) + 500, 40, 40)
-            painter.drawText((tile.x * 40) + 210, (tile.y * -40) + 525, tile.state.label)
+            painter.drawRect((tile.x * self.tileSize) + self.seedX, (tile.y * -
+                             self.tileSize) + self.seedY, self.tileSize, self.tileSize)
+            painter.drawText((tile.x * self.tileSize) + self.textX,
+                             (tile.y * -self.tileSize) + self.textY, tile.state.label)
 
         painter.end()
 
         if self.Engine.currentIndex != 0:
-            self.label_2.setText("Time elapsed: " + str(self.time) + " seconds")
-            self.label_3.setText("Current step time: " + str(self.Engine.timeTaken()) + " seconds")
+            self.label_2.setText("Time elapsed: " +
+                                 str(self.time) + " seconds")
+            self.label_3.setText("Current step time: " +
+                                 str(self.Engine.timeTaken()) + " seconds")
         else:
             self.label_2.setText("Time elapsed: 0 seconds")
             self.label_3.setText("Current step time: 0 seconds")
@@ -118,148 +133,159 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         if(err_flag == False):
             self.step = 0
             self.time = 0
-            #Assembler_Proto.Main()
+            # Assembler_Proto.Main()
             self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
 
     def Click_FileSearch(self, id):
         self.stop_sequence()
-        file = QFileDialog.getOpenFileName(self, "Select XML Document", "", "XML Files (*.xml)")
-        # Simulator must clear all of LoadFile's global variables when the user attempts to load something.
-        LoadFile.HorizontalAffinityRules.clear()
-        LoadFile.VerticalAffinityRules.clear()
-        LoadFile.HorizontalTransitionRules.clear()
-        LoadFile.VerticalTransitionRules.clear()
-        LoadFile.SeedAssembly.clear()
-        LoadFile.SeedStateSet.clear()
-        LoadFile.InitialStateSet.clear()
-        LoadFile.CompleteStateSet.clear()
+        self.SysLoaded = False
+        file = QFileDialog.getOpenFileName(
+            self, "Select XML Document", "", "XML Files (*.xml)")
+        if file[0] != '':
+            # Simulator must clear all of LoadFile's global variables when the user attempts to load something.
+            LoadFile.HorizontalAffinityRules.clear()
+            LoadFile.VerticalAffinityRules.clear()
+            LoadFile.HorizontalTransitionRules.clear()
+            LoadFile.VerticalTransitionRules.clear()
+            LoadFile.SeedStateSet.clear()
+            LoadFile.InitialStateSet.clear()
+            LoadFile.CompleteStateSet.clear()
 
-        LoadFile.readxml(file[0])
+            LoadFile.readxml(file[0])
 
-           # Creating global variables
-        global temp
-        global states
-        global inital_states
-        global seed_assembly
-        global seed_states
-        global vertical_affinities
-        global horizontal_affinities
-        global vertical_transitions
-        global horizontal_transitions
+            # Creating global variables
+            global temp
+            global states
+            global inital_states
+            global seed_assembly
+            global seed_states
+            global vertical_affinities
+            global horizontal_affinities
+            global vertical_transitions
+            global horizontal_transitions
 
-         # Creating a System object from data read.
-        temp = LoadFile.Temp
-        states = LoadFile.CompleteStateSet
-        inital_states = LoadFile.InitialStateSet
-        seed_assembly = LoadFile.SeedAssembly
-        seed_states = LoadFile.SeedStateSet
-        vertical_affinities = LoadFile.VerticalAffinityRules
-        horizontal_affinities = LoadFile.HorizontalAffinityRules
-        vertical_transitions = LoadFile.VerticalTransitionRules
-        horizontal_transitions = LoadFile.HorizontalTransitionRules
+            # Creating a System object from data read.
+            temp = LoadFile.Temp
+            states = LoadFile.CompleteStateSet
+            inital_states = LoadFile.InitialStateSet
+            seed_states = LoadFile.SeedStateSet
+            vertical_affinities = LoadFile.VerticalAffinityRules
+            horizontal_affinities = LoadFile.HorizontalAffinityRules
+            vertical_transitions = LoadFile.VerticalTransitionRules
+            horizontal_transitions = LoadFile.HorizontalTransitionRules
 
-        # Establish the current system we're working with
-        currentSystem = System(temp, states, inital_states, seed_assembly, seed_states, vertical_affinities,
-                               horizontal_affinities, vertical_transitions, horizontal_transitions)
-        print("\nSystem Dictionaries:")
-        print("Vertical Affinities:")
-        currentSystem.displayVerticalAffinityDict()
-        print("Horizontal Affinities:")
-        currentSystem.displayHorizontalAffinityDict()
-        print("Vertical Transitions:")
-        currentSystem.displayVerticalTransitionDict()
-        print("Horizontal Transitions:")
-        currentSystem.displayHorizontalTransitionDict()
+            self.SysLoaded = True
 
-        self.time = 0
-        self.Engine = Engine(currentSystem)
-        #a = Assembly()
-        #t = Tile(currentSystem.returnSeedStates(), 0, 0)
-        #a.tiles.append(t)
-        #currentAssemblyHistory.append(a)
-        #Assembler_Proto.Main()
-        self.draw_tiles(self.Engine.getCurrentAssembly())
+            # Establish the current system we're working with
+            currentSystem = System(temp, states, inital_states, seed_states, vertical_affinities,
+                                   horizontal_affinities, vertical_transitions, horizontal_transitions)
+            print("\nSystem Dictionaries:")
+            print("Vertical Affinities:")
+            currentSystem.displayVerticalAffinityDict()
+            print("Horizontal Affinities:")
+            currentSystem.displayHorizontalAffinityDict()
+            print("Vertical Transitions:")
+            currentSystem.displayVerticalTransitionDict()
+            print("Horizontal Transitions:")
+            currentSystem.displayHorizontalTransitionDict()
+
+            self.time = 0
+            self.Engine = Engine(currentSystem)
+            #a = Assembly()
+            #t = Tile(currentSystem.returnSeedStates(), 0, 0)
+            # a.tiles.append(t)
+            # currentAssemblyHistory.append(a)
+            # Assembler_Proto.Main()
+            self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def Click_SaveFile(self):
         # Creating a System object from data read.
-        temp = LoadFile.Temp
-        states = LoadFile.CompleteStateSet
-        inital_states = LoadFile.InitialStateSet
-        seed_assembly = LoadFile.SeedAssembly
-        seed_states = LoadFile.SeedStateSet
-        vertical_affinities = LoadFile.VerticalAffinityRules
-        horizontal_affinities = LoadFile.HorizontalAffinityRules
-        vertical_transitions = LoadFile.VerticalTransitionRules
-        horizontal_transitions = LoadFile.HorizontalTransitionRules
+        if(self.SysLoaded == True):
+            temp = LoadFile.Temp
+            states = LoadFile.CompleteStateSet
+            inital_states = LoadFile.InitialStateSet
+            seed_states = LoadFile.SeedStateSet
+            vertical_affinities = LoadFile.VerticalAffinityRules
+            horizontal_affinities = LoadFile.HorizontalAffinityRules
+            vertical_transitions = LoadFile.VerticalTransitionRules
+            horizontal_transitions = LoadFile.HorizontalTransitionRules
 
-        # Establish the current system we're working with
-        currentSystem = System(temp, states, inital_states, seed_assembly, seed_states, vertical_affinities,
-                               horizontal_affinities, vertical_transitions, horizontal_transitions)
+            # Establish the current system we're working with
+            currentSystem = System(temp, states, inital_states, seed_states, vertical_affinities,
+                                   horizontal_affinities, vertical_transitions, horizontal_transitions)
 
-        SaveFile.main(currentSystem)
+            fileName = QFileDialog.getSaveFileName(
+                self, "QFileDialog.getSaveFileName()", "", "XML Files (*.xml)")
+
+            if(fileName[0] != ''):
+                SaveFile.main(currentSystem, fileName)
 
     # self.draw_tiles(LoadFile.) #starting assembly goes here
-        
 
     def first_step(self):
-        self.stop_sequence()
-        self.Engine.first()
-        self.time = 0
-        #print(self.Engine.currentIndex)
-        self.draw_tiles(self.Engine.getCurrentAssembly())
+        if self.SysLoaded == True:
+            self.stop_sequence()
+            self.Engine.first()
+            self.time = 0
+            # print(self.Engine.currentIndex)
+            self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def prev_step(self):
         self.stop_sequence()
-        if self.Engine.currentIndex > 0:
-            self.Engine.back()
-            self.time = self.time - (self.Engine.timeTaken()) #Might need to go below
-            self.draw_tiles(self.Engine.getCurrentAssembly())
+        if self.SysLoaded == True:
+            if self.Engine.currentIndex > 0:
+                self.Engine.back()
+                # Might need to go below
+                self.time = self.time - (self.Engine.timeTaken())
+                self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def next_step(self):
         self.stop_sequence()
-        if self.Engine.step() != -1:
-            self.time = self.time + (self.Engine.timeTaken()) #Might need to go above
-            self.draw_tiles(self.Engine.getCurrentAssembly())
+        if self.SysLoaded == True:
+            if self.Engine.step() != -1:
+                # Might need to go above
+                self.time = self.time + (self.Engine.timeTaken())
+                self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def last_step(self):
         self.stop_sequence()
-        while (self.Engine.build() != -1):
-            self.time = self.time + (self.Engine.timeTaken()) 
-
-        self.draw_tiles(self.Engine.getCurrentAssembly())
-       
-
-    def play_sequence(self):
-        self.play = True
-        while((self.Engine.build() != -1) and self.play == True):
-            print(self.Engine.currentIndex)
-            self.time = self.time + (self.Engine.timeTaken())
-            
-            
-            loop = QtCore.QEventLoop()
-            if self.Engine.currentIndex != 0:
-                QtCore.QTimer.singleShot(int(1000 * self.Engine.timeTaken()), loop.quit)
-            else:
-                QtCore.QTimer.singleShot(1000, loop.quit)
-            loop.exec_()
+        if self.SysLoaded == True:
+            while (self.Engine.build() != -1):
+                self.time = self.time + (self.Engine.timeTaken())
 
             self.draw_tiles(self.Engine.getCurrentAssembly())
-            #if self.Engine.currentIndex != 0: #and self.Engine.currentIndex < self.Engine.lastIndex:
-            
 
-        #self.step = len(self.Engine.assemblyList) - 1 #this line is here to prevent a crash that happens if you click last after play finishes
-        self.stop_sequence()
+    def play_sequence(self):
+        if self.SysLoaded == True:
+            self.play = True
+            while((self.Engine.build() != -1) and self.play == True):
+                print(self.Engine.currentIndex)
+                self.time = self.time + (self.Engine.timeTaken())
+
+                loop = QtCore.QEventLoop()
+                if self.Engine.currentIndex != 0:
+                    QtCore.QTimer.singleShot(
+                        int(self.delay * self.Engine.timeTaken()), loop.quit)
+                else:
+                    QtCore.QTimer.singleShot(self.delay, loop.quit)
+                loop.exec_()
+
+                self.draw_tiles(self.Engine.getCurrentAssembly())
+                # if self.Engine.currentIndex != 0: #and self.Engine.currentIndex < self.Engine.lastIndex:
+
+            # self.step = len(self.Engine.assemblyList) - 1 #this line is here to prevent a crash that happens if you click last after play finishes
+            self.stop_sequence()
 
     def stop_sequence(self):
         self.play = False
 
 
 if __name__ == "__main__":
-    
-    #App Stuff
+
+    # App Stuff
     app = QApplication(sys.argv)
     w = Ui_MainWindow()
     w.show()
-   
+
     sys.exit(app.exec_())
 #
