@@ -481,14 +481,42 @@ class System:
     def set_tile_horizontal_transitions(self, tile_ht):
         self.tile_horizontal_transitions = tile_ht
 
-    def add_transition_rule(self, tr, direct):
-        if direct == "v":
-            self.vertical_transitions.append(tr)
+    def add_State(self, state):
+        if isinstance(state, list):
+            for s in state:
+                self.states.append(s)
+        elif isinstance(state, State):
+            self.states.append(state)
         else:
-            self.horizontal_transitions.append(tr)
+            print("Attempted to add a state that is not a state object")
 
-    def add_affinity(self, a, direct):
+    def add_Initial_State(self, state):
+        self.initial_states.append(state)
+
+
+    def add_transition_rule(self, tr, direct):
+        label1 = tr.returnLabel1()
+        label2 = tr.returnLabel2()
+        label1Final = tr.returnLabel1Final()
+        label2Final = tr.returnLabel2Final()
+        direct = tr.returnDir()
+
         if direct == "v":
-            self.vertical_affinities.append(a)
+            self.vertical_transitions_list.append(tr)
+            self.vertical_transitions_dict[label1, label2] = (label1Final, label2Final)
         else:
-            self.horizontal_affinities.append(a)
+            self.horizontal_transitions_list.append(tr)
+            self.horizontal_transitions_dict[label1, label2] = (label1Final, label2Final)
+
+    def add_affinity(self, a):
+        label1 = a.returnLabel1()
+        label2 = a.returnLabel2()
+        direct = a.returnDir()
+        stren =  a.returnStr()
+
+        if direct == "v":
+            self.vertical_affinities_list.append(a)
+            self.vertical_affinities_dict[(label1, label2)] = stren
+        else:
+            self.horizontal_affinities_list.append(a)
+            self.horizontal_affinities_dict[(label1, label2)] = stren
