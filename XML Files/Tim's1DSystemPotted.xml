@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Tim's 1D-System but it's Potted. -->
+<?xml version='1.0' encoding='utf-8'?>
 <System Temp="1">
     <AllStates>
-        <State Label="X" Color="ffffff" /> <!-- Adjustment -->
+        <State Label="X" Color="ffffff" />
         <State Label="A1" Color="ff0000" />
         <State Label="A2" Color="ff0000" />
         <State Label="A3" Color="ff0000" />
@@ -19,10 +18,10 @@
         <State Label="B1" Color="0000ff" />
         <State Label="B2" Color="0000ff" />
         <State Label="B3" Color="0000ff" />
-        <State Label="A1" Color="ff0000" /> <!-- Adjustment -->
+        <State Label="A1" Color="ff0000" />
     </InitialStates>
     <SeedStates>
-        <State Label="X" Color="ffffff" /> <!-- Adjustment -->
+        <State Label="X" Color="ffffff" />
     </SeedStates>
     <VerticalTransitions />
     <HorizontalTransitions>
@@ -33,7 +32,7 @@
     </HorizontalTransitions>
     <VerticalAffinities />
     <HorizontalAffinities>
-        <Rule Label1="X" Label2="A1" Strength="1" /> <!-- Adjustment -->
+        <Rule Label1="X" Label2="A1" Strength="1" />
         <Rule Label1="A1" Label2="A2" Strength="1" />
         <Rule Label1="A2" Label2="A3" Strength="1" />
         <Rule Label1="C1" Label2="A2" Strength="1" />

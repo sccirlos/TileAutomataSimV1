@@ -213,7 +213,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         horizontal_transitions = LoadFile.HorizontalTransitionRules
 
         # Establish the current system we're working with
-        currentSystem = System(temp, states, inital_states, seed_assembly, seed_states, vertical_affinities,
+        currentSystem = System(temp, states, inital_states, seed_states, vertical_affinities,
                                horizontal_affinities, vertical_transitions, horizontal_transitions)
 
         fileName = QFileDialog.getSaveFileName(
