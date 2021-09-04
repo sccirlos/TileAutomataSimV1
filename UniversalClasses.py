@@ -329,10 +329,11 @@ class SeedAssemblyTile:
 
 
 class AffinityRule:
-    def __init__(self, label1, label2, strength):
+    def __init__(self, label1, label2, dir, strength):
         self.label1 = label1  # Left/Upper label
         self.label2 = label2  # Right/Bottom label
         self.strength = strength  # Bond Strength (as a string)
+        self.dir = dir
 
     # Getters
     def returnLabel1(self):
@@ -344,13 +345,17 @@ class AffinityRule:
     def returnStr(self):
         return self.strength
 
+    def returnDir(self):
+        return self.dir
+
 
 class TransitionRule:
-    def __init__(self, label1, label2, label1Final, label2Final):
+    def __init__(self, label1, label2, label1Final, label2Final, dir):
         self.label1 = label1
         self.label2 = label2
         self.label1Final = label1Final
         self.label2Final = label2Final
+        self.dir = dir
 
     # Getters
     def returnLabel1(self):
@@ -364,6 +369,9 @@ class TransitionRule:
 
     def returnLabel2Final(self):
         return self.label2Final
+
+    def returnDir(self):
+        return self.dir
 
 
 # System is used for the assembler; represents the data in the XML
@@ -503,7 +511,7 @@ class System:
         self.initial_states.append(state)
 
 
-    def add_transition_rule(self, tr, direct):
+    def add_transition_rule(self, tr):
         label1 = tr.returnLabel1()
         label2 = tr.returnLabel2()
         label1Final = tr.returnLabel1Final()
