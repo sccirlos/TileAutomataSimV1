@@ -61,6 +61,13 @@ class Assembly:
         self.upMost = 0
         self.downMost = 0
 
+    def print_size(self):
+        print("Left Boundary: ", self.leftMost)
+        print("Right Boundary: ", self.rightMost)
+        print("North Boundary: ", self.upMost)
+        print("South Boundary: ", self.downMost)
+        print("Size: ", len(self.tiles))
+
     def get_label(self):
         return self.label
 
@@ -207,31 +214,31 @@ class Assembly:
         transitions_list = []
         sys_h_tr = sy.returnHorizontalTransitionDict()
         sys_v_tr = sy.returnVerticalTransitionDict()
-        sys_h_tiles = sy.get_tile_horizontal_transitions()
-        sys_v_tiles = sy.get_tile_vertical_transitions()
+        #sys_h_tiles = sy.get_tile_horizontal_transitions()
+        #sys_v_tiles = sy.get_tile_vertical_transitions()
 
         # Check each tile in the assembly
         for iTile in self.tiles:
            # print(sys_h_tiles[iTile.get_label()])
             # if isinstance(sys_h_tiles[iTile.get_label()], tuple):
 
-            iHTranRules = None
-            iVTranRules = None
+            #iHTranRules = None
+            #iVTranRules = None
 
-            if sys_h_tiles != None:
-                if sys_h_tiles.get(iTile.get_label()) != None:
-                    iHTranRules = sys_h_tr[sys_h_tiles[iTile.get_label()]]
-                else:
-                    for tiles in sys_h_tiles[iTile.get_label()]:
-                        iHTranRules = sys_h_tr[tiles]
+            #if sys_h_tiles != None:
+                #if sys_h_tiles.get(iTile.get_label()) != None:
+                    #iHTranRules = sys_h_tr[sys_h_tiles[iTile.get_label()]]
+                #else:
+                    #for tiles in sys_h_tiles[iTile.get_label()]:
+                        #iHTranRules = sys_h_tr[tiles]
 
             # if isinstance(sys_v_tiles[iTile.get_label()], tuple):
-            if sys_v_tiles != None:
-                if sys_v_tiles.get(iTile.get_label()):
-                    iVTranRules = sys_v_tr[sys_v_tiles[iTile.get_label()]]
-                else:
-                    for tiles in sys_v_tiles[iTile.get_label()]:
-                        iVTranRules = sys_v_tr[tiles]
+            #if sys_v_tiles != None:
+                #if sys_v_tiles.get(iTile.get_label()):
+                    #iVTranRules = sys_v_tr[sys_v_tiles[iTile.get_label()]]
+                #else:
+                    #for tiles in sys_v_tiles[iTile.get_label()]:
+                        #iVTranRules = sys_v_tr[tiles]
 
             # Get only the south and east neighbors of iTile
             neighborS = self.coords.get(toCoords(iTile.x, iTile.y - 1))
@@ -329,10 +336,13 @@ class SeedAssemblyTile:
 
 
 class AffinityRule:
-    def __init__(self, label1, label2, dir, strength):
+    def __init__(self, label1, label2, dir, strength=None):
         self.label1 = label1  # Left/Upper label
         self.label2 = label2  # Right/Bottom label
-        self.strength = strength  # Bond Strength (as a string)
+        if strength == None:
+            self.strength = 1
+        else:
+            self.strength = strength  # Bond Strength (as a string)
         self.dir = dir
 
     # Getters

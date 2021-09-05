@@ -53,6 +53,7 @@ class Engine:
         # Check if assembly is terminal
         if(len(moveList) == 0): 
             print("Terminal")
+            cAssembly.print_size()
             return -1
 
         self.TimeTaken.append(len(moveList))
