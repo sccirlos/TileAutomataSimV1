@@ -119,6 +119,7 @@ def genDoubleIndexStates(vLen):
 
 
 def genSqrtBinString(value):
+    revValue = value[::-1]
     genSys = genDoubleIndexStates(len(value))
 
     sqrtLen = math.ceil(math.sqrt(len(value)))
@@ -144,8 +145,11 @@ def genSqrtBinString(value):
                 labelA = str(i) + "A'"
             
 
-            index = len(value) - 1 - ((i * sqrtLen) + j)
-            symbol = str(value[index]) 
+            index = (i * sqrtLen) + j
+            if index < len(value):
+                symbol = str(revValue[index]) 
+            else:
+                symbol = "1"
 
             tr = uc.TransitionRule(labelA, labelB, labelA, symbol, "h")
             genSys.add_transition_rule(tr)
@@ -201,9 +205,36 @@ def genSqrtBinCount(value):
     carryAff = uc.AffinityRule("c", "0c", "v")
     genSys.add_affinity(carryAff)
     #        <Rule Label1="nc" Label2="1" Dir="v" Strength="1"></Rule>
+    nc1 = uc.AffinityRule("nc", "1", "v")
+    genSys.add_affinity(nc1)
     #        <Rule Label1="nc" Label2="0" Dir="v" Strength="1"></Rule>
+    nc0 = uc.AffinityRule("nc", "0", "v")
+    genSys.add_affinity(nc0)
 
-
+    #<Rule Label1="0" Label2="c" Label1Final="0" Label2Final="1" Dir="h"></Rule>
+    carry0TR = uc.TransitionRule("0", "c", "0", "1", "h")
+    genSys.add_transition_rule(carry0TR)
+    #<Rule Label1="0" Label2="nc" Label1Final="0" Label2Final="0" Dir="h"></Rule>
+    noCarry0TR = uc.TransitionRule("0", "nc", "0", "0", "h")
+    genSys.add_transition_rule(noCarry0TR)
+    #<Rule Label1="1" Label2="c" Label1Final="1" Label2Final="0c" Dir="h"></Rule>
+    zeroCarryTR = uc.TransitionRule("1", "c", "1", "0c", "h")
+    genSys.add_transition_rule(zeroCarryTR)
+    #<Rule Label1="1" Label2="nc" Label1Final="1" Label2Final="1" Dir="h"></Rule>
+    noCarry1TR = uc.TransitionRule("1", "nc", "1", "1", "h")
+    genSys.add_transition_rule(noCarry1TR)
+    #<Rule Label1="1" Label2="+" Label1Final="1" Label2Final="S" Dir="v"></Rule>
+    next1TR = uc.TransitionRule("1", "+", "1", "S", "v")
+    genSys.add_transition_rule(next1TR)
+    #<Rule Label1="0" Label2="+" Label1Final="0" Label2Final="S" Dir="v"></Rule>
+    next0TR = uc.TransitionRule("0", "+", "0", "S", "v")
+    genSys.add_transition_rule(next0TR)
+    #<Rule Label1="1" Label2="0c" Label1Final="1" Label2Final="0" Dir="v"></Rule>
+    down1TR = uc.TransitionRule("1", "0c", "1", "0", "v")
+    genSys.add_transition_rule(down1TR)
+    #<Rule Label1="0" Label2="0c" Label1Final="0" Label2Final="0" Dir="v"></Rule>
+    down0TR = uc.TransitionRule("0", "0c", "0", "0", "v")
+    genSys.add_transition_rule(down0TR)
 
     return genSys
 
@@ -223,8 +254,14 @@ if __name__ == "__main__":
     #sys = genSqrtBinCount("110010001")
     #SaveFile.main(sys, ["genTestString.xml"])
 
-    tallSys = genDoubleIndexStates(100)
-    SaveFile.main(tallSys, ["tallSys.xml"])
+    #tallSys = genDoubleIndexStates(100)
+    #SaveFile.main(tallSys, ["tallSys.xml"])
+
+    #sys = genSqrtBinCount("111010101")
+    #SaveFile.main(sys, ["genTestCount.xml"])
+
+    sys = genSqrtBinCount("110011100")
+    SaveFile.main(sys, ["biggerTestCount.xml"])
 
 
 
