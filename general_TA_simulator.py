@@ -81,6 +81,34 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         self.actionLast.triggered.connect(self.last_step)
 
+    def keyPressEvent(self, event):
+  
+        # if up arrow key is pressed
+        if event.key() == Qt.Key_Up:
+            if self.seedY < 1000:      #this needs to be the window height
+                self.seedY = self.seedY - 10
+                self.textY = self.seedY + 25
+
+        # if down arrow key is pressed
+        elif event.key() == Qt.Key_Down:
+            if self.seedY >= 10:
+                self.seedY = self.seedY + 10
+                self.textY = self.seedY + 25
+
+        # if left arrow key is pressed
+        elif event.key() == Qt.Key_Left:
+            if self.seedX >= 10:
+                self.seedX = self.seedX - 10
+                self.textX = self.seedX + 10
+
+        # if down arrow key is pressed
+        elif event.key() == Qt.Key_Right:
+            if self.seedX < 1000:       #this needs to be the window width
+                self.seedX = self.seedX + 10
+                self.textX = self.seedX + 10
+
+        self.draw_tiles(self.Engine.getCurrentAssembly())
+
     def draw_tiles(self, assembly):
         painter = QPainter(self.label.pixmap())
         pen = QtGui.QPen()
@@ -124,7 +152,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.label_2.setText("Time elapsed: 0 seconds")
             self.label_3.setText("Current step time: 0 seconds")
 
-        print(self.Engine.currentIndex)
+        #print(self.Engine.currentIndex)
         self.update()
 
     def Click_Run_Simulation(self):  # Run application if everythings good
