@@ -11,11 +11,13 @@ import TAMainWindow
 import LoadFile
 import SaveFile
 import Assembler_Proto
+import QuickRotate
+import QuickCombine
 
 import sys
 
 # Global Variables
-currentSystem = None
+# Note: currentSystem is still global but had to be moved into the loading method
 currentAssemblyHistory = []
 # General Seeded TA Simulator
 
@@ -68,6 +70,12 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         # "Save" from the "File" menu
         self.actionSave.triggered.connect(self.Click_SaveFile)
+
+        # "Quick Rotate"
+        self.actionRotate.triggered.connect(self.Click_QuickRotate)
+
+        # "Quick Combine"
+        self.actionCombine.triggered.connect(self.Click_QuickCombine)
 
         self.actionFirst.triggered.connect(self.first_step)
 
@@ -177,6 +185,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.SysLoaded = True
 
             # Establish the current system we're working with
+            global currentSystem
             currentSystem = System(temp, states, inital_states, seed_states, vertical_affinities,
                                    horizontal_affinities, vertical_transitions, horizontal_transitions)
             print("\nSystem Dictionaries:")
@@ -201,24 +210,20 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def Click_SaveFile(self):
         # Creating a System object from data read.
         if(self.SysLoaded == True):
-            temp = LoadFile.Temp
-            states = LoadFile.CompleteStateSet
-            inital_states = LoadFile.InitialStateSet
-            seed_states = LoadFile.SeedStateSet
-            vertical_affinities = LoadFile.VerticalAffinityRules
-            horizontal_affinities = LoadFile.HorizontalAffinityRules
-            vertical_transitions = LoadFile.VerticalTransitionRules
-            horizontal_transitions = LoadFile.HorizontalTransitionRules
-
-            # Establish the current system we're working with
-            currentSystem = System(temp, states, inital_states, seed_states, vertical_affinities,
-                                   horizontal_affinities, vertical_transitions, horizontal_transitions)
-
             fileName = QFileDialog.getSaveFileName(
                 self, "QFileDialog.getSaveFileName()", "", "XML Files (*.xml)")
 
             if(fileName[0] != ''):
                 SaveFile.main(currentSystem, fileName)
+
+    def Click_QuickRotate(self):
+        self.stop_sequence()
+        if(self.SysLoaded == True):
+            QuickRotate.main(currentSystem)
+
+    def Click_QuickCombine(self):
+        if(self.SysLoaded == True):
+            QuickCombine.main(currentSystem)
 
     # self.draw_tiles(LoadFile.) #starting assembly goes here
 

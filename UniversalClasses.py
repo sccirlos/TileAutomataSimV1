@@ -450,6 +450,18 @@ class System:
     def returnSeedStates(self):
         return self.seed_states
 
+    def returnVerticalAffinityList(self):
+        return self.vertical_affinities_list
+
+    def returnHorizontalAffinityList(self):
+        return self.horizontal_affinities_list
+
+    def returnVerticalTransitionList(self):
+        return self.vertical_transitions_list
+
+    def returnHorizontalTransitionList(self):
+        return self.horizontal_transitions_list
+
     def returnVerticalAffinityDict(self):
         return self.vertical_affinities_dict
 
@@ -481,6 +493,47 @@ class System:
 
     def displayHorizontalTransitionDict(self):
         print(self.horizontal_transitions_dict)
+
+    # Clearers
+    def clearVerticalAffinityList(self):
+        self.vertical_affinities_list.clear()
+
+    def clearHorizontalAffinityList(self):
+        self.horizontal_affinities_list.clear()
+
+    def clearVerticalTransitionList(self):
+        self.vertical_transitions_list.clear()
+
+    def clearHorizontalTransitionList(self):
+        self.horizontal_transitions_list.clear()
+
+    def clearVerticalAffinityDict(self):
+        self.vertical_affinities_dict.clear()
+
+    def clearHorizontalAffinityDict(self):
+        self.horizontal_affinities_dict.clear()
+
+    def clearVerticalTransitionDict(self):
+        self.vertical_transitions_dict.clear()
+
+    def clearHorizontalTransitionDict(self):
+        self.horizontal_transitions_dict.clear()
+
+    # Dictionary Appenders
+    # Note: Value = Bond Strength
+    def appendVerticalAffinityDict(self, label1, label2, value):
+        self.vertical_affinities_dict[label1, label2] = value
+
+    def appendHorizontalAffinityDict(self, label1, label2, value):
+        self.horizontal_affinities_dict[label1, label2] = value
+
+    def appendVerticalTransitionDict(self, label1, label2, label1Final, label2Final):
+        self.vertical_transitions_dict[label1, label2] = (
+            label1Final, label2Final)
+
+    def appendHorizontalTransitionDict(self, label1, label2, label1Final, label2Final):
+        self.horizontal_transitions_dict[label1, label2] = (
+            label1Final, label2Final)
 
     # TO DO Update these to write to a dictionary, and to use lists of objects from universalClasses.py
 
