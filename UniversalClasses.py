@@ -108,7 +108,7 @@ class Assembly:
                 # Check if position is empty
                 if self.coords.get(toCoords(iX, iY)) != None:
                     continue
-                print("Testing ", iX, ", ", iY)
+                #print("Testing ", iX, ", ", iY)
 
                 # Get each neighbor
                 neighborN = self.coords.get(toCoords(iX, iY + 1))
@@ -270,7 +270,7 @@ class Assembly:
                 #rules = iHTranRules[neighborE.get_label()]
                 rules = sys_h_tr.get(
                     (iTile.get_label(), neighborE.get_label()))
-                print(sys_h_tr)
+                #print(sys_h_tr)
                 # rules.append(iHTranRules)
 
                 if rules != None:
@@ -313,7 +313,7 @@ class Assembly:
         if(trans["dir"] == "h"):
             a.coords[toCoords(trans["x"] + 1, trans["y"])
                      ].set_state(trans["state2Final"])
-        print("New Assembly Tiles: ", a.tiles)
+        #print("New Assembly Tiles: ", a.tiles)
         return a
 
     def getMoves(self, sy):
@@ -462,6 +462,8 @@ class System:
         for state in self.states:
             if state.get_label() == label:
                 return state
+        print("State: ", label, "not found")
+        return None
 
     def add_values_in_dict(self, dict, key, list_of_values):
         if key not in dict:
