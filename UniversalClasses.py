@@ -117,24 +117,24 @@ class Assembly:
                         stren = v_rules.get(
                             (neighborN.get_label(), iTile.get_label()))
                         if(stren != None):
-                            attStr += int(stren[0])
+                            attStr += int(stren)
                     if(neighborS != None):
                         stren = v_rules.get(
                             (iTile.get_label(), neighborS.get_label()))
                         if(stren != None):
-                            attStr += int(stren[0])
+                            attStr += int(stren)
                     if(neighborE != None):
                         stren = h_rules.get(
                             (iTile.get_label(), neighborE.get_label()))
                         if(stren != None):
-                            attStr += int(stren[0])
+                            attStr += int(stren)
                     # else:
                     #    print("East of "+ str(iX) + " : " + str(iY) + " is empty")
                     if(neighborW != None):
                         stren = h_rules.get(
                             (neighborW.get_label(), iTile.get_label()))
                         if(stren != None):
-                            attStr += int(stren[0])
+                            attStr += int(stren)
                     # else:
                     #    print("West of "+ str(iX) + " : " + str(iY) + " is empty")
 
@@ -253,7 +253,6 @@ class Assembly:
                     move["state2"] = neighborS.get_state()
 
                     for i in range(0, len(rules), 2):   
-                        print(i)
                         move["state1Final"] = sy.get_state(
                             rules[i])  # .returnLabel1Final()
                         move["state2Final"] = sy.get_state(
@@ -277,7 +276,6 @@ class Assembly:
                     move["state2"] = neighborE.get_state()
 
                     for i in range(0, len(rules), 2):   
-                        print(i)
                         move["state1Final"] = sy.get_state(
                             rules[i])  # .returnLabel1Final()
                         move["state2Final"] = sy.get_state(
@@ -409,21 +407,13 @@ class System:
             label2 = rule.returnLabel2()
             str = rule.returnStr()
 
-            key = (label1, label2)
-
-            self.add_values_in_dict(self.vertical_affinities_dict, key, str)
-
-            #self.vertical_affinities_dict[label1, label2] = str
+            self.vertical_affinities_dict[label1, label2] = str
         for rule in horizontal_affinities_list:
             label1 = rule.returnLabel1()
             label2 = rule.returnLabel2()
             str = rule.returnStr()
 
-            key = (label1, label2)
-
-            self.add_values_in_dict(self.horizontal_affinities_dict, key, str)
-
-            #self.horizontal_affinities_dict[label1, label2] = str
+            self.horizontal_affinities_dict[label1, label2] = str
         for rule in vertical_transitions_list:
             label1 = rule.returnLabel1()
             label2 = rule.returnLabel2()
