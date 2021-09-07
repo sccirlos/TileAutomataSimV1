@@ -1,3 +1,4 @@
+from random import randrange
 # These classes are used for Loading and Saving Files and Communicating with general_TA_simulator.
 
 class State:
@@ -258,14 +259,12 @@ class Assembly:
                     move["state1"] = iTile.get_state()
                     move["state2"] = neighborS.get_state()
 
-                    # a pair of states may have mutliple rules
-
-                    # class is in universal classes
-                    move["state1Final"] = sy.get_state(
-                        rules[0])  # .returnLabel1Final()
-                    move["state2Final"] = sy.get_state(
-                        rules[1])  # .returnLabel2Final()
-                    transitions_list.append(move)
+                    for i in range(0, len(rules), 2):   
+                        move["state1Final"] = sy.get_state(
+                            rules[i])  # .returnLabel1Final()
+                        move["state2Final"] = sy.get_state(
+                            rules[i + 1])  # .returnLabel2Final()
+                        transitions_list.append(move)
 
             if(neighborE != None):
                 #rules = iHTranRules[neighborE.get_label()]
@@ -283,11 +282,12 @@ class Assembly:
                     move["state1"] = iTile.get_state()
                     move["state2"] = neighborE.get_state()
 
-                    move["state1Final"] = sy.get_state(
-                        rules[0])  # .returnLabel1Final()
-                    move["state2Final"] = sy.get_state(
-                        rules[1])  # .returnLabel2Final()
-                    transitions_list.append(move)
+                    for i in range(0, len(rules), 2):   
+                        move["state1Final"] = sy.get_state(
+                            rules[i])  # .returnLabel1Final()
+                        move["state2Final"] = sy.get_state(
+                            rules[i + 1])  # .returnLabel2Final()
+                        transitions_list.append(move)
 
         return transitions_list
         # ORIGINAL ((type: ), (current labels), (transition labels))
@@ -325,7 +325,6 @@ class Assembly:
             return self.set_attachments(move)
         if(move["type"] == "t"):
             return self.set_transition(move)
-
 
 # Not in use right now.
 class SeedAssemblyTile:
@@ -439,21 +438,35 @@ class System:
             label1Final = rule.returnLabel1Final()
             label2Final = rule.returnLabel2Final()
 
-            self.vertical_transitions_dict[label1, label2] = (
-                label1Final, label2Final)
+            key = (label1, label2)
+            transition = (label1Final, label2Final)
+
+            self.add_values_in_dict(self.vertical_transitions_dict, key, transition)
+
+            #self.vertical_transitions_dict[label1, label2] = (
+            #    label1Final, label2Final)
         for rule in horizontal_transitions_list:
             label1 = rule.returnLabel1()
             label2 = rule.returnLabel2()
             label1Final = rule.returnLabel1Final()
             label2Final = rule.returnLabel2Final()
 
-            self.horizontal_transitions_dict[label1, label2] = (
-                label1Final, label2Final)
+            key = (label1, label2)
+            transition = (label1Final, label2Final)
+
+            self.add_values_in_dict(self.horizontal_transitions_dict, key, transition)
+            #self.horizontal_transitions_dict[label1, label2] = (
+            #    label1Final, label2Final)
 
     def get_state(self, label):
         for state in self.states:
             if state.get_label() == label:
                 return state
+
+    def add_values_in_dict(self, dict, key, list_of_values):
+        if key not in dict:
+            dict[key] = list()
+        dict[key].extend(list_of_values)
 
     # Getters
     def returnTemp(self):
