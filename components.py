@@ -31,7 +31,3 @@ def make_prime(stri):
     fin = strings + num
     return fin
     
-strg = "A'10"   
-increment_string(strg)
-stri = "B5"
-make_prime(stri)
