@@ -85,27 +85,23 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
   
         # if up arrow key is pressed
         if event.key() == Qt.Key_Up:
-            if self.seedY < 1000:      #this needs to be the window height
-                self.seedY = self.seedY - 10
-                self.textY = self.seedY + 25
+            self.seedY = self.seedY - 10
+            self.textY = self.seedY + 25
 
         # if down arrow key is pressed
         elif event.key() == Qt.Key_Down:
-            if self.seedY >= 10:
-                self.seedY = self.seedY + 10
-                self.textY = self.seedY + 25
+            self.seedY = self.seedY + 10
+            self.textY = self.seedY + 25
 
         # if left arrow key is pressed
         elif event.key() == Qt.Key_Left:
-            if self.seedX >= 10:
-                self.seedX = self.seedX - 10
-                self.textX = self.seedX + 10
+            self.seedX = self.seedX - 10
+            self.textX = self.seedX + 10
 
         # if down arrow key is pressed
         elif event.key() == Qt.Key_Right:
-            if self.seedX < 1000:       #this needs to be the window width
-                self.seedX = self.seedX + 10
-                self.textX = self.seedX + 10
+            self.seedX = self.seedX + 10
+            self.textX = self.seedX + 10
 
         self.draw_tiles(self.Engine.getCurrentAssembly())
 
