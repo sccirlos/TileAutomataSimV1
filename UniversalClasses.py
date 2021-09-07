@@ -116,24 +116,24 @@ class Assembly:
                         stren = v_rules.get(
                             (neighborN.get_label(), iTile.get_label()))
                         if(stren != None):
-                            attStr += int(stren)
+                            attStr += int(stren[0])
                     if(neighborS != None):
                         stren = v_rules.get(
                             (iTile.get_label(), neighborS.get_label()))
                         if(stren != None):
-                            attStr += int(stren)
+                            attStr += int(stren[0])
                     if(neighborE != None):
                         stren = h_rules.get(
                             (iTile.get_label(), neighborE.get_label()))
                         if(stren != None):
-                            attStr += int(stren)
+                            attStr += int(stren[0])
                     # else:
                     #    print("East of "+ str(iX) + " : " + str(iY) + " is empty")
                     if(neighborW != None):
                         stren = h_rules.get(
                             (neighborW.get_label(), iTile.get_label()))
                         if(stren != None):
-                            attStr += int(stren)
+                            attStr += int(stren[0])
                     # else:
                     #    print("West of "+ str(iX) + " : " + str(iY) + " is empty")
 
@@ -408,34 +408,56 @@ class System:
             label2 = rule.returnLabel2()
             str = rule.returnStr()
 
-            self.vertical_affinities_dict[label1, label2] = str
+            key = (label1, label2)
+
+            self.add_values_in_dict(self.vertical_affinities_dict, key, str)
+
+            #self.vertical_affinities_dict[label1, label2] = str
         for rule in horizontal_affinities_list:
             label1 = rule.returnLabel1()
             label2 = rule.returnLabel2()
             str = rule.returnStr()
 
-            self.horizontal_affinities_dict[label1, label2] = str
+            key = (label1, label2)
+
+            self.add_values_in_dict(self.horizontal_affinities_dict, key, str)
+
+            #self.horizontal_affinities_dict[label1, label2] = str
         for rule in vertical_transitions_list:
             label1 = rule.returnLabel1()
             label2 = rule.returnLabel2()
             label1Final = rule.returnLabel1Final()
             label2Final = rule.returnLabel2Final()
 
-            self.vertical_transitions_dict[label1, label2] = (
-                label1Final, label2Final)
+            key = (label1, label2)
+            transition = (label1Final, label2Final)
+
+            self.add_values_in_dict(self.vertical_transitions_dict, key, transition)
+
+            #self.vertical_transitions_dict[label1, label2] = (
+            #    label1Final, label2Final)
         for rule in horizontal_transitions_list:
             label1 = rule.returnLabel1()
             label2 = rule.returnLabel2()
             label1Final = rule.returnLabel1Final()
             label2Final = rule.returnLabel2Final()
 
-            self.horizontal_transitions_dict[label1, label2] = (
-                label1Final, label2Final)
+            key = (label1, label2)
+            transition = (label1Final, label2Final)
+
+            self.add_values_in_dict(self.horizontal_transitions_dict, key, transition)
+            #self.horizontal_transitions_dict[label1, label2] = (
+            #    label1Final, label2Final)
 
     def get_state(self, label):
         for state in self.states:
             if state.get_label() == label:
                 return state
+
+    def add_values_in_dict(self, dict, key, list_of_values):
+        if key not in dict:
+            dict[key] = list()
+        dict[key].extend(list_of_values)
 
     # Getters
     def returnTemp(self):
