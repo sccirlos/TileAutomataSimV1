@@ -76,7 +76,7 @@ def readxml(file):
         HorizontalTransitionRules.append(tempRule)
 
     # Record Vertical Affinities
-    for rule_tag in treeroot.findall("Vertical Affinities/Rule"):
+    for rule_tag in treeroot.findall("VerticalAffinities/Rule"):
         label1 = rule_tag.get("Label1")
         label2 = rule_tag.get("Label2")
         strength = rule_tag.get("Strength")

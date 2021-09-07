@@ -217,9 +217,13 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 SaveFile.main(currentSystem, fileName)
 
     def Click_QuickRotate(self):
-        self.stop_sequence()
+        # Make a rotated system based off the current system, and instantly save the new system.
         if(self.SysLoaded == True):
-            QuickRotate.main(currentSystem)
+            fileName = QFileDialog.getSaveFileName(
+                self, "QFileDialog.getSaveFileName()", "", "XML Files (*.xml)")
+
+            if(fileName[0] != ''):
+                QuickRotate.main(currentSystem, fileName)
 
     def Click_QuickCombine(self):
         if(self.SysLoaded == True):

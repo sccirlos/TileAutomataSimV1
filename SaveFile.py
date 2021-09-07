@@ -98,7 +98,7 @@ def main(system, fileName):
 
         rule_tag = ET.SubElement(vertical_affinities_tag, "Rule")
         rule_tag.set('Label1', label1)
-        rule_tag.set('Label2'. label2)
+        rule_tag.set('Label2', label2)
         rule_tag.set("Strength", strength)
 
     # Add horizontal affinity rules

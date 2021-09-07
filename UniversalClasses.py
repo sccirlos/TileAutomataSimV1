@@ -403,19 +403,28 @@ class System:
         self.horizontal_transitions_dict = {}
 
         # Translate list versions into dictionary versions
-        for rule in vertical_affinities_list:
+        self.translateListsToDicts()
+
+    def get_state(self, label):
+        for state in self.states:
+            if state.get_label() == label:
+                return state
+    # Utility
+
+    def translateListsToDicts(self):
+        for rule in self.vertical_affinities_list:
             label1 = rule.returnLabel1()
             label2 = rule.returnLabel2()
             str = rule.returnStr()
 
             self.vertical_affinities_dict[label1, label2] = str
-        for rule in horizontal_affinities_list:
+        for rule in self.horizontal_affinities_list:
             label1 = rule.returnLabel1()
             label2 = rule.returnLabel2()
             str = rule.returnStr()
 
             self.horizontal_affinities_dict[label1, label2] = str
-        for rule in vertical_transitions_list:
+        for rule in self.vertical_transitions_list:
             label1 = rule.returnLabel1()
             label2 = rule.returnLabel2()
             label1Final = rule.returnLabel1Final()
@@ -423,7 +432,7 @@ class System:
 
             self.vertical_transitions_dict[label1, label2] = (
                 label1Final, label2Final)
-        for rule in horizontal_transitions_list:
+        for rule in self.horizontal_transitions_list:
             label1 = rule.returnLabel1()
             label2 = rule.returnLabel2()
             label1Final = rule.returnLabel1Final()
@@ -431,13 +440,8 @@ class System:
 
             self.horizontal_transitions_dict[label1, label2] = (
                 label1Final, label2Final)
-
-    def get_state(self, label):
-        for state in self.states:
-            if state.get_label() == label:
-                return state
-
     # Getters
+
     def returnTemp(self):
         return int(self.temp)
 
