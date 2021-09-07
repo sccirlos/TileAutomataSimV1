@@ -1,5 +1,6 @@
 import UniversalClasses as uc 
 import SaveFile
+from components import increment_string, make_prime
 
 import math
 
@@ -237,6 +238,46 @@ def genSqrtBinCount(value):
     genSys.add_transition_rule(down0TR)
 
     return genSys
+
+class LinesGenerator:
+    def __init__(self, line_len=None, num_st=None):
+        
+        self.seedA = uc.State("S", black)
+        self.genSys = uc.System(1, [], [], [self.seedA], [], [], [], [])   
+        self.num_states = num_st
+        self.line_length = line_len
+        if not line_len == None:
+            self.bit_len = line_len.bit_length
+        else:
+            self.bit_len = None 
+        pass
+
+    
+class NLength_LineGenerator(LinesGenerator):
+    
+    def __init__(self, line_len=None):
+        self.reseed_states = []
+        return super(LinesGenerator, self).__init__(line_len)  
+
+    def generate_states(self):
+        # New Initial States
+        ## Add B0
+        b0 = uc.State("B0", white)
+        self.genSys.add_State(b0)
+        self.genSys.add_Initial_State(b0)
+        ## Add B'0
+        bp0 = uc.State("B'0", white)
+        self.genSys.add_State(bp0)
+        
+        
+        for i in range(self.bit_len):
+            
+            pass
+
+    def reseed_states(self):
+        
+        pass    
+
 
 if __name__ == "__main__":
     #sys = genDoubleIndexStates(16)
