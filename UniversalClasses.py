@@ -252,17 +252,13 @@ class Assembly:
                     move["state1"] = iTile.get_state()
                     move["state2"] = neighborS.get_state()
 
-                    # a pair of states may have mutliple rules
-                    x = 0
-                    if len(rules) > 2:
-                        x = self.random_move(rules)
-
-                    # class is in universal classes
-                    move["state1Final"] = sy.get_state(
-                        rules[x])  # .returnLabel1Final()
-                    move["state2Final"] = sy.get_state(
-                        rules[x + 1])  # .returnLabel2Final()
-                    transitions_list.append(move)
+                    for i in range(0, len(rules), 2):   
+                        print(i)
+                        move["state1Final"] = sy.get_state(
+                            rules[i])  # .returnLabel1Final()
+                        move["state2Final"] = sy.get_state(
+                            rules[i + 1])  # .returnLabel2Final()
+                        transitions_list.append(move)
 
             if(neighborE != None):
                 #rules = iHTranRules[neighborE.get_label()]
@@ -280,15 +276,13 @@ class Assembly:
                     move["state1"] = iTile.get_state()
                     move["state2"] = neighborE.get_state()
 
-                    x = 0
-                    if len(rules) > 2:
-                        x = self.random_move(rules)
-
-                    move["state1Final"] = sy.get_state(
-                        rules[x])  # .returnLabel1Final()
-                    move["state2Final"] = sy.get_state(
-                        rules[x + 1])  # .returnLabel2Final()
-                    transitions_list.append(move)
+                    for i in range(0, len(rules), 2):   
+                        print(i)
+                        move["state1Final"] = sy.get_state(
+                            rules[i])  # .returnLabel1Final()
+                        move["state2Final"] = sy.get_state(
+                            rules[i + 1])  # .returnLabel2Final()
+                        transitions_list.append(move)
 
         return transitions_list
         # ORIGINAL ((type: ), (current labels), (transition labels))
@@ -326,12 +320,6 @@ class Assembly:
             return self.set_attachments(move)
         if(move["type"] == "t"):
             return self.set_transition(move)
-
-    def random_move(self, list):
-        rule_number = randrange(len(list))
-        if rule_number % 2 != 0:
-            rule_number = rule_number - 1
-        return rule_number
 
 # Not in use right now.
 class SeedAssemblyTile:
