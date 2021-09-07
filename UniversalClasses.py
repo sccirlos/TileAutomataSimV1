@@ -1,3 +1,4 @@
+from random import randrange
 # These classes are used for Loading and Saving Files and Communicating with general_TA_simulator.
 
 class State:
@@ -252,7 +253,7 @@ class Assembly:
                     move["state2"] = neighborS.get_state()
 
                     # a pair of states may have mutliple rules
-
+                    
                     # class is in universal classes
                     move["state1Final"] = sy.get_state(
                         rules[0])  # .returnLabel1Final()
@@ -276,10 +277,14 @@ class Assembly:
                     move["state1"] = iTile.get_state()
                     move["state2"] = neighborE.get_state()
 
+                    rule_number = randrange(len(rules))
+                    if rule_number % 2 != 0:
+                        rule_number = rule_number - 1
+
                     move["state1Final"] = sy.get_state(
-                        rules[0])  # .returnLabel1Final()
+                        rules[rule_number])  # .returnLabel1Final()
                     move["state2Final"] = sy.get_state(
-                        rules[1])  # .returnLabel2Final()
+                        rules[rule_number + 1])  # .returnLabel2Final()
                     transitions_list.append(move)
 
         return transitions_list
