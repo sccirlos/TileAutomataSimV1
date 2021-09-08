@@ -87,31 +87,35 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         # if up arrow key is pressed
         if event.key() == Qt.Key_Up:
             self.seedY = self.seedY - 10
-            self.textY = self.seedY + 25
+            self.textY = self.textY - 10
 
         # if down arrow key is pressed
         elif event.key() == Qt.Key_Down:
             self.seedY = self.seedY + 10
-            self.textY = self.seedY + 25
+            self.textY = self.textY + 10
 
         # if left arrow key is pressed
         elif event.key() == Qt.Key_Left:
             self.seedX = self.seedX - 10
-            self.textX = self.seedX + 10
+            self.textX = self.textX - 10
 
         # if down arrow key is pressed
         elif event.key() == Qt.Key_Right:
             self.seedX = self.seedX + 10
-            self.textX = self.seedX + 10
+            self.textX = self.textX + 10
 
         self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def wheelEvent(self,event):
         if event.angleDelta().y() == 120:
             self.tileSize = self.tileSize + 10
+            self.textX = self.textX + 3
+            self.textY = self.textY + 5
         else:
             if self.tileSize > 10:
                 self.tileSize = self.tileSize - 10
+                self.textX = self.textX - 3
+                self.textY = self.textY - 5
         self.textSize = int(self.tileSize / 3)
 
         self.draw_tiles(self.Engine.getCurrentAssembly())
@@ -144,10 +148,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
             painter.setPen(pen)
             painter.setBrush(brush)
-            painter.drawRect((tile.x * self.tileSize) + self.seedX, (tile.y * -
-                             self.tileSize) + self.seedY, self.tileSize, self.tileSize)
-            painter.drawText((tile.x * self.tileSize) + self.textX,
-                             (tile.y * -self.tileSize) + self.textY, tile.state.label)
+            painter.drawRect((tile.x * self.tileSize) + self.seedX, (tile.y * -self.tileSize) + self.seedY, self.tileSize, self.tileSize)
+            painter.drawText((tile.x * self.tileSize) + self.textX, (tile.y * -self.tileSize) + self.textY, tile.state.label)
 
         painter.end()
 
