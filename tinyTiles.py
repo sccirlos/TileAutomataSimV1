@@ -11,13 +11,11 @@ import TAMainWindow
 import LoadFile
 import SaveFile
 import Assembler_Proto
-import QuickRotate
-import QuickCombine
 
 import sys
 
 # Global Variables
-# Note: currentSystem is still global but had to be moved into the loading method
+currentSystem = None
 currentAssemblyHistory = []
 # General Seeded TA Simulator
 
@@ -49,18 +47,17 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.time = 0
         self.delay = 0
         self.seedX = 25
-        self.seedY = 500
+        self.seedY = 550
 
         self.textX = self.seedX + 10
         self.textY = self.seedY + 25
 
-        self.tileSize = 40
-        self.textSize = int(self.tileSize / 3)
+        self.tileSize = 6
 
         self.Engine = None
         self.SysLoaded = False
         self.play = True
-        canvas = QtGui.QPixmap(1000, 600) #need variables here to be the screen size, that way we can adjust size with screen
+        canvas = QtGui.QPixmap(1000, 600)
         canvas.fill(Qt.white)
         self.label.setPixmap(canvas)
 
@@ -71,12 +68,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         # "Save" from the "File" menu
         self.actionSave.triggered.connect(self.Click_SaveFile)
-
-        # "Quick Rotate"
-        self.actionRotate.triggered.connect(self.Click_QuickRotate)
-
-        # "Quick Combine"
-        self.actionCombine.triggered.connect(self.Click_QuickCombine)
 
         self.actionFirst.triggered.connect(self.first_step)
 
@@ -89,45 +80,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.actionNext.triggered.connect(self.next_step)
 
         self.actionLast.triggered.connect(self.last_step)
-
-    def keyPressEvent(self, event):
-    #### Moving tiles across screen functions #####
-        # up arrow key is pressed
-        if event.key() == Qt.Key_Up:
-            self.seedY = self.seedY - 10
-            self.textY = self.textY - 10
-
-        # down arrow key is pressed
-        elif event.key() == Qt.Key_Down:
-            self.seedY = self.seedY + 10
-            self.textY = self.textY + 10
-
-        # left arrow key is pressed
-        elif event.key() == Qt.Key_Left:
-            self.seedX = self.seedX - 10
-            self.textX = self.textX - 10
-
-        # down arrow key is pressed
-        elif event.key() == Qt.Key_Right:
-            self.seedX = self.seedX + 10
-            self.textX = self.textX + 10
-
-        self.draw_tiles(self.Engine.getCurrentAssembly())
-
-    def wheelEvent(self,event):
-        #### Zoom in functions for the scroll wheel ####
-        if event.angleDelta().y() == 120:
-            self.tileSize = self.tileSize + 10
-            self.textX = self.textX + 3
-            self.textY = self.textY + 5
-        else:
-            if self.tileSize > 10:
-                self.tileSize = self.tileSize - 10
-                self.textX = self.textX - 3
-                self.textY = self.textY - 5
-        self.textSize = int(self.tileSize / 3)
-
-        self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def draw_tiles(self, assembly):
         painter = QPainter(self.label.pixmap())
@@ -148,7 +100,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         font.setFamily("Times")
         font.setBold(True)
-        font.setPixelSize(self.textSize)
         painter.setFont(font)
         for tile in assembly.tiles:
             # print(tile[0].color)
@@ -157,8 +108,10 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
             painter.setPen(pen)
             painter.setBrush(brush)
-            painter.drawRect((tile.x * self.tileSize) + self.seedX, (tile.y * -self.tileSize) + self.seedY, self.tileSize, self.tileSize)
-            painter.drawText((tile.x * self.tileSize) + self.textX, (tile.y * -self.tileSize) + self.textY, tile.state.label)
+            painter.drawRect((tile.x * self.tileSize) + self.seedX, (tile.y * -
+                             self.tileSize) + self.seedY, self.tileSize, self.tileSize)
+            #painter.drawText((tile.x * self.tileSize) + self.textX,
+                             #(tile.y * -self.tileSize) + self.textY, tile.state.label)
 
         painter.end()
 
@@ -171,7 +124,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.label_2.setText("Time elapsed: 0 seconds")
             self.label_3.setText("Current step time: 0 seconds")
 
-        #print(self.Engine.currentIndex)
+        print(self.Engine.currentIndex)
         self.update()
 
     def Click_Run_Simulation(self):  # Run application if everythings good
@@ -224,7 +177,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.SysLoaded = True
 
             # Establish the current system we're working with
-            global currentSystem
             currentSystem = System(temp, states, inital_states, seed_states, vertical_affinities,
                                    horizontal_affinities, vertical_transitions, horizontal_transitions)
             print("\nSystem Dictionaries:")
@@ -249,24 +201,24 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def Click_SaveFile(self):
         # Creating a System object from data read.
         if(self.SysLoaded == True):
+            temp = LoadFile.Temp
+            states = LoadFile.CompleteStateSet
+            inital_states = LoadFile.InitialStateSet
+            seed_states = LoadFile.SeedStateSet
+            vertical_affinities = LoadFile.VerticalAffinityRules
+            horizontal_affinities = LoadFile.HorizontalAffinityRules
+            vertical_transitions = LoadFile.VerticalTransitionRules
+            horizontal_transitions = LoadFile.HorizontalTransitionRules
+
+            # Establish the current system we're working with
+            currentSystem = System(temp, states, inital_states, seed_states, vertical_affinities,
+                                   horizontal_affinities, vertical_transitions, horizontal_transitions)
+
             fileName = QFileDialog.getSaveFileName(
                 self, "QFileDialog.getSaveFileName()", "", "XML Files (*.xml)")
 
             if(fileName[0] != ''):
                 SaveFile.main(currentSystem, fileName)
-
-    def Click_QuickRotate(self):
-        # Make a rotated system based off the current system, and instantly save the new system.
-        if(self.SysLoaded == True):
-            fileName = QFileDialog.getSaveFileName(
-                self, "QFileDialog.getSaveFileName()", "", "XML Files (*.xml)")
-
-            if(fileName[0] != ''):
-                QuickRotate.main(currentSystem, fileName)
-
-    def Click_QuickCombine(self):
-        if(self.SysLoaded == True):
-            QuickCombine.main(currentSystem)
 
     # self.draw_tiles(LoadFile.) #starting assembly goes here
 
