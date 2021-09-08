@@ -259,8 +259,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             if(fileName[0] != ''):
                 SaveFile.main(currentSystem, fileName)
 
-    # self.draw_tiles(LoadFile.) #starting assembly goes here
-
     def first_step(self):
         if self.SysLoaded == True:
             self.stop_sequence()
