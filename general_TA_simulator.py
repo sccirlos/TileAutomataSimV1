@@ -58,7 +58,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.Engine = None
         self.SysLoaded = False
         self.play = True
-        canvas = QtGui.QPixmap(1000, 600)
+        canvas = QtGui.QPixmap(1000, 600) #need variables here to be the screen size, that way we can adjust size with screen
         canvas.fill(Qt.white)
         self.label.setPixmap(canvas)
 
@@ -83,23 +83,23 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.actionLast.triggered.connect(self.last_step)
 
     def keyPressEvent(self, event):
-    
-        # if up arrow key is pressed
+    #### Moving tiles across screen functions #####
+        # up arrow key is pressed
         if event.key() == Qt.Key_Up:
             self.seedY = self.seedY - 10
             self.textY = self.textY - 10
 
-        # if down arrow key is pressed
+        # down arrow key is pressed
         elif event.key() == Qt.Key_Down:
             self.seedY = self.seedY + 10
             self.textY = self.textY + 10
 
-        # if left arrow key is pressed
+        # left arrow key is pressed
         elif event.key() == Qt.Key_Left:
             self.seedX = self.seedX - 10
             self.textX = self.textX - 10
 
-        # if down arrow key is pressed
+        # down arrow key is pressed
         elif event.key() == Qt.Key_Right:
             self.seedX = self.seedX + 10
             self.textX = self.textX + 10
@@ -107,6 +107,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def wheelEvent(self,event):
+        #### Zoom in functions for the scroll wheel ####
         if event.angleDelta().y() == 120:
             self.tileSize = self.tileSize + 10
             self.textX = self.textX + 3
