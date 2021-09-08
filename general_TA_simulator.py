@@ -53,11 +53,12 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.textY = self.seedY + 25
 
         self.tileSize = 40
+        self.textSize = int(self.tileSize / 3)
 
         self.Engine = None
         self.SysLoaded = False
         self.play = True
-        canvas = QtGui.QPixmap(1000, 600)
+        canvas = QtGui.QPixmap(1000, 600) #need variables here to be the screen size, that way we can adjust size with screen
         canvas.fill(Qt.white)
         self.label.setPixmap(canvas)
 
@@ -81,6 +82,45 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         self.actionLast.triggered.connect(self.last_step)
 
+    def keyPressEvent(self, event):
+    #### Moving tiles across screen functions #####
+        # up arrow key is pressed
+        if event.key() == Qt.Key_Up:
+            self.seedY = self.seedY - 10
+            self.textY = self.textY - 10
+
+        # down arrow key is pressed
+        elif event.key() == Qt.Key_Down:
+            self.seedY = self.seedY + 10
+            self.textY = self.textY + 10
+
+        # left arrow key is pressed
+        elif event.key() == Qt.Key_Left:
+            self.seedX = self.seedX - 10
+            self.textX = self.textX - 10
+
+        # down arrow key is pressed
+        elif event.key() == Qt.Key_Right:
+            self.seedX = self.seedX + 10
+            self.textX = self.textX + 10
+
+        self.draw_tiles(self.Engine.getCurrentAssembly())
+
+    def wheelEvent(self,event):
+        #### Zoom in functions for the scroll wheel ####
+        if event.angleDelta().y() == 120:
+            self.tileSize = self.tileSize + 10
+            self.textX = self.textX + 3
+            self.textY = self.textY + 5
+        else:
+            if self.tileSize > 10:
+                self.tileSize = self.tileSize - 10
+                self.textX = self.textX - 3
+                self.textY = self.textY - 5
+        self.textSize = int(self.tileSize / 3)
+
+        self.draw_tiles(self.Engine.getCurrentAssembly())
+
     def draw_tiles(self, assembly):
         painter = QPainter(self.label.pixmap())
         pen = QtGui.QPen()
@@ -100,6 +140,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         font.setFamily("Times")
         font.setBold(True)
+        font.setPixelSize(self.textSize)
         painter.setFont(font)
         for tile in assembly.tiles:
             # print(tile[0].color)
@@ -108,10 +149,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
             painter.setPen(pen)
             painter.setBrush(brush)
-            painter.drawRect((tile.x * self.tileSize) + self.seedX, (tile.y * -
-                             self.tileSize) + self.seedY, self.tileSize, self.tileSize)
-            painter.drawText((tile.x * self.tileSize) + self.textX,
-                             (tile.y * -self.tileSize) + self.textY, tile.state.label)
+            painter.drawRect((tile.x * self.tileSize) + self.seedX, (tile.y * -self.tileSize) + self.seedY, self.tileSize, self.tileSize)
+            painter.drawText((tile.x * self.tileSize) + self.textX, (tile.y * -self.tileSize) + self.textY, tile.state.label)
 
         painter.end()
 
@@ -124,7 +163,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.label_2.setText("Time elapsed: 0 seconds")
             self.label_3.setText("Current step time: 0 seconds")
 
-        print(self.Engine.currentIndex)
+        #print(self.Engine.currentIndex)
         self.update()
 
     def Click_Run_Simulation(self):  # Run application if everythings good
