@@ -46,8 +46,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         #self.label = QtWidgets.QLabel()
         self.time = 0
         self.delay = 0
-        self.seedX = 25
-        self.seedY = 500
+        self.seedX = 450 #need to have some function for half the screen width
+        self.seedY = 300 #need to have some function for half the screen height
 
         self.textX = self.seedX + 10
         self.textY = self.seedY + 25
@@ -227,6 +227,14 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             currentSystem.displayVerticalTransitionDict()
             print("Horizontal Transitions:")
             currentSystem.displayHorizontalTransitionDict()
+
+            self.seedX = 450 #need to have some function for half the screen width
+            self.seedY = 300 #need to have some function for half the screen height
+            self.textX = self.seedX + 10
+            self.textY = self.seedY + 25
+
+            self.tileSize = 40
+            self.textSize = int(self.tileSize / 3)
 
             self.time = 0
             self.Engine = Engine(currentSystem)
