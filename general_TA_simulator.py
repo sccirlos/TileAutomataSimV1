@@ -53,6 +53,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.textY = self.seedY + 25
 
         self.tileSize = 40
+        self.textSize = int(self.tileSize / 3)
 
         self.Engine = None
         self.SysLoaded = False
@@ -82,7 +83,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.actionLast.triggered.connect(self.last_step)
 
     def keyPressEvent(self, event):
-  
+    
         # if up arrow key is pressed
         if event.key() == Qt.Key_Up:
             self.seedY = self.seedY - 10
@@ -105,6 +106,16 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         self.draw_tiles(self.Engine.getCurrentAssembly())
 
+    def wheelEvent(self,event):
+        if event.angleDelta().y() == 120:
+            self.tileSize = self.tileSize + 10
+        else:
+            if self.tileSize > 10:
+                self.tileSize = self.tileSize - 10
+        self.textSize = int(self.tileSize / 3)
+
+        self.draw_tiles(self.Engine.getCurrentAssembly())
+
     def draw_tiles(self, assembly):
         painter = QPainter(self.label.pixmap())
         pen = QtGui.QPen()
@@ -124,6 +135,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         font.setFamily("Times")
         font.setBold(True)
+        font.setPixelSize(self.textSize)
         painter.setFont(font)
         for tile in assembly.tiles:
             # print(tile[0].color)
