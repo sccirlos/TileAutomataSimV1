@@ -174,8 +174,8 @@ class Assembly:
         # print(trans[2][1])
        # print(trans[0])
         #a.tiles[change] = trans[2][1]
-        print("attaching at " + str(att["x"]) + " : " + str(att["y"]))
-        print("New Assembly Tiles: ", a.tiles)
+        #print("attaching at " + str(att["x"]) + " : " + str(att["y"]))
+        #print("New Assembly Tiles: ", a.tiles)
 
         att_tile = Tile(att["state1"], att["x"], att["y"])
         a.tiles.append(att_tile)
@@ -299,11 +299,11 @@ class Assembly:
         a.label = self.label + "T " + \
             trans["state1Final"].get_label() + trans["state2Final"].get_label()
         a.set_tiles(self.tiles.copy())
-        change = trans["type"]
+        #change = trans["type"]
 
         # print(a.tiles[change])
-        print(trans["state2Final"])
-        print(trans["type"])
+        print(trans["state2Final"].get_label())
+        #print(trans["type"])
         a.coords[toCoords(trans["x"], trans["y"])].set_state(
             trans["state1Final"])
         # a.tiles[trans["x"]][trans["y"]].setState(trans["state1Final"])
@@ -325,6 +325,35 @@ class Assembly:
             return self.set_attachments(move)
         if(move["type"] == "t"):
             return self.set_transition(move)
+
+    def undoMove(self, move):
+        a = Assembly()
+        a.set_tiles(self.tiles.copy())
+
+        x = move["x"]
+        y = move["y"]
+
+        if(move["type"] == "t"):
+            a.coords[toCoords(x, y)].set_state(move["state1"])
+            # a.tiles[trans["x"]][trans["y"]].setState(trans["state1Final"])
+            if(move["dir"] == "v"):
+                a.coords[toCoords(move["x"], move["y"] - 1)
+                        ].set_state(move["state2"])
+            if(move["dir"] == "h"):
+                a.coords[toCoords(move["x"] + 1, move["y"])
+                        ].set_state(move["state2"])
+
+
+
+            return a
+        if(move["type"] == "a"):
+            print("Removing state", move["state1"], "from ", move["x"], ", ", move["y"])
+            tile = a.coords[toCoords(x, y)]
+            del a.coords[toCoords(x, y)]
+
+            a.tiles.remove(tile)
+
+            return a
 
 # Not in use right now.
 class SeedAssemblyTile:

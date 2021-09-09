@@ -8,7 +8,8 @@ import sys
 class Engine:
     def __init__(self, currentSystem):
         self.system = currentSystem
-        self.assemblyList = []
+        #self.assemblyList = []
+        self.moveList = []
         self.TimeTaken = []
         self.currentIndex = 0
         self.lastIndex = 0
@@ -18,28 +19,39 @@ class Engine:
 
         seedState = random.choice(self.system.returnSeedStates())
         seed = UniversalClasses.Tile(seedState, 0, 0) 
-        seedAssembly = UniversalClasses.Assembly()
-        seedAssembly.set_tiles([seed])
-        self.assemblyList.append(seedAssembly)
+        self.seedAssembly = UniversalClasses.Assembly()
+        self.seedAssembly.set_tiles([seed])
+        # Changed from adding to list to setting it as the current assembly
+        #self.assemblyList.append(seedAssembly)
+        self.currentAssembly = self.seedAssembly
 
     def step(self):
         if(self.currentIndex < self.lastIndex): 
+            move = self.moveList[self.currentIndex]
+            self.currentAssembly = self.currentAssembly.performMove(move)
+
             self.currentIndex = self.currentIndex + 1
             return 0
         else:
             return self.build()
                 
     def back(self):
-        if(self.currentIndex > 0): self.currentIndex = self.currentIndex - 1
+        if(self.currentIndex > 0): 
+            self.currentIndex = self.currentIndex - 1
+            move = self.moveList[self.currentIndex]
+            self.currentAssembly = self.currentAssembly.undoMove(move)
 
     def first(self):
         self.currentIndex = 0
+        self.currentAssembly = self.seedAssembly
 
     def last(self):
-        self.currentIndex = self.lastIndex
+        while self.currentIndex < self.lastIndex:
+            # Will update current assembly, break if terminal
+            if self.step() == -1: break
 
     def getCurrentAssembly(self):
-        return self.assemblyList[self.currentIndex]
+        return self.currentAssembly
 
     def getCurrentIndex(self):
         return self.currentIndex
@@ -64,8 +76,8 @@ class Engine:
 
         # Get next assembly and add to list
         move = random.choice(moveList)
-        newAssembly = cAssembly.performMove(move)
-        self.assemblyList.append(newAssembly)
+        self.currentAssembly = cAssembly.performMove(move)
+        self.moveList.append(move)
         return 0
 
     def timeTaken(self):
