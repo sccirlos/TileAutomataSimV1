@@ -174,7 +174,7 @@ class Assembly:
         # print(trans[2][1])
        # print(trans[0])
         #a.tiles[change] = trans[2][1]
-        #print("attaching at " + str(att["x"]) + " : " + str(att["y"]))
+        print("attaching at " + str(att["x"]) + " : " + str(att["y"]))
         #print("New Assembly Tiles: ", a.tiles)
 
         att_tile = Tile(att["state1"], att["x"], att["y"])
@@ -326,6 +326,139 @@ class Assembly:
         if(move["type"] == "t"):
             return self.set_transition(move)
 
+    # Get moves for the tile at location x y 
+    def getMovesCoords(self, x, y, sy):
+        sys_h_tr = sy.returnHorizontalTransitionDict()
+        sys_v_tr = sy.returnVerticalTransitionDict()
+
+        updatedMoves = []
+
+        curLabel = self.coords[toCoords(x, y)].get_label()
+
+        # Get each neighbor
+        neighborN = self.coords.get(toCoords(x, y + 1))
+        neighborS = self.coords.get(toCoords(x, y - 1))
+        neighborE = self.coords.get(toCoords(x + 1, y))
+        neighborW = self.coords.get(toCoords(x - 1, y))
+
+
+        
+
+
+        if(neighborS != None):
+            # second dictionary
+            # rules = iVTranRules.get(neighborS.get_label())
+            rules = sys_v_tr.get(
+                (curLabel, neighborS.get_label()))
+            # rules.append(iVTranRules)
+            if rules != None:
+                newMove = {"type": "t"}
+                newMove["x"] = x
+                newMove["y"] = y
+                newMove["dir"] = "v"
+                newMove["state1"] = curLabel
+                newMove["state2"] = neighborS.get_state()
+
+                for i in range(0, len(rules), 2):   
+                    newMove["state1Final"] = sy.get_state(
+                        rules[i])  # .returnLabel1Final()
+                    newMove["state2Final"] = sy.get_state(
+                        rules[i + 1])  # .returnLabel2Final()
+                    updatedMoves.append(newMove)
+        else:
+            attMoves = self.getAttForCoords(x, y - 1, sy)
+            if len(attMoves) > 0:
+                updatedMoves.extend(attMoves)
+
+
+        if(neighborE != None):
+            #rules = iHTranRules[neighborE.get_label()]
+            rules = sys_h_tr.get(
+                (curLabel, neighborE.get_label()))
+            #print(sys_h_tr)
+            # rules.append(iHTranRules)
+
+            if rules != None:
+                #print(iTile.get_label() + " : " + str(len(rules)))
+                newMove = {"type": "t"}
+                newMove["x"] = x
+                newMove["y"] = y
+                newMove["dir"] = "h"
+                newMove["state1"] = curLabel
+                newMove["state2"] = neighborS.get_state()
+
+                for i in range(0, len(rules), 2):   
+                    newMove["state1Final"] = sy.get_state(
+                        rules[i])  # .returnLabel1Final()
+                    newMove["state2Final"] = sy.get_state(
+                        rules[i + 1])  # .returnLabel2Final()
+                    updatedMoves.append(newMove)
+        else:
+            attMoves = self.getAttForCoords(x + 1, y, sy)
+            if len(attMoves) > 0:
+                updatedMoves.extend(attMoves)
+
+        if neighborN != None:
+            #rules = iHTranRules[neighborE.get_label()]
+            rules = sys_v_tr.get(
+                (neighborN.get_label(), curLabel))
+            #print(sys_h_tr)
+            # rules.append(iHTranRules)
+
+            if rules != None:
+                #print(iTile.get_label() + " : " + str(len(rules)))
+                newMove = {"type": "t"}
+                newMove["x"] = x
+                newMove["y"] = y + 1
+                newMove["dir"] = "v"
+                newMove["state1"] = neighborN.get_state()
+                newMove["state2"] = curLabel
+
+                for i in range(0, len(rules), 2):   
+                    newMove["state1Final"] = sy.get_state(
+                        rules[i])  # .returnLabel1Final()
+                    newMove["state2Final"] = sy.get_state(
+                        rules[i + 1])  # .returnLabel2Final()
+                    updatedMoves.append(newMove)
+        else:
+            attMoves = self.getAttForCoords(x, y + 1, sy)
+            if len(attMoves) > 0:
+                updatedMoves.extend(attMoves)
+
+        if neighborW != None:
+            #rules = iHTranRules[neighborE.get_label()]
+            rules = sys_h_tr.get(
+                (neighborW.get_label(), curLabel))
+            #print(sys_h_tr)
+            # rules.append(iHTranRules)
+
+            if rules != None:
+                #print(iTile.get_label() + " : " + str(len(rules)))
+                newMove = {"type": "t"}
+                newMove["x"] = x - 1
+                newMove["y"] = y
+                newMove["dir"] = "h"
+                newMove["state1"] = neighborW.get_state()
+                newMove["state2"] = curLabel
+
+                for i in range(0, len(rules), 2):   
+                    newMove["state1Final"] = sy.get_state(
+                        rules[i])  # .returnLabel1Final()
+                    newMove["state2Final"] = sy.get_state(
+                        rules[i + 1])  # .returnLabel2Final()
+                    updatedMoves.append(newMove)
+        else:
+            attMoves = self.getAttForCoords(x - 1, y, sy)
+            if len(attMoves) > 0:
+                updatedMoves.extend(attMoves)
+
+        for testMove in updatedMoves:
+            if isinstance(testMove, list):
+                print(len(updatedMoves), ": ", testMove)
+
+        return updatedMoves
+
+
     def undoMove(self, move):
         a = Assembly()
         a.set_tiles(self.tiles.copy())
@@ -354,6 +487,58 @@ class Assembly:
             a.tiles.remove(tile)
 
             return a
+
+    def getAttForCoords(self, x, y, sy):
+        moveList = []
+
+        v_rules = sy.returnVerticalAffinityDict()
+        h_rules = sy.returnHorizontalAffinityDict()
+
+        neighborN = self.coords.get(toCoords(x, y + 1))
+        neighborS = self.coords.get(toCoords(x, y - 1))
+        neighborE = self.coords.get(toCoords(x + 1, y))
+        neighborW = self.coords.get(toCoords(x - 1, y))
+
+        # Calcuate the str of each tile attaching at this position
+        for iTile in sy.returnInitialStates():
+            attStr = 0
+
+            if(neighborN != None):
+                stren = v_rules.get(
+                    (neighborN.get_label(), iTile.get_label()))
+                if(stren != None):
+                    attStr += int(stren)
+            if(neighborS != None):
+                stren = v_rules.get(
+                    (iTile.get_label(), neighborS.get_label()))
+                if(stren != None):
+                    attStr += int(stren)
+            if(neighborE != None):
+                stren = h_rules.get(
+                    (iTile.get_label(), neighborE.get_label()))
+                if(stren != None):
+                    attStr += int(stren)
+            # else:
+            #    print("East of "+ str(iX) + " : " + str(iY) + " is empty")
+            if(neighborW != None):
+                stren = h_rules.get(
+                    (neighborW.get_label(), iTile.get_label()))
+                if(stren != None):
+                    attStr += int(stren)
+            # else:
+            #    print("West of "+ str(iX) + " : " + str(iY) + " is empty")
+
+            #print(iTile.get_label(), ": ", attStr)
+            if attStr >= sy.returnTemp():
+                attMove = {"type": "a"}
+
+                attMove["x"] = x
+                attMove["y"] = y
+                attMove["state1"] = iTile
+
+                
+                moveList.append(attMove)
+        return moveList
 
 # Not in use right now.
 class SeedAssemblyTile:

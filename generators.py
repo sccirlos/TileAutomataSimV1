@@ -470,11 +470,11 @@ if __name__ == "__main__":
     #sys = genSqrtBinCount("111010101")
     #SaveFile.main(sys, ["genTestCount.xml"])
 
-    #sys = genSqrtBinCount("110011100")
-    #SaveFile.main(sys, ["biggerTestCount.xml"])
+    sys = genSqrtBinCount("110011100")
+    SaveFile.main(sys, ["biggerTestCount.xml"])
 
-    sys = genTripleIndexStates(27)
-    SaveFile.main(sys, ["tripleTest.xml"])
+    #sys = genTripleIndexStates(27)
+    #SaveFile.main(sys, ["tripleTest.xml"])
 
     #value = input("Please Enter a binary string")
     #sys = genSqrtBinCount(value)
