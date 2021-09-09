@@ -66,18 +66,26 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         ### Minimize window ######
         self.minimize_button.clicked.connect(lambda: self.showMinimized())
+        self.minimize_button.setIcon(QtGui.QIcon('Icons/Programming-Minimize-Window-icon.png'))
 
         ### Close window ####
         self.close_button.clicked.connect(lambda: self.close())
+        self.close_button.setIcon(QtGui.QIcon('Icons/Actions-file-close-icon.png'))
 
         ### Restore/Maximize window ####
         self.maximize_button.clicked.connect(lambda: self.restore_or_maximize_window())
+        self.maximize_button.setIcon(QtGui.QIcon('Icons/Programming-Maximize-Window-icon.png'))
+
+        #Left Menu toggle button
+        self.Menu_button.clicked.connect(lambda: self.slideLeftMenu())
+        self.Menu_button.setIcon(QtGui.QIcon('Icons/menu_icon.png'))
 
         # this is "Load" on the "File" menu
         self.Load_button.clicked.connect(self.Click_FileSearch)
 
         # "Save" from the "File" menu
         self.SaveAs_button.clicked.connect(self.Click_SaveFile)
+        self.SaveAs_button.setIcon(QtGui.QIcon('Icons/save-icon.png'))
 
         self.First_button.clicked.connect(self.first_step)
 
@@ -86,6 +94,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         #self.Stop_button.clicked.connect(self.stop_sequence)
 
         self.Play_button.clicked.connect(self.play_sequence)
+        self.Play_button.setIcon(QtGui.QIcon('Icons/Media-Controls-Play-icon.png'))
 
         self.Next_button.clicked.connect(self.next_step)
 
@@ -105,9 +114,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         # Add click event/Mouse move event/drag event to the top header to move the window
         self.header.mouseMoveEvent = moveWindow
-
-        #Left Menu toggle button
-        self.Menu_button.clicked.connect(lambda: self.slideLeftMenu())
 
         #self.label = QtWidgets.QLabel()
         self.time = 0
