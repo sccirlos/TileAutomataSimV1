@@ -2,6 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog
 from PyQt5.QtGui import QPainter, QBrush, QPen
 
+
 from PyQt5.QtCore import Qt
 from random import randrange
 
@@ -43,6 +44,71 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
 
+        ###Remove Window title bar ####
+        self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+
+        ###Set main background to transparent####
+        #self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+
+        ###Shadow effect #####
+        self.shadow = QtWidgets.QGraphicsDropShadowEffect(self)
+        self.shadow.setBlurRadius(50)
+        self.shadow.setXOffset(0)
+        self.shadow.setYOffset(0)
+        self.shadow.setColor(QtGui.QColor(0, 92, 157, 550))
+
+        ####Apply shadow to central widget####
+        self.centralwidget.setGraphicsEffect(self.shadow)
+
+        ###Set window title and Icon####
+        #self.setWindowIcon(QtGui.QIcon("path goes here"))
+        self.setWindowTitle("TA Simulator")
+
+        ### Minimize window ######
+        self.minimize_button.clicked.connect(lambda: self.showMinimized())
+
+        ### Close window ####
+        self.close_button.clicked.connect(lambda: self.close())
+
+        ### Restore/Maximize window ####
+        self.maximize_button.clicked.connect(lambda: self.restore_or_maximize_window())
+
+        # this is "Load" on the "File" menu
+        self.Load_button.clicked.connect(self.Click_FileSearch)
+
+        # "Save" from the "File" menu
+        self.SaveAs_button.clicked.connect(self.Click_SaveFile)
+
+        self.First_button.clicked.connect(self.first_step)
+
+        self.Prev_button.clicked.connect(self.prev_step)
+
+        #self.Stop_button.clicked.connect(self.stop_sequence)
+
+        self.Play_button.clicked.connect(self.play_sequence)
+
+        self.Next_button.clicked.connect(self.next_step)
+
+        self.Last_button.clicked.connect(self.last_step)
+
+        # Function to Move window on mouse drag event on the title bar
+        def moveWindow(e):
+            # Detect if the window is  normal size
+            if self.isMaximized() == False: #Not maximized
+                # Move window only when window is normal size 
+                #if left mouse button is clicked (Only accept left mouse button clicks)
+                if e.buttons() == Qt.LeftButton:  
+                    #Move window 
+                    self.move(self.pos() + e.globalPos() - self.clickPosition)
+                    self.clickPosition = e.globalPos()
+                    e.accept()
+
+        # Add click event/Mouse move event/drag event to the top header to move the window
+        self.header.mouseMoveEvent = moveWindow
+
+        #Left Menu toggle button
+        self.Menu_button.clicked.connect(lambda: self.slideLeftMenu())
+
         #self.label = QtWidgets.QLabel()
         self.time = 0
         self.delay = 0
@@ -64,23 +130,43 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         self.label_2.setText("")
 
-        # this is "Load" on the "File" menu
-        self.actionLoad.triggered.connect(self.Click_FileSearch)
+        
 
-        # "Save" from the "File" menu
-        self.actionSave.triggered.connect(self.Click_SaveFile)
+    # Slide left menu function
+    def slideLeftMenu(self):
+        # Get current left menu width
+        width = self.slide_menu_container.width()
 
-        self.actionFirst.triggered.connect(self.first_step)
+        # If minimized
+        if width == 0:
+            # Expand menu
+            newWidth = 200
+            #self.open_close_side_bar_btn.setIcon(QtGui.QIcon(u":/icons/icons/chevron-left.svg"))
+        # If maximized
+        else:
+            # Restore menu
+            newWidth = 0
+            #self.open_close_side_bar_btn.setIcon(QtGui.QIcon(u":/icons/icons/align-left.svg"))
 
-        self.actionPrevious.triggered.connect(self.prev_step)
+        # Animate the transition
+        self.animation = QtCore.QPropertyAnimation(self.slide_menu_container, b"maximumWidth")#Animate minimumWidht
+        self.animation.setDuration(250)
+        self.animation.setStartValue(width)#Start value is the current menu width
+        self.animation.setEndValue(newWidth)#end value is the new menu width
+        self.animation.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
+        self.animation.start()
 
-        self.actionStop.triggered.connect(self.stop_sequence)
+    # Add mouse events to the window
+    def mousePressEvent(self, event):
+        # Get the current position of the mouse
+        self.clickPosition = event.globalPos()
+        # We will use this value to move the window
 
-        self.actionPlay.triggered.connect(self.play_sequence)
-
-        self.actionNext.triggered.connect(self.next_step)
-
-        self.actionLast.triggered.connect(self.last_step)
+    def restore_or_maximize_window(self):
+        if self.isMaximized():
+            self.showNormal()
+        else:
+            self.showMaximized()
 
     def keyPressEvent(self, event):
     #### Moving tiles across screen functions #####
@@ -302,24 +388,27 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
     def play_sequence(self):
         if self.SysLoaded == True:
-            self.play = True
-            while((self.Engine.build() != -1) and self.play == True):
-                print(self.Engine.currentIndex)
-                self.time = self.time + (self.Engine.timeTaken())
+            if self.play == False:
+                self.play = True
+                while((self.Engine.build() != -1) and self.play == True):
+                    print(self.Engine.currentIndex)
+                    self.time = self.time + (self.Engine.timeTaken())
 
-                loop = QtCore.QEventLoop()
-                if self.Engine.currentIndex != 0:
-                    QtCore.QTimer.singleShot(
-                        int(self.delay * self.Engine.timeTaken()), loop.quit)
-                else:
-                    QtCore.QTimer.singleShot(self.delay, loop.quit)
-                loop.exec_()
+                    loop = QtCore.QEventLoop()
+                    if self.Engine.currentIndex != 0:
+                        QtCore.QTimer.singleShot(
+                            int(self.delay * self.Engine.timeTaken()), loop.quit)
+                    else:
+                        QtCore.QTimer.singleShot(self.delay, loop.quit)
+                    loop.exec_()
 
-                self.draw_tiles(self.Engine.getCurrentAssembly())
-                # if self.Engine.currentIndex != 0: #and self.Engine.currentIndex < self.Engine.lastIndex:
+                    self.draw_tiles(self.Engine.getCurrentAssembly())
+                    # if self.Engine.currentIndex != 0: #and self.Engine.currentIndex < self.Engine.lastIndex:
 
-            # self.step = len(self.Engine.assemblyList) - 1 #this line is here to prevent a crash that happens if you click last after play finishes
-            self.stop_sequence()
+                # self.step = len(self.Engine.assemblyList) - 1 #this line is here to prevent a crash that happens if you click last after play finishes
+                self.stop_sequence()
+            if self.play == True:
+                self.stop_sequence()
 
     def stop_sequence(self):
         self.play = False
