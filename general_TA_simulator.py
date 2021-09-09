@@ -137,7 +137,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.label_2.setText("")
 
         
-
     # Slide left menu function
     def slideLeftMenu(self):
         # Get current left menu width
@@ -177,22 +176,22 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def keyPressEvent(self, event):
     #### Moving tiles across screen functions #####
         # up arrow key is pressed
-        if event.key() == Qt.Key_Up:
+        if event.key() == Qt.Key_W:
             self.seedY = self.seedY - 10
             self.textY = self.textY - 10
 
         # down arrow key is pressed
-        elif event.key() == Qt.Key_Down:
+        elif event.key() == Qt.Key_S:
             self.seedY = self.seedY + 10
             self.textY = self.textY + 10
 
         # left arrow key is pressed
-        elif event.key() == Qt.Key_Left:
+        elif event.key() == Qt.Key_A:
             self.seedX = self.seedX - 10
             self.textX = self.textX - 10
 
         # down arrow key is pressed
-        elif event.key() == Qt.Key_Right:
+        elif event.key() == Qt.Key_D:
             self.seedX = self.seedX + 10
             self.textX = self.textX + 10
 
