@@ -333,7 +333,7 @@ class Assembly:
 
         updatedMoves = []
 
-        curLabel = self.coords[toCoords(x, y)].get_label()
+        curState = self.coords[toCoords(x, y)].get_state()
 
         # Get each neighbor
         neighborN = self.coords.get(toCoords(x, y + 1))
@@ -349,14 +349,14 @@ class Assembly:
             # second dictionary
             # rules = iVTranRules.get(neighborS.get_label())
             rules = sys_v_tr.get(
-                (curLabel, neighborS.get_label()))
+                (curState.get_label(), neighborS.get_label()))
             # rules.append(iVTranRules)
             if rules != None:
                 newMove = {"type": "t"}
                 newMove["x"] = x
                 newMove["y"] = y
                 newMove["dir"] = "v"
-                newMove["state1"] = curLabel
+                newMove["state1"] = curState
                 newMove["state2"] = neighborS.get_state()
 
                 for i in range(0, len(rules), 2):   
@@ -374,7 +374,7 @@ class Assembly:
         if(neighborE != None):
             #rules = iHTranRules[neighborE.get_label()]
             rules = sys_h_tr.get(
-                (curLabel, neighborE.get_label()))
+                (curState.get_label(), neighborE.get_label()))
             #print(sys_h_tr)
             # rules.append(iHTranRules)
 
@@ -384,8 +384,8 @@ class Assembly:
                 newMove["x"] = x
                 newMove["y"] = y
                 newMove["dir"] = "h"
-                newMove["state1"] = curLabel
-                newMove["state2"] = neighborS.get_state()
+                newMove["state1"] = curState
+                newMove["state2"] = neighborE.get_state()
 
                 for i in range(0, len(rules), 2):   
                     newMove["state1Final"] = sy.get_state(
@@ -401,7 +401,7 @@ class Assembly:
         if neighborN != None:
             #rules = iHTranRules[neighborE.get_label()]
             rules = sys_v_tr.get(
-                (neighborN.get_label(), curLabel))
+                (neighborN.get_label(), curState.get_label()))
             #print(sys_h_tr)
             # rules.append(iHTranRules)
 
@@ -412,7 +412,7 @@ class Assembly:
                 newMove["y"] = y + 1
                 newMove["dir"] = "v"
                 newMove["state1"] = neighborN.get_state()
-                newMove["state2"] = curLabel
+                newMove["state2"] = curState
 
                 for i in range(0, len(rules), 2):   
                     newMove["state1Final"] = sy.get_state(
@@ -428,7 +428,7 @@ class Assembly:
         if neighborW != None:
             #rules = iHTranRules[neighborE.get_label()]
             rules = sys_h_tr.get(
-                (neighborW.get_label(), curLabel))
+                (neighborW.get_label(), curState.get_label()))
             #print(sys_h_tr)
             # rules.append(iHTranRules)
 
@@ -439,7 +439,7 @@ class Assembly:
                 newMove["y"] = y
                 newMove["dir"] = "h"
                 newMove["state1"] = neighborW.get_state()
-                newMove["state2"] = curLabel
+                newMove["state2"] = curState
 
                 for i in range(0, len(rules), 2):   
                     newMove["state1Final"] = sy.get_state(
