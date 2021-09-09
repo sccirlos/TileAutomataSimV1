@@ -10,7 +10,8 @@ green = "0ead69"
 orange = "f39237"
 black = "323031"
 white = "DFE0E2"
-
+grey = "9EA9A4"
+light_blue = "C2DCFE"
 
 def genDoubleIndexStates(vLen):
     seedA = uc.State("SA", black)
@@ -247,17 +248,19 @@ class LinesGenerator:
         self.num_states = num_st
         self.line_length = line_len
         if not line_len == None:
-            self.bit_len = line_len.bit_length
+            self.bit_len = line_len.bit_length()
         else:
             self.bit_len = None 
-        pass
+        self.genSys.add_State(self.seedA)
 
     
 class NLength_LineGenerator(LinesGenerator):
     
     def __init__(self, line_len=None):
+        super().__init__(line_len)
         self.reseed_states = []
-        return super(LinesGenerator, self).__init__(line_len)  
+        self.generate_states()
+         
 
     def generate_states(self):
         # New Initial States
@@ -265,18 +268,80 @@ class NLength_LineGenerator(LinesGenerator):
         b0 = uc.State("B0", white)
         self.genSys.add_State(b0)
         self.genSys.add_Initial_State(b0)
+        
+        # New Transition States
         ## Add B'0
-        bp0 = uc.State("B'0", white)
+        bp0 = uc.State("B'0", light_blue)
         self.genSys.add_State(bp0)
         
         
         for i in range(self.bit_len):
+            if not i == 0:
+                #Add back states that are not B0
+                bState = uc.State("B" + str(i), blue)
+                self.genSys.add_State(bState)
+            ## Add forward states    
+            fState = uc.State("F" + str(i), red)
+            self.genSys.add_State(fState)
+            ## Add forward prime states
+            fpState = uc.State("F'" + str(i), orange)
+            self.genSys.add_State(fpState)
             
-            pass
+        # Call Generate Reseed States Function
+        self.reseed_states_gen()
 
-    def reseed_states(self):
         
-        pass    
+        print("States Are: ")
+        st = self.genSys.returnStates()
+        for s in st:
+            print(s.get_label())
+
+    def reseed_states_gen(self):
+        # Generate Reseed States
+        ## The bit length will give one more than the highest power hence subtract 1
+        bl = self.bit_len - 1
+        ## line length minus seed
+        num = self.line_length - 1
+        rs = []
+
+        ## Subtracts number 
+        while num > 0:
+            
+            if num - 2**bl >= 0:
+                rState = uc.State("R" + str(bl), grey)
+                self.genSys.add_State(rState)
+                rs.append("R" + str(bl))
+                rs.append("R'" + str(bl))
+                
+                rpState = uc.State("R'" + str(bl), grey)
+                self.genSys.add_State(rpState)
+                num = num - 2**bl
+            bl = bl - 1
+
+    def add_affinities(self):
+        # northAff = uc.AffinityRule("N", "2A'", "v")
+        # genSys.add_affinity(northAff)
+        states = self.genSys.returnStates()
+        b0Aff = uc.AffinityRule("S","B0", "h")
+        self.genSys.add_affinity(b0Aff)
+        first_R_found = False
+        if len(states) > 2:
+            for i in range(1, len(states) - 1):
+                l2 = states[i].get_label()
+                if "'" in l2:
+                    
+                    pass
+                
+                elif l2[0] == "R":
+                    if first_R_found == False:
+                        sAff = uc.AffinityRule("S", l2, "h")
+                        first_R_found = True
+                else:        
+                    sAff = uc.AffinityRule("S", l2, "h")
+
+            
+            
+           
 
 
 if __name__ == "__main__":
@@ -301,8 +366,15 @@ if __name__ == "__main__":
     #sys = genSqrtBinCount("111010101")
     #SaveFile.main(sys, ["genTestCount.xml"])
 
-    sys = genSqrtBinCount("110011100")
-    SaveFile.main(sys, ["biggerTestCount.xml"])
+    """ sys = genSqrtBinCount("110011100")
+    SaveFile.main(sys, ["biggerTestCount.xml"]) """
+    # qnum = 101
+    # bl = (qnum -1).bit_length()
+    # print(bl)
+    # firstpower = bl - 1
+    # print(2**firstpower)
+
+    linesSys = NLength_LineGenerator(101)
 
 
 
