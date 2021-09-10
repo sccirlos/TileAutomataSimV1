@@ -1,6 +1,6 @@
 import UniversalClasses as uc 
 import SaveFile
-from components import increment_string, make_prime
+from components import increment_string, make_prime, states_test_14, states_test_27
 
 import math
 
@@ -260,11 +260,16 @@ class NLength_LineGenerator(LinesGenerator):
         super().__init__(line_len)
         self.reseed_states = []
         self.generate_states()
+        self.add_affinities()
          
 
     def generate_states(self):
+        # Call Generate Reseed States Function
+        self.reseed_states_gen()
+        
         # New Initial States
         ## Add B0
+        
         b0 = uc.State("B0", white)
         self.genSys.add_State(b0)
         self.genSys.add_Initial_State(b0)
@@ -273,28 +278,35 @@ class NLength_LineGenerator(LinesGenerator):
         ## Add B'0
         bp0 = uc.State("B'0", light_blue)
         self.genSys.add_State(bp0)
+
+        f0 = uc.State("F0", red)
+        
+        self.genSys.add_State(f0)
         
         
-        for i in range(self.bit_len):
-            if not i == 0:
+        for i in range(1, self.bit_len):
+            if i == (self.bit_len - 1):
+               bState = uc.State("B" + str(i), blue)
+               self.genSys.add_State(bState) 
+            else:
                 #Add back states that are not B0
                 bState = uc.State("B" + str(i), blue)
                 self.genSys.add_State(bState)
-            ## Add forward states    
-            fState = uc.State("F" + str(i), red)
-            self.genSys.add_State(fState)
-            ## Add forward prime states
-            fpState = uc.State("F'" + str(i), orange)
-            self.genSys.add_State(fpState)
-            
-        # Call Generate Reseed States Function
-        self.reseed_states_gen()
-
-        
+                ## Add forward states
+                fState = uc.State("F" + str(i), red)
+                self.genSys.add_State(fState)
+                ## Add forward prime states
+                fpState = uc.State("F'" + str(i), orange)
+                self.genSys.add_State(fpState)
+                
         print("States Are: ")
-        st = self.genSys.returnStates()
-        for s in st:
+        st = self.genSys.return_list_of_state_labels()
+        sta = self.genSys.returnStates()
+        #states_test_14(st)
+        #states_test_27(st)
+        for s in sta:
             print(s.get_label())
+        
 
     def reseed_states_gen(self):
         # Generate Reseed States
@@ -308,37 +320,111 @@ class NLength_LineGenerator(LinesGenerator):
         while num > 0:
             
             if num - 2**bl >= 0:
-                rState = uc.State("R" + str(bl), grey)
-                self.genSys.add_State(rState)
-                rs.append("R" + str(bl))
-                rs.append("R'" + str(bl))
                 
+                if not(num - 2**bl == 0):
+                    rState = uc.State("R" + str(bl), grey)
+                    self.genSys.add_State(rState)
+                    rs.append("R" + str(bl))
+
                 rpState = uc.State("R'" + str(bl), grey)
+                
+                if rpState.get_label() == "R'1":
+                    rs.append("R" + str(bl))
+                    r1State = uc.State("R" + str(bl), grey)
+                    self.genSys.add_State(r1State)  
+                        
+                rs.append("R'" + str(bl))
+                #Now append R' State after checking if it is R'1
                 self.genSys.add_State(rpState)
+                  
                 num = num - 2**bl
             bl = bl - 1
 
     def add_affinities(self):
-        # northAff = uc.AffinityRule("N", "2A'", "v")
+        # northAff = uc.AffinityRule("[W]", "[E]'", "h")
         # genSys.add_affinity(northAff)
         states = self.genSys.returnStates()
         b0Aff = uc.AffinityRule("S","B0", "h")
         self.genSys.add_affinity(b0Aff)
         first_R_found = False
+        
         if len(states) > 2:
-            for i in range(1, len(states) - 1):
+            for i in range(1, len(states)):
                 l2 = states[i].get_label()
-                if "'" in l2:
-                    
-                    pass
                 
+                if "'" in l2 and not(l2 == "B'0"): # Sticks to non prime self
+                    l1 = states[i-1].get_label()
+                    pAff = uc.AffinityRule(l1, l2, "h")
+                    self.genSys.add_affinity(pAff)
+                    bpAff = uc.AffinityRule(l2, "B0", "h")
+                    self.genSys.add_affinity(bpAff)
+           
+                    bpAff = uc.AffinityRule(l2, "F0", "h")
+                    self.genSys.add_affinity(bpAff)
+                    
+                            
+                # Reseed sticks to seed 
                 elif l2[0] == "R":
                     if first_R_found == False:
-                        sAff = uc.AffinityRule("S", l2, "h")
                         first_R_found = True
+                        sAff = uc.AffinityRule("S", l2, "h")
+                        self.genSys.add_affinity(sAff) 
+                        toPop = "F" + l2[1:]
+                        self.genSys.horizontal_affinities_dict.pop(("S", toPop), None)
+                    
+                            
+                        
+                elif l2 == "B'0":
+                    bAff = uc.AffinityRule("F0", "B0", "h")  
+                    self.genSys.add_affinity(bAff)   
+                    bAff = uc.AffinityRule("F0", "B'0", "h")
+                    self.genSys.add_affinity(bAff)
+                    bAff = uc.AffinityRule("B1", "B'0", "h")
+                    self.genSys.add_affinity(bAff)
+                    
                 else:        
                     sAff = uc.AffinityRule("S", l2, "h")
+                    self.genSys.add_affinity(sAff)
+                    l1 = increment_string(l2)
+                    check_l2 = "B" + str(self.bit_len - 1)
+                    if l2 == check_l2:
+                        pass
+                    elif not(l2 == "F0" or l2 == "B0"):
+                        if l2[0] == "F":
+                            fAff = uc.AffinityRule(l1, l2,"h")
+                            self.genSys.add_affinity(fAff)
+                            l1 = "B" + l1[1:]
+                            fAff = uc.AffinityRule(l2, l1, "h")
+                            self.genSys.add_affinity(fAff)
+                        elif l2[0] == "B":
+                            bAff = uc.AffinityRule(l1, l2, "h")  
+                            self.genSys.add_affinity(bAff) 
+                    
+                        Aff = uc.AffinityRule(l2, l2, "h")
+                        self.genSys.add_affinity(Aff)    
 
+        self.genSys.horizontal_affinities_dict.pop(("F'0", 'B0'), None)           
+        self.genSys.horizontal_affinities_dict.pop(("F0", 'B1'), None)              
+        self.genSys.horizontal_affinities_dict.pop(("F0", "F'0"), None)                  
+        self.genSys.horizontal_affinities_dict.pop(("F1", "F0"), None) 
+        hd = self.genSys.returnHorizontalAffinityDict() 
+        shd = sorted(hd)
+        b = 0
+        
+        s = 3
+        e = s - 1
+        
+        while e <= (len(shd) + s):
+            t = list(shd[b:e])
+            print(t)
+            b = e + 1
+            e = e + s
+                
+            
+                
+                     
+             
+        return 
             
             
            
@@ -374,7 +460,7 @@ if __name__ == "__main__":
     # firstpower = bl - 1
     # print(2**firstpower)
 
-    linesSys = NLength_LineGenerator(101)
+    linesSys = NLength_LineGenerator(27)
 
 
 
