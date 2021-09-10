@@ -92,10 +92,8 @@ class Engine:
         self.lastIndex = self.lastIndex + 1
         self.currentIndex = self.currentIndex + 1
 
-        # Get next move and add to list
+        # Get next move 
         move = random.choice(self.nextMoves)
-
-
         coords = UniversalClasses.toCoords(move["x"], move["y"])
 
         # Remove Old Moves from List
@@ -115,23 +113,33 @@ class Engine:
             print("middle: ", len(self.nextMoves))
             del self.moveDict[coords]
 
-        coordsN = UniversalClasses.toCoords(move["x"], move["y"] + 1)
-        oldMovesN = self.moveDict.get(coordsN)
+
 
         # Remove any transtion rules that occur to the north
+
+        ## Get the coordinates of the northern Neighbors
+        coordsN = UniversalClasses.toCoords(move["x"], move["y"] + 1)
+        ## Get any moves that can take place to the north
+        oldMovesN = self.moveDict.get(coordsN)
+        ## If any exists exist
         if oldMovesN != None:
-            if oldMoves[0]["type"] == "t":
+            ## Check if the moves are transitions
+            if oldMovesN[0]["type"] == "t":
+                ## For each oMove (old move) remove it from the move list
                 for oMove in self.moveDict[coordsN]:
                     self.nextMoves.remove(oMove)
+                ## Delete the whole dictionary entry
                 del self.moveDict[coordsN]
             
 
+
+
+        # Remove W rules if they are transitions
         coordsW = UniversalClasses.toCoords(move["x"] - 1, move["y"])
         oldMovesW = self.moveDict.get(coordsW)
 
-        # Remove rules if they are transitions
         if oldMovesW != None:
-            if oldMoves[0]["type"] == "t":
+            if oldMovesW[0]["type"] == "t":
                 for oMove in self.moveDict[coordsW]:
                     self.nextMoves.remove(oMove)
                 del self.moveDict[coordsW]
@@ -154,24 +162,67 @@ class Engine:
             newMoves.extend(neighMoves)
 
         
-        self.nextMoves.extend(newMoves)
 
-        for nMove in newMoves:
-            x = nMove["x"]
-            y = nMove["y"]
 
-            newCoords = UniversalClasses.toCoords(x, y)
-            if self.moveDict.get(newCoords) == None: 
-                self.moveDict[UniversalClasses.toCoords(x , y)] = []
+        self.addMoveToLists(newMoves)
 
-            self.moveDict[UniversalClasses.toCoords(x , y)].append(nMove)
+        #for nMove in newMoves:
+            #x = nMove["x"]
+            #y = nMove["y"]
+
+            #newCoords = UniversalClasses.toCoords(x, y)
+            #if self.moveDict.get(newCoords) == None: 
+            #    self.moveDict[UniversalClasses.toCoords(x , y)] = []
+
+            #self.moveDict[UniversalClasses.toCoords(x , y)].append(nMove)
 
         print("after: ", len(self.nextMoves))
 
         for move in self.nextMoves:
-            print("move: ", move)
+            UniversalClasses.printMove(move)
 
         return 0
+
+    def addMoveToLists(self, moves):
+        # If passed a single move make it into a list
+        if not isinstance(moves, list):
+            moves = [moves]
+
+        for cMove in moves:
+            # get the current dictionary for the location 
+            x = cMove["x"]
+            y = cMove["y"]
+            coords = UniversalClasses.toCoords(x, y)
+            movesXY = self.moveDict.get(coords)
+
+            if movesXY == None:
+                self.moveDict[coords] = [cMove]
+                self.nextMoves.append(cMove)
+            # we need to check if cMove is already in the list
+            elif cMove["type"] == "a":
+                # start by assuming the rule isn't already in the list
+                uniqueFlag = 1
+                # If the move is an attachment add it to the list if it is not already there
+                for m in movesXY:
+                    # If both 
+                    #print("Comparing moves in dictionary")
+                    if cMove["state1"].get_label() == m["state1"].get_label():
+                        #print("Found a match")
+                        uniqueFlag = 0
+
+                if uniqueFlag == 1:
+                    self.moveDict.get(coords).append(cMove)
+                    self.nextMoves.append(cMove)
+            elif cMove["type"] == "t":
+                # We cannot accidently add repeat rules for transitions
+                self.moveDict.get(coords).append(cMove)
+                self.nextMoves.append(cMove)
+
+
+
+
+            
+
 
     def timeTaken(self):
         if len(self.TimeTaken) > 0:

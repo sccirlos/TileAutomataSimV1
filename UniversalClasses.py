@@ -1,6 +1,13 @@
 from random import randrange
 # These classes are used for Loading and Saving Files and Communicating with general_TA_simulator.
 
+def printMove(move):
+    if move["type"] == "a":
+        print("Attach: ", move["state1"].get_label(), " at ", (move["x"], move["y"]))
+    elif move["type"] == "t":
+        print("Transition ", (move["state1"].get_label(), move["state2"].get_label()), 
+            "->", (move["state1Final"].get_label(), move["state2Final"].get_label()))
+
 class State:
     def __init__(self, label, color):
         self.label = label
@@ -366,6 +373,7 @@ class Assembly:
                         rules[i + 1])  # .returnLabel2Final()
                     updatedMoves.append(newMove)
         else:
+
             attMoves = self.getAttForCoords(x, y - 1, sy)
             if len(attMoves) > 0:
                 updatedMoves.extend(attMoves)
