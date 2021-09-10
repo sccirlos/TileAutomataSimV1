@@ -516,7 +516,14 @@ class System:
             self.states.append(state)
         else:
             print("Attempted to add a state that is not a state object")
-
+            
+    def return_list_of_state_labels(self):
+        st = []
+        cst = self.returnStates()
+        for s in cst:
+            st.append(s.get_label())
+        return st    
+        
     def add_Initial_State(self, state):
         self.initial_states.append(state)
 
