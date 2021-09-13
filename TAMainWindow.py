@@ -13,7 +13,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(784, 579)
+        MainWindow.resize(781, 649)
         MainWindow.setStyleSheet("*{\n"
 " border: none;\n"
 "}")
@@ -24,7 +24,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout.setSpacing(0)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.slide_menu_container = QtWidgets.QFrame(self.centralwidget)
-        self.slide_menu_container.setMaximumSize(QtCore.QSize(200, 16777215))
+        self.slide_menu_container.setEnabled(True)
+        self.slide_menu_container.setMaximumSize(QtCore.QSize(0, 16777215))
         self.slide_menu_container.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.slide_menu_container.setFrameShadow(QtWidgets.QFrame.Raised)
         self.slide_menu_container.setObjectName("slide_menu_container")
@@ -70,7 +71,7 @@ class Ui_MainWindow(object):
         self.toolBox = QtWidgets.QToolBox(self.frame_5)
         self.toolBox.setObjectName("toolBox")
         self.page = QtWidgets.QWidget()
-        self.page.setGeometry(QtCore.QRect(0, 0, 164, 423))
+        self.page.setGeometry(QtCore.QRect(0, 0, 162, 493))
         self.page.setObjectName("page")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.page)
         self.verticalLayout_5.setContentsMargins(0, 0, 0, 0)
@@ -101,7 +102,7 @@ class Ui_MainWindow(object):
         icon1.addPixmap(QtGui.QPixmap("TileAutomataSimV1/Icons/document-icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.toolBox.addItem(self.page, icon1, "")
         self.page_2 = QtWidgets.QWidget()
-        self.page_2.setGeometry(QtCore.QRect(0, 0, 164, 423))
+        self.page_2.setGeometry(QtCore.QRect(0, 0, 162, 493))
         self.page_2.setObjectName("page_2")
         self.verticalLayout_7 = QtWidgets.QVBoxLayout(self.page_2)
         self.verticalLayout_7.setContentsMargins(0, 0, 0, 0)
@@ -135,6 +136,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_7.addWidget(self.frame_7)
         self.toolBox.addItem(self.page_2, "")
         self.page_3 = QtWidgets.QWidget()
+        self.page_3.setGeometry(QtCore.QRect(0, 0, 162, 493))
         self.page_3.setObjectName("page_3")
         self.toolBox.addItem(self.page_3, "")
         self.verticalLayout_4.addWidget(self.toolBox)
@@ -249,6 +251,8 @@ class Ui_MainWindow(object):
         self.main_body_contents.setFrameShadow(QtWidgets.QFrame.Raised)
         self.main_body_contents.setObjectName("main_body_contents")
         self.verticalLayout_9 = QtWidgets.QVBoxLayout(self.main_body_contents)
+        self.verticalLayout_9.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_9.setSpacing(0)
         self.verticalLayout_9.setObjectName("verticalLayout_9")
         self.label = QtWidgets.QLabel(self.main_body_contents)
         self.label.setText("")
@@ -259,7 +263,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
-        self.toolBox.setCurrentIndex(0)
+        self.toolBox.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

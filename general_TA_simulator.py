@@ -130,7 +130,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.Engine = None
         self.SysLoaded = False
         self.play = True
-        canvas = QtGui.QPixmap(1000, 600) #need variables here to be the screen size, that way we can adjust size with screen
+
+        canvas = QtGui.QPixmap(self.geometry().width(), self.geometry().height())
         canvas.fill(Qt.white)
         self.label.setPixmap(canvas)
 
@@ -146,13 +147,29 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         if width == 0:
             # Expand menu
             newWidth = 200
+            canvas = QtGui.QPixmap(self.geometry().width() - 200, self.geometry().height() - 35) 
+            canvas.fill(Qt.white)
+            #self.label.setPixmap(canvas)
+            self.menu_animation(width, newWidth)
             #self.open_close_side_bar_btn.setIcon(QtGui.QIcon(u":/icons/icons/chevron-left.svg"))
         # If maximized
         else:
             # Restore menu
             newWidth = 0
-            #self.open_close_side_bar_btn.setIcon(QtGui.QIcon(u":/icons/icons/align-left.svg"))
+            self.menu_animation(width, newWidth)
+            self.setGeometry(self.x(), self.y(), self.geometry().width() - 400, self.geometry().height())
 
+            canvas = QtGui.QPixmap(self.geometry().width(), self.geometry().height() - 35) 
+            canvas.fill(Qt.white)
+            self.label.setPixmap(canvas)
+            
+            #self.open_close_side_bar_btn.setIcon(QtGui.QIcon(u":/icons/icons/align-left.svg"))
+        
+        
+        if self.Engine != None:
+            self.draw_tiles(self.Engine.getCurrentAssembly())
+
+    def menu_animation(self, width, newWidth):
         # Animate the transition
         self.animation = QtCore.QPropertyAnimation(self.slide_menu_container, b"maximumWidth")#Animate minimumWidht
         self.animation.setDuration(250)
