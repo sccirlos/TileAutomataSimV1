@@ -114,36 +114,75 @@ class Engine:
             del self.moveDict[coords]
 
 
+        if move["type"] == "t":
+            # Remove any transtion rules that occur to the north
 
-        # Remove any transtion rules that occur to the north
+            ## Get the coordinates of the northern Neighbors
+            coordsN = UniversalClasses.toCoords(move["x"], move["y"] + 1)
+            ## Get any moves that can take place to the north
+            oldMovesN = self.moveDict.get(coordsN)
+            ## If any exists exist
+            if oldMovesN != None:
+                ## Check if the moves are transitions
+                if oldMovesN[0]["type"] == "t":
+                    ## For each oMove (old move) remove it from the move list
+                    for oMove in self.moveDict[coordsN]:
+                        if oMove["dir"] == "v":
+                            self.nextMoves.remove(oMove)
+                    ## Delete the whole dictionary entry
+                    del self.moveDict[coordsN]
+                
 
-        ## Get the coordinates of the northern Neighbors
-        coordsN = UniversalClasses.toCoords(move["x"], move["y"] + 1)
-        ## Get any moves that can take place to the north
-        oldMovesN = self.moveDict.get(coordsN)
-        ## If any exists exist
-        if oldMovesN != None:
-            ## Check if the moves are transitions
-            if oldMovesN[0]["type"] == "t":
-                ## For each oMove (old move) remove it from the move list
-                for oMove in self.moveDict[coordsN]:
-                    self.nextMoves.remove(oMove)
-                ## Delete the whole dictionary entry
-                del self.moveDict[coordsN]
+
+
+            # Remove W rules if they are transitions
+            coordsW = UniversalClasses.toCoords(move["x"] - 1, move["y"])
+            oldMovesW = self.moveDict.get(coordsW)
+
+            if oldMovesW != None:
+                if oldMovesW[0]["type"] == "t":
+                    for oMove in self.moveDict[coordsW]:
+                        if oMove["dir"] == "h":
+                            self.nextMoves.remove(oMove)
+                    del self.moveDict[coordsW]
             
 
-
-
-        # Remove W rules if they are transitions
-        coordsW = UniversalClasses.toCoords(move["x"] - 1, move["y"])
-        oldMovesW = self.moveDict.get(coordsW)
-
-        if oldMovesW != None:
-            if oldMovesW[0]["type"] == "t":
-                for oMove in self.moveDict[coordsW]:
-                    self.nextMoves.remove(oMove)
-                del self.moveDict[coordsW]
             
+        
+            if move["dir"] == "v":
+                ## Get the coordinates of the southern Neighbor
+                coordsS = UniversalClasses.toCoords(move["x"], move["y"] - 1)
+                ## Get any moves that can take place to the south
+                oldMovesS = self.moveDict.get(coordsS)
+                ## If any exists exist
+                if oldMovesS != None:
+                    ## Check if the moves are transitions
+                    if oldMovesS[0]["type"] == "t":
+                        ## For each oMove (old move) remove it from the move list
+                        for oMove in self.moveDict[coordsS]:
+                            self.nextMoves.remove(oMove)
+                        ## Delete the whole dictionary entry
+                        del self.moveDict[coordsS]
+
+                ## Also need to remove attachments to neighbors
+                
+
+
+            if move["dir"] == "h":
+                ## Get the coordinates of the northern Neighbors
+                coordsE = UniversalClasses.toCoords(move["x"] + 1, move["y"])
+                ## Get any moves that can take place to the north
+                oldMovesE = self.moveDict.get(coordsE)
+                ## If any exists exist
+                if oldMovesE != None:
+                    ## Check if the moves are transitions
+                    if oldMovesE[0]["type"] == "t":
+                        ## For each oMove (old move) remove it from the move list
+                        for oMove in self.moveDict[coordsE]:
+                            self.nextMoves.remove(oMove)
+                        ## Delete the whole dictionary entry
+                        del self.moveDict[coordsE]
+
 
         # Update assembly and get new moves
         self.currentAssembly = cAssembly.performMove(move)
@@ -204,7 +243,7 @@ class Engine:
                 uniqueFlag = 1
                 # If the move is an attachment add it to the list if it is not already there
                 for m in movesXY:
-                    # If both 
+                    # If both labels are equal we set the flag to 0
                     #print("Comparing moves in dictionary")
                     if cMove["state1"].get_label() == m["state1"].get_label():
                         #print("Found a match")
@@ -214,7 +253,7 @@ class Engine:
                     self.moveDict.get(coords).append(cMove)
                     self.nextMoves.append(cMove)
             elif cMove["type"] == "t":
-                # We cannot accidently add repeat rules for transitions
+                # TODO check for repeat transition rules
                 self.moveDict.get(coords).append(cMove)
                 self.nextMoves.append(cMove)
 
