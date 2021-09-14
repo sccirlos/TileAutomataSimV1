@@ -114,12 +114,14 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         # Add click event/Mouse move event/drag event to the top header to move the window
         self.header.mouseMoveEvent = moveWindow
+        self.slide_menu.mouseMoveEvent = moveWindow
 
         #self.label = QtWidgets.QLabel()
         self.time = 0
         self.delay = 0
-        self.seedX = 450 #need to have some function for half the screen width
-        self.seedY = 300 #need to have some function for half the screen height
+        self.seedX = self.geometry().width()/2 #need to have some function for half the screen width
+        self.seedY = self.geometry().height()/2 #need to have some function for half the screen height
+        self.clickPosition = QtCore.QPoint(self.geometry().x(), self.geometry().y())
 
         self.textX = self.seedX + 10
         self.textY = self.seedY + 25
@@ -184,6 +186,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     # Add mouse events to the window
     def mousePressEvent(self, event):
         # Get the current position of the mouse
+        #print(event.globalPos())
+        super().mousePressEvent(event)
         self.clickPosition = event.globalPos()
         # We will use this value to move the window
 
