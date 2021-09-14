@@ -427,6 +427,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def play_sequence(self):
         if self.SysLoaded == True:
             if self.play == False:
+                self.Play_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-pause.png'))
                 self.play = True
                 while((self.Engine.build() != -1) and self.play == True):
                     print(self.Engine.currentIndex)
@@ -445,7 +446,10 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
                 # self.step = len(self.Engine.assemblyList) - 1 #this line is here to prevent a crash that happens if you click last after play finishes
                 self.stop_sequence()
-            if self.play == True:
+                self.Play_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-play.png'))
+
+            if self.play == True:   
+                self.Play_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-play.png'))
                 self.stop_sequence()
 
     def stop_sequence(self):
