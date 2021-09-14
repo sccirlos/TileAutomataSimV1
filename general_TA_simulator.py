@@ -139,7 +139,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         
     # Slide left menu function
-    def slideLeftMenu(self):
+    def slideLeftMenu(self):                    #ANIMATION NEEDS TO BE WORKED ON SO ITS BEEN TURNED OFF
         # Get current left menu width
         width = self.slide_menu_container.width()
 
@@ -192,6 +192,11 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.showNormal()
         else:
             self.showMaximized()
+            
+    def resizeEvent(self, event):
+        canvas = QtGui.QPixmap(self.geometry().width(), self.geometry().height() - 35) 
+        canvas.fill(Qt.white)
+        self.label.setPixmap(canvas)
 
     def keyPressEvent(self, event):
     #### Moving tiles across screen functions #####
