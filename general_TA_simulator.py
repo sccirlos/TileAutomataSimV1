@@ -123,8 +123,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         #self.label = QtWidgets.QLabel()
         self.time = 0
         self.delay = 0
-        self.seedX = self.geometry().width()/2 #need to have some function for half the screen width
-        self.seedY = self.geometry().height()/2 #need to have some function for half the screen height
+        self.seedX = self.geometry().width() / 2 #need to have some function for half the screen width
+        self.seedY = self.geometry().height() / 2 #need to have some function for half the screen height
         self.clickPosition = QtCore.QPoint(self.geometry().x(), self.geometry().y())
 
         self.textX = self.seedX + 10
@@ -174,7 +174,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             
             #self.open_close_side_bar_btn.setIcon(QtGui.QIcon(u":/icons/icons/align-left.svg"))
         
-        
         if self.Engine != None:
             self.draw_tiles(self.Engine.getCurrentAssembly())
 
@@ -202,9 +201,16 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.showMaximized()
             
     def resizeEvent(self, event):
-        canvas = QtGui.QPixmap(self.geometry().width(), self.geometry().height() - 35) 
+        # If left menu is closed
+        if self.slide_menu_container.width() == 0:
+            canvas = QtGui.QPixmap(self.geometry().width(), self.geometry().height() - 35)
+        else:
+            canvas = QtGui.QPixmap(self.geometry().width() - 200, self.geometry().height() - 35) #prevents a bug that happens if menus open
+
         canvas.fill(Qt.white)
         self.label.setPixmap(canvas)
+        if self.Engine != None:
+            self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def keyPressEvent(self, event):
     #### Moving tiles across screen functions #####
@@ -228,7 +234,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.seedX = self.seedX + 10
             self.textX = self.textX + 10
 
-        self.draw_tiles(self.Engine.getCurrentAssembly())
+        if self.Engine != None:
+            self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def wheelEvent(self,event):
         #### Zoom in functions for the scroll wheel ####
@@ -243,7 +250,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 self.textY = self.textY - 5
         self.textSize = int(self.tileSize / 3)
 
-        self.draw_tiles(self.Engine.getCurrentAssembly())
+        if self.Engine != None:
+            self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def draw_tiles(self, assembly):
         painter = QPainter(self.label.pixmap())
@@ -260,7 +268,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         painter.setPen(pen)
         painter.setBrush(brush)
         # this block is drawing a big white rectangle across the screen to "clear" it
-        painter.drawRect(0, 0, 1000, 1000)
+        painter.drawRect(0, 0, self.geometry().width(), self.geometry().height())
 
         font.setFamily("Times")
         font.setBold(True)
