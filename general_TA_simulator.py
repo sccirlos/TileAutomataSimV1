@@ -149,15 +149,18 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             newWidth = 200
             canvas = QtGui.QPixmap(self.geometry().width() - 200, self.geometry().height() - 35) 
             canvas.fill(Qt.white)
-            #self.label.setPixmap(canvas)
-            self.menu_animation(width, newWidth)
+            
+            self.slide_menu_container.setMaximumWidth(newWidth)
+            #self.menu_animation(width, newWidth)
+            self.label.setPixmap(canvas)
             #self.open_close_side_bar_btn.setIcon(QtGui.QIcon(u":/icons/icons/chevron-left.svg"))
         # If maximized
         else:
             # Restore menu
             newWidth = 0
-            self.menu_animation(width, newWidth)
-            self.setGeometry(self.x(), self.y(), self.geometry().width() - 400, self.geometry().height())
+            #self.setGeometry(self.x(), self.y(), self.geometry().width() - 100, self.geometry().height())
+            #self.menu_animation(width, newWidth)
+            self.slide_menu_container.setMaximumWidth(newWidth)
 
             canvas = QtGui.QPixmap(self.geometry().width(), self.geometry().height() - 35) 
             canvas.fill(Qt.white)
