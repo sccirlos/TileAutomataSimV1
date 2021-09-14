@@ -360,8 +360,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             print("Horizontal Transitions:")
             currentSystem.displayHorizontalTransitionDict()
 
-            self.seedX = 450 #need to have some function for half the screen width
-            self.seedY = 300 #need to have some function for half the screen height
+            self.seedX = (self.geometry().width() - 150)/ 2 #the -150 is to account for the slide menu
+            self.seedY = self.geometry().height() / 2 
             self.textX = self.seedX + 10
             self.textY = self.seedY + 25
 
