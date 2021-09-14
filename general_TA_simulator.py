@@ -88,17 +88,21 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.SaveAs_button.setIcon(QtGui.QIcon('Icons/save-icon.png'))
 
         self.First_button.clicked.connect(self.first_step)
+        self.First_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-skip-back.png'))
 
         self.Prev_button.clicked.connect(self.prev_step)
+        self.Prev_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-track-prev.png'))
 
         #self.Stop_button.clicked.connect(self.stop_sequence)
 
         self.Play_button.clicked.connect(self.play_sequence)
-        self.Play_button.setIcon(QtGui.QIcon('Icons/Media-Controls-Play-icon.png'))
+        self.Play_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-play.png'))
 
         self.Next_button.clicked.connect(self.next_step)
+        self.Next_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-track-next.png'))
 
         self.Last_button.clicked.connect(self.last_step)
+        self.Last_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-skip-forward.png'))
 
         # Function to Move window on mouse drag event on the title bar
         def moveWindow(e):
