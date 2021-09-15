@@ -355,6 +355,130 @@ class Assembly:
 
             return a
 
+    def getAttat(self, sy, x, y):
+        attachments_list = []
+        # sys_attachments = sy.get_initial_states()
+        # sys_v_transition_rules = sy.get_vertical_transition_rules
+
+        v_rules = sy.returnVerticalAffinityDict()
+        h_rules = sy.returnHorizontalAffinityDict()
+
+        # Check if position is empty
+        if self.coords.get(toCoords(x, y)) != None:
+            return attachments_list
+        #print("Testing ", iX, ", ", iY)
+
+        # Get each neighbor
+        neighborN = self.coords.get(toCoords(x, y + 1))
+        neighborS = self.coords.get(toCoords(x, y - 1))
+        neighborE = self.coords.get(toCoords(x + 1, y))
+        neighborW = self.coords.get(toCoords(x - 1, y))
+
+        # Calcuate the str of each tile attaching at this position
+        for iTile in sy.returnInitialStates():
+            attStr = 0
+
+            if(neighborN != None):
+                stren = v_rules.get(
+                    (neighborN.get_label(), iTile.get_label()))
+                if(stren != None):
+                    attStr += int(stren)
+            if(neighborS != None):
+                stren = v_rules.get(
+                    (iTile.get_label(), neighborS.get_label()))
+                if(stren != None):
+                    attStr += int(stren)
+            if(neighborE != None):
+                stren = h_rules.get(
+                    (iTile.get_label(), neighborE.get_label()))
+                if(stren != None):
+                    attStr += int(stren)
+            # else:
+            #    print("East of "+ str(iX) + " : " + str(iY) + " is empty")
+            if(neighborW != None):
+                stren = h_rules.get(
+                    (neighborW.get_label(), iTile.get_label()))
+                if(stren != None):
+                    attStr += int(stren)
+            # else:
+            #    print("West of "+ str(iX) + " : " + str(iY) + " is empty")
+
+            #print(iTile.get_label(), ": ", attStr)
+            if attStr >= sy.returnTemp():
+                attMove = {"type": "a"}
+
+                attMove["x"] = x
+                attMove["y"] = y
+                attMove["state1"] = iTile
+
+                attachments_list.append(attMove)
+        return attachments_list
+
+
+    def getTRat(self, sy, x, y, dir=None):
+        transitions_list = []
+        sys_h_tr = sy.returnHorizontalTransitionDict()
+        sys_v_tr = sy.returnVerticalTransitionDict()
+
+        iTile = self.coords.get(toCoords(x, y))
+
+                # Get only the south and east neighbors of iTile
+        neighborS = self.coords.get(toCoords(x, y - 1))
+        neighborE = self.coords.get(toCoords(x + 1, y))
+
+        if isinstance(dir, None) or dir == "v":
+            if(neighborS != None):
+                    # second dictionary
+                    # rules = iVTranRules.get(neighborS.get_label())
+                    rules = sys_v_tr.get(
+                        (iTile.get_label(), neighborS.get_label()))
+                    # rules.append(iVTranRules)
+                    if rules != None:
+                        move = {"type": "t"}
+                        move["x"] = iTile.x
+                        move["y"] = iTile.y
+                        move["dir"] = "v"
+                        move["state1"] = iTile.get_state()
+                        move["state2"] = neighborS.get_state()
+
+                        for i in range(0, len(rules), 2):   
+                            move["state1Final"] = sy.get_state(
+                                rules[i])  # .returnLabel1Final()
+                            move["state2Final"] = sy.get_state(
+                                rules[i + 1])  # .returnLabel2Final()
+                            transitions_list.append(move)
+
+
+        if isinstance(dir, None) or dir == "h":
+            if(neighborE != None):
+                    # second dictionary
+                    # rules = iVTranRules.get(neighborS.get_label())
+                    rules = sys_h_tr.get(
+                        (iTile.get_label(), neighborE.get_label()))
+                    # rules.append(iVTranRules)
+                    if rules != None:
+                        move = {"type": "t"}
+                        move["x"] = iTile.x
+                        move["y"] = iTile.y
+                        move["dir"] = "h"
+                        move["state1"] = iTile.get_state()
+                        move["state2"] = neighborE.get_state()
+
+                        for i in range(0, len(rules), 2):   
+                            move["state1Final"] = sy.get_state(
+                                rules[i])  # .returnLabel1Final()
+                            move["state2Final"] = sy.get_state(
+                                rules[i + 1])  # .returnLabel2Final()
+                            transitions_list.append(move)
+
+        return transitions_list
+
+
+
+
+                    
+            
+
 # Not in use right now.
 class SeedAssemblyTile:
     def __init__(self, label, x, y):
