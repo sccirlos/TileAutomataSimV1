@@ -244,6 +244,15 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.seedX = self.seedX + 10
             self.textX = self.textX + 10
 
+        elif event.key() == Qt.Key_J:
+            self.prev_step()
+
+        elif event.key() == Qt.Key_K:
+            self.play_sequence()
+
+        elif event.key() == Qt.Key_L:
+            self.next_step()
+
         if self.Engine != None:
             self.draw_tiles(self.Engine.getCurrentAssembly())
 
