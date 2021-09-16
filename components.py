@@ -326,8 +326,8 @@ def affinities_test_14(aff_dict):
     failures = []
     all_affs.sort()
     j = 0
-    for i in all_affs:
-        if i in aff_copy:
+    for i in aff_copy:
+        if i in all_affs:
             passes.append(i)
             missing.remove(i)
         else:
