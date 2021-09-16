@@ -76,8 +76,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.maximize_button.clicked.connect(lambda: self.restore_or_maximize_window())
         self.maximize_button.setIcon(QtGui.QIcon('Icons/Programming-Maximize-Window-icon.png'))
 
-        ### Restore/Maximize window ####
-        self.sizeDrag_Button.clicked.connect(self.Click_dragSize)
+        ### Window Size grip to resize window ###
+        QtWidgets.QSizeGrip(self.sizeDrag_Button)
         self.sizeDrag_Button.setIcon(QtGui.QIcon('Icons/tabler-icon-resize.png'))
 
         #Left Menu toggle button
