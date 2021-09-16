@@ -353,9 +353,7 @@ def affinities_test_14(aff_dict):
     for p in missing:
         print("Missing: ", p)    
         
-    """ print("All affinities")
-    aff_copy.sort()
-    print(aff_copy) """
+    
     
 def affinities_test_17(aff_dict):
     st = []
@@ -394,10 +392,15 @@ def affinities_test_17(aff_dict):
     st.append("B4")
     npr.append("B4")
     # Reseed
+    st.append("R4")
+    npr.append("R4")
+    st.append("R'4")
+    pr.append("R'4")
 
     all_affs =[("S", "B0"), ("S", "B1"), ("S", "B2"), ("S", "B3"), ("S", "B4"), 
                # S forward
                ("S", "F0"), ("S", "F1"), ("S", "F2"), ("S", "F3"), 
+               
                # F0 B0
                ("F0", "B0"), 
                 # F' to B0
@@ -405,7 +408,7 @@ def affinities_test_17(aff_dict):
                # F' to F0
                ("F'1", "F0"), ("F'2", "F0"), ("F'3", "F0"), 
                #Fs to B'0
-               ("F0", "B'0"), ("F1", "B'0"), ("F2", "B'0"), ("F3", "B'0"),
+               ("F0", "B'0"), ("F1", "B'0"), ("F2", "B'0"), ("F3", "B'0"), 
                # B1 to B'0
                ("B1", "B'0"),
                # F' to B1 
@@ -414,7 +417,7 @@ def affinities_test_17(aff_dict):
                ("F2", "B1"), ("F3", "B1"),
                
                # F' to F1
-               ("F'2", "F1"), ("F'3", "F1"), 
+               ("F'2", "F1"), ("F'3", "F1"), ("F'3", "F2"), 
                
                
                #F1 to F'1
@@ -433,7 +436,10 @@ def affinities_test_17(aff_dict):
                # F to smaller B
                 ("F3", "B2"), 
                # F to equal B
-               ("F2", "B2"), ("F3", "B3"),]
+               ("F2", "B2"), ("F3", "B3"),
+               # Reseed affinities
+               ("S", "R4"), ("R4", "R'4"), ("R4", "R4"), ("R4", "B4"), ("R4", "B3"), ("R4", "B2"), ("R4", "B1"), ("R4", "B'0")
+               ]
     
     aff_copy = aff_dict.copy()
     passes = []
@@ -441,8 +447,8 @@ def affinities_test_17(aff_dict):
     failures = []
     all_affs.sort()
     j = 0
-    for i in all_affs:
-        if i in aff_copy:
+    for i in aff_copy:
+        if i in all_affs:
             passes.append(i)
             missing.remove(i)
         else:
