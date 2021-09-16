@@ -70,11 +70,15 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         ### Close window ####
         self.close_button.clicked.connect(lambda: self.close())
-        self.close_button.setIcon(QtGui.QIcon('Icons/Actions-file-close-icon.png'))
+        self.close_button.setIcon(QtGui.QIcon('Icons/X-icon.png'))
 
         ### Restore/Maximize window ####
         self.maximize_button.clicked.connect(lambda: self.restore_or_maximize_window())
         self.maximize_button.setIcon(QtGui.QIcon('Icons/Programming-Maximize-Window-icon.png'))
+
+        ### Restore/Maximize window ####
+        self.sizeDrag_Button.clicked.connect(self.Click_dragSize)
+        self.sizeDrag_Button.setIcon(QtGui.QIcon('Icons/tabler-icon-resize.png'))
 
         #Left Menu toggle button
         self.Menu_button.clicked.connect(lambda: self.slideLeftMenu())
@@ -153,7 +157,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         if width == 0:
             # Expand menu
             newWidth = 200
-            canvas = QtGui.QPixmap(self.geometry().width() - 200, self.geometry().height() - 35) 
+            canvas = QtGui.QPixmap(self.geometry().width() - 200, self.geometry().height() - 45) 
             canvas.fill(Qt.white)
             
             self.slide_menu_container.setMaximumWidth(newWidth)
@@ -168,7 +172,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             #self.menu_animation(width, newWidth)
             self.slide_menu_container.setMaximumWidth(newWidth)
 
-            canvas = QtGui.QPixmap(self.geometry().width(), self.geometry().height() - 35) 
+            canvas = QtGui.QPixmap(self.geometry().width(), self.geometry().height() - 45) 
             canvas.fill(Qt.white)
             self.label.setPixmap(canvas)
             
@@ -199,13 +203,17 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.showNormal()
         else:
             self.showMaximized()
-            
+
+    def Click_dragSize(self):
+        print("click")    
+
+
     def resizeEvent(self, event):
         # If left menu is closed
         if self.slide_menu_container.width() == 0:
-            canvas = QtGui.QPixmap(self.geometry().width(), self.geometry().height() - 35)
+            canvas = QtGui.QPixmap(self.geometry().width(), self.geometry().height() - 45)
         else:
-            canvas = QtGui.QPixmap(self.geometry().width() - 200, self.geometry().height() - 35) #prevents a bug that happens if menus open
+            canvas = QtGui.QPixmap(self.geometry().width() - 200, self.geometry().height() - 45) #prevents a bug that happens if menus open
 
         canvas.fill(Qt.white)
         self.label.setPixmap(canvas)
