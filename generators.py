@@ -451,33 +451,6 @@ class NLength_LineGenerator(LinesGenerator):
             if len(self.reseed_states) -3 >= l_index:
                 Aff = uc.AffinityRule(label, self.reseed_states[l_index + 1],"h")
                 self.genSys.add_affinity(Aff)   
-                
-    def add_reseed_affinities_v2(self):        
-        rs = self.reseed_states.copy()
-        aff = uc.AffinityRule("S", rs[0], "h")
-        self.genSys.add_affinity(aff)    
-        rs_len = len(rs) - 1
-        for i in range(rs_len):
-            if (i + 1) <= rs_len:
-                aff = uc.AffinityRule(rs[i], rs[i+1], "h")
-                self.genSys.add_affinity(aff)
-                print(f'( {rs[i]}, {rs[i+1]} )')
-            if not (rs[i] == "R'0" or rs[i] == "R'1"):
-                aff = uc.AffinityRule(rs[i], rs[i], "h")
-                self.genSys.add_affinity(aff)
-                print(f'( {rs[i]}, {rs[i]} )')
-            if not ("'" in rs[i]):
-                aff = uc.AffinityRule(rs[i], "B'0", "h")
-                self.genSys.add_affinity(aff)
-                print(f'( {rs[i]}, {"Bp0"} )')
-            elif not(i == rs_len):
-                aff = uc.AffinityRule(rs[i], "B0", "h")
-                self.genSys.add_affinity(aff)
-           
-                
-
-    
-                
     def add_reseed_prime_affinities(self):
         
         max_num_split = split_nonprime_label(self.reseed_states[0])
@@ -520,7 +493,7 @@ class NLength_LineGenerator(LinesGenerator):
         #             f = "F" + str(i)
         #             rs_faff = uc.AffinityRule(j, f, "h")
         #             self.genSys.add_affinity(rs_faff)
-                        
+        
     def add_fp_affinities(self, label):
         if check_is_prime(label) and not("R'" in label or "B'" in label):
             max_num_split = split_prime_label(label)
@@ -534,8 +507,39 @@ class NLength_LineGenerator(LinesGenerator):
                     f = "F" + str(i)
                     faff = uc.AffinityRule(label, f, "h")
                     self.genSys.add_affinity(faff)
-                
+
+#Actually in use                
+    def add_reseed_affinities_v2(self): 
+        # Adds affinity for Seed to first reseed       
+        rs = self.reseed_states.copy()
+        aff = uc.AffinityRule("S", rs[0], "h")
+        self.genSys.add_affinity(aff)
+        print("rs[0]: ", rs[0])   
+         
+        rs_len = len(rs) - 1
+        for i in range(rs_len):
+            # Adds affinity between reseeds in order eg (R3, R'3), (R'3, R1)
+            if (i + 1) <= rs_len:
+                aff = uc.AffinityRule(rs[i], rs[i+1], "h")
+                self.genSys.add_affinity(aff)
+                print(f'( {rs[i]}, {rs[i+1]} )')
+            # Adds affinities between non primes and B'0  
+            if not ("'" in rs[i] and i > 0):  
+                aff = uc.AffinityRule(rs[i], "B'0", "h")
+                self.genSys.add_affinity(aff)
+                print(f'( {rs[i]}, {"Bp0"} )')
+                if not (rs[i] == "R1"):
                     
+                    aff = uc.AffinityRule(rs[i], rs[i], "h")
+                    self.genSys.add_affinity(aff)
+                    print(f'( {rs[i]}, {rs[i]} )')
+            
+                
+            elif not(i == rs_len):
+                aff = uc.AffinityRule(rs[i], "B0", "h")
+                self.genSys.add_affinity(aff)
+           
+
     def add_affinities_v2(self):
         # Const states 
         print("Affinities V2 Returns: ")
@@ -595,14 +599,14 @@ class NLength_LineGenerator(LinesGenerator):
                             # If i is one less than wa_num   
                             elif (i - 1) == wa_num and wa_num >= 1:
                                 brp = "B" + str(i)   
-                                Aff = uc.AffinityRule(wa, brp,"h")
+                                Aff = uc.AffinityRule(brp, wa,"h")
                                 self.genSys.add_affinity(Aff)
                                 
-                        if i <= wa_num and not(i == 0):
-                            brp = "B" + str(i)
-                            Aff = uc.AffinityRule(wa, brp, "h")
-                            self.genSys.add_affinity(Aff)
-                        pass
+                        # if i <= wa_num and not(i == 0):
+                        #     brp = "B" + str(i)
+                        #     Aff = uc.AffinityRule(wa, brp, "h")
+                        #     self.genSys.add_affinity(Aff)
+                        
                     elif "F'" in wa:
                         if i <= wa_num:
                             b = "B" + str(i)
@@ -619,101 +623,50 @@ class NLength_LineGenerator(LinesGenerator):
                             bp = "B'" + str(i)
                             Aff = uc.AffinityRule(wa, bp, "h")
                             self.genSys.add_affinity(Aff) 
-                        elif i <= (wa_num + 1):
-                            b = "B" + str(i)
+                        elif i <= (wa_num + 1) and not(wa == 'F0' or wa == 'F1'):
+                            if i > 1:
+                                b = "B" + str(i)
+                                Aff = uc.AffinityRule(wa, b, "h")
+                                self.genSys.add_affinity(Aff)
+                            elif i == 1 and not(wa == 'F0' or wa == 'F1'):
+                                b = "B" + str(i)
+                                Aff = uc.AffinityRule(wa, b, "h")
+                                self.genSys.add_affinity(Aff)
+                                
+                        elif wa == 'F1':
+                            b = "B2"
                             Aff = uc.AffinityRule(wa, b, "h")
                             self.genSys.add_affinity(Aff)
-                        if not(i == 0):
-                           fp = "F'" + str(i)
-                           Aff = uc.AffinityRule(wa, fp, "h")
-                           self.genSys.add_affinity(Aff)    
-                           if i > 1:
-                                f = "F" + str(i)
-                                Aff = uc.AffinityRule(wa, f, "h")
-                                self.genSys.add_affinity(Aff)          
+                                
+                        if i > 0:
+                            
+                            if wa_num > 1 and i > 1:
+                                if wa_num >= i:
+                                    fp = "F'" + str(i)
+                                    Aff = uc.AffinityRule(wa, fp, "h")
+                                    self.genSys.add_affinity(Aff)    
+                                    if i > 1 and wa_num >= i:
+                                            f = "F" + str(i)
+                                            Aff = uc.AffinityRule(wa, f, "h")
+                                            self.genSys.add_affinity(Aff)     
+                            elif wa_num == 1:
+                                fp = "F'1" 
+                                Aff = uc.AffinityRule(wa, fp, "h")
+                                self.genSys.add_affinity(Aff)    
+                                                 
                 else:
                     b = "B" + str(i)
                     Aff = uc.AffinityRule(wa, b, "h")
                     self.genSys.add_affinity(Aff)
-                    if i < bl:
+                    if i < (bl -1):
                         f = "F" + str(i)
                         Aff = uc.AffinityRule(wa, f, "h")
                         self.genSys.add_affinity(Aff)
-                        
-        #loop through numbers from 0 to max bit len
-        # for i in range(1, bl):
-  
-        #     b = "B" + str(i)
-        #     bp1 = "B" + str(i + 1)
-        #     bm1 = "B" + str(i - 1)
-        #     f = "F" + str(i)
-        #     fp1 = "F" + str(i + 1)
-        #     fm1 = "F" + str(i - 1)
-        #     fp = "F'" + str(i)
-        #     fpp1 = "F'" + str(i + 1)
-        #     fpm1 = "F'" + str(i - 1)
-            
-        #     r = "R" + str(i)   
-        #     rp1 = "R" + str(i + 1)
-        #     rm1 = "R" + str(i - 1) 
-            
-        #     rp = "R'" + str(i) 
-        #     i_list = [b, bp1, bm1, f, fp1, fm1, fp, fpp1, fpm1, r, rp1, rm1, rp]
-        #     i_list = list(filter(lambda x: x in i_list, CONST_STATES)) 
-            
-        #     # Seed affinities back
-        #     if b in i_list:
-        #         Aff = uc.AffinityRule("S", b, "h")
-        #         self.genSys.add_affinity(Aff)
-        #         # B attaches to self if greater than 1
-        #         if i > 1:
-        #             Aff = uc.AffinityRule(b, b, "h")
-        #             self.genSys.add_affinity(Aff)
-                    
-        #     if bp1 in i_list:
-        #         #b can be attached to b+1
-        #         Aff = uc.AffinityRule(bp1, b, "h")
-        #         self.genSys.add_affinity(Aff)
-        #         # f can have b one bigger attached to E
-        #         if f in i_list:
-        #             Aff = uc.AffinityRule(f, bp1, "h")
-        #             self.genSys.add_affinity(Aff)
-                    
-        #     if f in i_list:
-        #         # Seed attaches to f
-        #        Aff = uc.AffinityRule("S", f, "h")
-        #        self.genSys.add_affinity(Aff)
-        #        # f attaches to B'0
-        #        Aff = uc.AffinityRule(f, "B'0","h")
-        #        self.genSys.add_affinity(Aff)
-        #        # F attaches to self
-        #        if i > 1:
-        #            Aff = uc.AffinityRule(f, f, "h")
-        #            self.genSys.add_affinity(Aff)  
-                 
-        #     if fp in i_list:
-        #         # F attaches to f prime
-        #         Aff = uc.AffinityRule(f, fp, "h")
-        #         self.genSys.add_affinity(Aff)
-                
-        #     if r in i_list:
-        #         Aff = uc.AffinityRule(r, rp, "h")
-        #         self.genSys.add_affinity(Aff) 
-                
-        #         # R attaches to self if greater than 1
-        #         if i > 1:
-        #             Aff = uc.AffinityRule(r, r, "h")
-        #             self.genSys.add_affinity(Aff)  
-                
-                    
-            # seed affinities forward
-            #Reseed affinities non prime only b states attach
-            # B affinities 
+
         print("End Affinities V2 Returns")     
                                     
     def add_affinities(self):
-        # northAff = uc.AffinityRule("[W]", "[E]'", "h")
-        # genSys.add_affinity(northAff)
+       
         states = self.genSys.returnStates()
         b0Aff = uc.AffinityRule("S","B0", "h")
         self.genSys.add_affinity(b0Aff)
