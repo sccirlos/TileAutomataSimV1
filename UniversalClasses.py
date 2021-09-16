@@ -522,7 +522,7 @@ class System:
         cst = self.returnStates()
         for s in cst:
             st.append(s.get_label())
-            #print(s.get_label())
+            
         return st    
         
     def add_Initial_State(self, state):
