@@ -206,10 +206,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         else:
             self.showMaximized()
 
-    def Click_dragSize(self):
-        print("click")    
-
-
     def resizeEvent(self, event):
         # If left menu is closed
         if self.slide_menu_container.width() == 0:
