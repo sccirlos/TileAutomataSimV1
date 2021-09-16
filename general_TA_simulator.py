@@ -108,6 +108,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.Last_button.clicked.connect(self.last_step)
         self.Last_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-skip-forward.png'))
 
+        self.slowMode_Button.clicked.connect(self.slowMode_toggle)
+
         # Function to Move window on mouse drag event on the title bar
         def moveWindow(e):
             # Detect if the window is  normal size
@@ -406,6 +408,12 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
             if(fileName[0] != ''):
                 SaveFile.main(currentSystem, fileName)
+
+    def slowMode_toggle(self):
+        if self.slowMode_Button.isChecked():
+            self.delay = 1000
+        else:
+            self.delay = 0
 
     def first_step(self):
         if self.SysLoaded == True:
