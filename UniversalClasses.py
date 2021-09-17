@@ -421,12 +421,15 @@ class Assembly:
         sys_v_tr = sy.returnVerticalTransitionDict()
 
         iTile = self.coords.get(toCoords(x, y))
+        
+        if iTile == None:
+            return transitions_list
 
                 # Get only the south and east neighbors of iTile
         neighborS = self.coords.get(toCoords(x, y - 1))
         neighborE = self.coords.get(toCoords(x + 1, y))
 
-        if isinstance(dir, None) or dir == "v":
+        if dir == None or dir == "v":
             if(neighborS != None):
                     # second dictionary
                     # rules = iVTranRules.get(neighborS.get_label())
@@ -449,7 +452,7 @@ class Assembly:
                             transitions_list.append(move)
 
 
-        if isinstance(dir, None) or dir == "h":
+        if dir == None or dir == "h":
             if(neighborE != None):
                     # second dictionary
                     # rules = iVTranRules.get(neighborS.get_label())
