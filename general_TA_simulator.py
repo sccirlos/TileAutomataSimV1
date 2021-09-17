@@ -60,7 +60,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.Engine = None
         self.SysLoaded = False
         self.play = True
-        canvas = QtGui.QPixmap(1000, 600) #need variables here to be the screen size, that way we can adjust size with screen
+        # need variables here to be the screen size, that way we can adjust size with screen
+        canvas = QtGui.QPixmap(1000, 600)
         canvas.fill(Qt.white)
         self.label.setPixmap(canvas)
 
@@ -91,7 +92,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.actionLast.triggered.connect(self.last_step)
 
     def keyPressEvent(self, event):
-    #### Moving tiles across screen functions #####
+        #### Moving tiles across screen functions #####
         # up arrow key is pressed
         if event.key() == Qt.Key_Up:
             self.seedY = self.seedY - 10
@@ -114,7 +115,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         self.draw_tiles(self.Engine.getCurrentAssembly())
 
-    def wheelEvent(self,event):
+    def wheelEvent(self, event):
         #### Zoom in functions for the scroll wheel ####
         if event.angleDelta().y() == 120:
             self.tileSize = self.tileSize + 10
@@ -157,8 +158,10 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
             painter.setPen(pen)
             painter.setBrush(brush)
-            painter.drawRect((tile.x * self.tileSize) + self.seedX, (tile.y * -self.tileSize) + self.seedY, self.tileSize, self.tileSize)
-            painter.drawText((tile.x * self.tileSize) + self.textX, (tile.y * -self.tileSize) + self.textY, tile.state.label)
+            painter.drawRect((tile.x * self.tileSize) + self.seedX, (tile.y * -
+                             self.tileSize) + self.seedY, self.tileSize, self.tileSize)
+            painter.drawText((tile.x * self.tileSize) + self.textX,
+                             (tile.y * -self.tileSize) + self.textY, tile.state.label)
 
         painter.end()
 
@@ -171,7 +174,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.label_2.setText("Time elapsed: 0 seconds")
             self.label_3.setText("Current step time: 0 seconds")
 
-        #print(self.Engine.currentIndex)
+        # print(self.Engine.currentIndex)
         self.update()
 
     def Click_Run_Simulation(self):  # Run application if everythings good
@@ -256,13 +259,14 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 SaveFile.main(currentSystem, fileName)
 
     def Click_QuickRotate(self):
-        # Make a rotated system based off the current system, and instantly save the new system.
+        # Make a rotated system based off the current system, and instantly load the new system.
         if(self.SysLoaded == True):
-            fileName = QFileDialog.getSaveFileName(
-                self, "QFileDialog.getSaveFileName()", "", "XML Files (*.xml)")
-
-            if(fileName[0] != ''):
-                QuickRotate.main(currentSystem, fileName)
+            global currentSystem
+            QuickRotate.main(currentSystem)
+            currentSystem = QuickRotate.tempSystem
+            self.time = 0
+            self.Engine = Engine(currentSystem)
+            self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def Click_QuickCombine(self):
         if(self.SysLoaded == True):

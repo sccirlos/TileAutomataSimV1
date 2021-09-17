@@ -1,12 +1,11 @@
 import copy
 
 from UniversalClasses import System, AffinityRule, TransitionRule
-import SaveFile
 
 # Major Note: Currently rotates a system by 90 degrees CW
 
 
-def main(currentSystem, fileName):
+def main(currentSystem):
     global tempSystem
     tempSystem = copy.deepcopy(currentSystem)
 
@@ -80,5 +79,3 @@ def main(currentSystem, fileName):
 
     # Translate tempSystem's lists into dictionaries
     tempSystem.translateListsToDicts()
-    # Use SaveFile to save tempSystem as the rotated system of currentSystem
-    SaveFile.main(tempSystem, fileName)
