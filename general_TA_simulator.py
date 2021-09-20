@@ -97,8 +97,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.Prev_button.clicked.connect(self.prev_step)
         self.Prev_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-track-prev.png'))
 
-        #self.Stop_button.clicked.connect(self.stop_sequence)
-
         self.Play_button.clicked.connect(self.play_sequence)
         self.Play_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-play.png'))
 
@@ -126,11 +124,10 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.header.mouseMoveEvent = moveWindow
         self.slide_menu.mouseMoveEvent = moveWindow
 
-        #self.label = QtWidgets.QLabel()
         self.time = 0
         self.delay = 0
-        self.seedX = self.geometry().width() / 2 #need to have some function for half the screen width
-        self.seedY = self.geometry().height() / 2 #need to have some function for half the screen height
+        self.seedX = self.geometry().width() / 2 
+        self.seedY = self.geometry().height() / 2 
         self.clickPosition = QtCore.QPoint(self.geometry().x(), self.geometry().y())
 
         self.textX = self.seedX + 10
@@ -302,13 +299,13 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         painter.end()
 
         if self.Engine.currentIndex != 0:
-            self.label_2.setText("Time elapsed: " +
-                                 str(self.time) + " seconds")
-            self.label_3.setText("Current step time: " +
-                                 str(self.Engine.timeTaken()) + " seconds")
+            self.label_2.setText("Time elapsed: \n" +
+                                 str(round(self.time, 2)) + " time steps")
+            self.label_3.setText("Current step time: \n" +
+                                 str(round(self.Engine.timeTaken(), 2)) + " time steps")
         else:
-            self.label_2.setText("Time elapsed: 0 seconds")
-            self.label_3.setText("Current step time: 0 seconds")
+            self.label_2.setText("Time elapsed: \n 0 time steps")
+            self.label_3.setText("Current step time: \n 0 time steps")
 
         #print(self.Engine.currentIndex)
         self.update()
