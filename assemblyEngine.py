@@ -239,7 +239,7 @@ class Engine:
                 swNewMoves = self.currentAssembly.getTRat(self.system, moveX - 1, moveY - 1, "h")
                 self.addMoves(swNewMoves)
             
-                # Remove attachments from neighbors
+                # Add attachments from neighbors
                 s2Atts = self.currentAssembly.getAttat(self.system, moveX, moveY - 2)
                 self.addMoves(s2Atts)
 
@@ -257,7 +257,7 @@ class Engine:
                 vOldMoves = cAssembly.getTRat(self.system, moveX + 1, moveY)
                 self.removeMoves(vOldMoves)
 
-                # Remove "h" rules for SW
+                # Remove "v" rules for NE
                 neMoves = cAssembly.getTRat(self.system, moveX + 1, moveY + 1, "v")
                 self.removeMoves(neMoves)
             
@@ -276,7 +276,7 @@ class Engine:
                 vNewMoves = self.currentAssembly.getTRat(self.system, moveX + 1, moveY)
                 self.addMoves(vNewMoves)
 
-                # add "h" rules for SW
+                # add "v" rules for ne
                 neMoves = self.currentAssembly.getTRat(self.system, moveX + 1, moveY + 1, "v")
                 self.addMoves(neMoves)
             
