@@ -455,7 +455,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             if self.play == False:
                 self.Play_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-pause.png'))
                 self.play = True
-                while((self.Engine.build() != -1) and self.play == True):
+                while((self.Engine.step() != -1) and self.play == True):
                     print(self.Engine.currentIndex)
                     self.time = self.time + (self.Engine.timeTaken())
 
