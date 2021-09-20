@@ -445,7 +445,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def last_step(self):
         self.stop_sequence()
         if self.SysLoaded == True:
-            while (self.Engine.build() != -1):
+            while (self.Engine.step() != -1):
                 self.time = self.time + (self.Engine.timeTaken())
 
             self.draw_tiles(self.Engine.getCurrentAssembly())
