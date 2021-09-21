@@ -32,6 +32,9 @@ def main(currentSystem, file):
     # Attach secondSystem's All States to currentSystem
     for state_tag in treeroot.findall('AllStates/State'):
         label = state_tag.get("Label")
+        # If the label is the pot (X), don't append a "$".
+        if(label != "X"):
+            label = label + "$"
         color = state_tag.get("Color")
         for state in current_CompleteStateSet:
             if(state.returnLabel() == label):
@@ -45,6 +48,9 @@ def main(currentSystem, file):
     # Attach secondSystem's Initial States
     for state_tag in treeroot.findall("InitialStates/State"):
         label = state_tag.get("Label")
+        # If the label is the pot (X), don't append a "$".
+        if(label != "X"):
+            label = label + "$"
         color = state_tag.get("Color")
         for state in current_InitialStateSet:
             if(state.returnLabel() == label):
@@ -58,6 +64,9 @@ def main(currentSystem, file):
     # Seed States
     for state_tag in treeroot.findall("SeedStates/State"):
         label = state_tag.get("Label")
+        # If the label is the pot (X), don't append a "$".
+        if(label != "X"):
+            label = label + "$"
         color = state_tag.get("Color")
 
         for state in current_SeedStateSet:
@@ -75,6 +84,16 @@ def main(currentSystem, file):
         label2 = rule_tag.get("Label2")
         label1Final = rule_tag.get("Label1Final")
         label2Final = rule_tag.get("Label2Final")
+
+        # If the label is the pot (X), don't append a "$".
+        if(label1 != "X"):
+            label1 = label1 + "$"
+        if(label2 != "X"):
+            label2 = label2 + "$"
+        if(label1Final != "X"):
+            label1Final = label1Final + "$"
+        if(label2Final != "X"):
+            label2Final = label2Final + "$"
 
         # Attach secondSystem's Vertical Transitions if they don't already exist in currentSystem
         for rule in current_VerticalTransitionRules:
@@ -94,6 +113,16 @@ def main(currentSystem, file):
         label1Final = rule_tag.get("Label1Final")
         label2Final = rule_tag.get("Label2Final")
 
+        # If the label is the pot (X), don't append a "$".
+        if(label1 != "X"):
+            label1 = label1 + "$"
+        if(label2 != "X"):
+            label2 = label2 + "$"
+        if(label1Final != "X"):
+            label1Final = label1Final + "$"
+        if(label2Final != "X"):
+            label2Final = label2Final + "$"
+
         # Attach secondSystem's Horizontal Transitions if they don't already exist in currentSystem
         for rule in current_HorizontalTransitionRules:
             if(rule.returnLabel1() == label1 and rule.returnLabel2() == label2 and rule.returnLabel1Final() == label1Final and rule.returnLabel2Final() == label2Final):
@@ -111,6 +140,11 @@ def main(currentSystem, file):
         label2 = rule_tag.get("Label2")
         strength = rule_tag.get("Strength")
 
+        if(label1 != "X"):
+            label1 = label1 + "$"
+        if(label2 != "X"):
+            label2 = label2 + "$"
+
         # Attach secondSystem's Vertical Affinities if they don't already exist in currentSystem
         for rule in current_VerticalAffinityRules:
             if(rule.returnLabel1() == label1 and rule.returnLabel2() == label2):
@@ -126,6 +160,11 @@ def main(currentSystem, file):
         label1 = rule_tag.get("Label1")
         label2 = rule_tag.get("Label2")
         strength = rule_tag.get("Strength")
+
+        if(label1 != "X"):
+            label1 = label1 + "$"
+        if(label2 != "X"):
+            label2 = label2 + "$"
 
         # Attach secondSystem's Vertical Affinities if they don't already exist in currentSystem
         for rule in current_HorizontalAffinityRules:
