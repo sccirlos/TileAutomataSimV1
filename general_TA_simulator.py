@@ -12,11 +12,13 @@ import TAMainWindow
 import LoadFile
 import SaveFile
 import Assembler_Proto
+import QuickRotate
+import QuickCombine
 
 import sys
 
 # Global Variables
-currentSystem = None
+# Note: currentSystem is still global but had to be moved into the loading method
 currentAssemblyHistory = []
 # General Seeded TA Simulator
 
@@ -106,7 +108,13 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.Last_button.clicked.connect(self.last_step)
         self.Last_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-skip-forward.png'))
 
-        self.slowMode_Button.clicked.connect(self.slowMode_toggle)
+         # "Quick Rotate"
+        self.Rotate_button.clicked.connect(self.Click_QuickRotate)
+
+        # "Quick Combine"
+        self.Combine_button.clicked.connect(self.Click_QuickCombine)
+
+        self.SlowMode_button.clicked.connect(self.slowMode_toggle)
 
         # Function to Move window on mouse drag event on the title bar
         def moveWindow(e):
@@ -216,7 +224,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def keyPressEvent(self, event):
-    #### Moving tiles across screen functions #####
+        #### Moving tiles across screen functions #####
         # up arrow key is pressed
         if event.key() == Qt.Key_W:
             self.seedY = self.seedY - 10
@@ -255,7 +263,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         if self.Engine != None:
             self.draw_tiles(self.Engine.getCurrentAssembly())
 
-    def wheelEvent(self,event):
+    def wheelEvent(self, event):
         #### Zoom in functions for the scroll wheel ####
         if event.angleDelta().y() == 120:
             self.tileSize = self.tileSize + 10
@@ -316,7 +324,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.label_2.setText("Time elapsed: \n 0 time steps")
             self.label_3.setText("Current step time: \n 0 time steps")
 
-        #print(self.Engine.currentIndex)
+        # print(self.Engine.currentIndex)
         self.update()
 
     def Click_Run_Simulation(self):  # Run application if everythings good
@@ -369,6 +377,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.SysLoaded = True
 
             # Establish the current system we're working with
+            global currentSystem
             currentSystem = System(temp, states, inital_states, seed_states, vertical_affinities,
                                    horizontal_affinities, vertical_transitions, horizontal_transitions)
             print("\nSystem Dictionaries:")
@@ -401,25 +410,39 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def Click_SaveFile(self):
         # Creating a System object from data read.
         if(self.SysLoaded == True):
-            temp = LoadFile.Temp
-            states = LoadFile.CompleteStateSet
-            inital_states = LoadFile.InitialStateSet
-            seed_states = LoadFile.SeedStateSet
-            vertical_affinities = LoadFile.VerticalAffinityRules
-            horizontal_affinities = LoadFile.HorizontalAffinityRules
-            vertical_transitions = LoadFile.VerticalTransitionRules
-            horizontal_transitions = LoadFile.HorizontalTransitionRules
-
-            # Establish the current system we're working with
-            currentSystem = System(temp, states, inital_states, seed_states, vertical_affinities,
-                                   horizontal_affinities, vertical_transitions, horizontal_transitions)
-
             fileName = QFileDialog.getSaveFileName(
                 self, "QFileDialog.getSaveFileName()", "", "XML Files (*.xml)")
 
             if(fileName[0] != ''):
                 SaveFile.main(currentSystem, fileName)
 
+    def Click_QuickRotate(self):
+        # Make a rotated system based off the current system, and instantly load the new system.
+        if(self.SysLoaded == True):
+            global currentSystem
+            QuickRotate.main(currentSystem)
+            currentSystem = QuickRotate.tempSystem
+            self.time = 0
+            self.Engine = Engine(currentSystem)
+            self.draw_tiles(self.Engine.getCurrentAssembly())
+
+    def Click_QuickCombine(self):
+        if(self.SysLoaded == True):
+            global currentSystem
+            file = QFileDialog.getOpenFileName(
+                self, "Select XML Document", "", "XML Files (*.xml)")
+            if file[0] != '':
+                QuickCombine.main(currentSystem, file[0])
+            currentSystem.clearVerticalTransitionDict()
+            currentSystem.clearHorizontalTransitionDict()
+            currentSystem.clearVerticalAffinityDict()
+            currentSystem.clearHorizontalAffinityDict()
+            currentSystem.translateListsToDicts()
+            self.time = 0
+            self.Engine = Engine(currentSystem)
+            self.draw_tiles(self.Engine.getCurrentAssembly())
+
+    # self.draw_tiles(LoadFile.) #starting assembly goes here
     def slowMode_toggle(self):
         if self.slowMode_Button.isChecked():
             self.delay = 1000
