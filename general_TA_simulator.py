@@ -237,6 +237,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.seedX = self.seedX + 10
             self.textX = self.textX + 10
 
+        elif event.key() == Qt.Key_H:
+            self.first_step()
+
         elif event.key() == Qt.Key_J:
             self.prev_step()
 
@@ -245,6 +248,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         elif event.key() == Qt.Key_L:
             self.next_step()
+
+        elif event.key() == Qt.Key_Semicolon:
+            self.last_step()
 
         if self.Engine != None:
             self.draw_tiles(self.Engine.getCurrentAssembly())
@@ -294,7 +300,10 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             painter.setPen(pen)
             painter.setBrush(brush)
             painter.drawRect((tile.x * self.tileSize) + self.seedX, (tile.y * -self.tileSize) + self.seedY, self.tileSize, self.tileSize)
-            painter.drawText((tile.x * self.tileSize) + self.textX, (tile.y * -self.tileSize) + self.textY, tile.state.label)
+            if len(tile.state.label) > 4:
+                painter.drawText((tile.x * self.tileSize) + self.textX, (tile.y * -self.tileSize) + self.textY, tile.state.label[0:3])
+            else:
+                painter.drawText((tile.x * self.tileSize) + self.textX, (tile.y * -self.tileSize) + self.textY, tile.state.label)
 
         painter.end()
 
@@ -422,7 +431,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.stop_sequence()
             self.Engine.first()
             self.time = 0
-            # print(self.Engine.currentIndex)
             self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def prev_step(self):
