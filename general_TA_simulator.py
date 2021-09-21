@@ -270,7 +270,19 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
     def Click_QuickCombine(self):
         if(self.SysLoaded == True):
-            QuickCombine.main(currentSystem)
+            global currentSystem
+            file = QFileDialog.getOpenFileName(
+                self, "Select XML Document", "", "XML Files (*.xml)")
+            if file[0] != '':
+                QuickCombine.main(currentSystem, file[0])
+            currentSystem.clearVerticalTransitionDict()
+            currentSystem.clearHorizontalTransitionDict()
+            currentSystem.clearVerticalAffinityDict()
+            currentSystem.clearHorizontalAffinityDict()
+            currentSystem.translateListsToDicts()
+            self.time = 0
+            self.Engine = Engine(currentSystem)
+            self.draw_tiles(self.Engine.getCurrentAssembly())
 
     # self.draw_tiles(LoadFile.) #starting assembly goes here
 
