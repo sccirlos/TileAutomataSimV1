@@ -514,15 +514,15 @@ def cbrtBinString(value):
 
     revValue = value[::-1]
     vLen = len(value)
-    genSys = genDoubleIndexStates(vLen)
+    genSys = genTripleIndexStates(vLen)
 
     cbrtLen = math.ceil(vLen**(1.0/3.0))
 
     genSys = genTripleIndexStates(vLen)
 
     # Add Binary Symbol states
-    state0 = uc.State("0", orange)
-    state1 = uc.State("1", green)
+    state0 = uc.State("0", black)
+    state1 = uc.State("1", white)
     genSys.add_State(state0)
     genSys.add_State(state1)
 
@@ -553,46 +553,54 @@ def cbrtBinString(value):
 
             for k in range(cbrtLen - 1):
                 bitPos = (i * (cbrtLen**2)) + (j * cbrtLen) + k
-                bit = revValue[bitPos]
 
-                if bit == 0:
+                if bitPos >= len(value):
+                    bit = 1
+                else:
+                    bit = revValue[bitPos]
+
+                if bit == "0":
                     labelC = str(k) + "C0"
-                elif bit == 1:
+                elif bit == "1":
                     labelC = str(k) + "C1"
                 else:
                     labelC = None
                     print("Not a binary string ")
 
-                tr = uc.TransitionRule(labelA, labelB, labelA, labelC)
+                tr = uc.TransitionRule(labelA, labelB, labelA, labelC, "h")
                 genSys.add_transition_rule(tr)
 
             # We know any transitions with a prime are on the last row of the section is automatacilly the last C
             lastBitPos = (i * (cbrtLen**2)) + (j * cbrtLen) + cbrtLen - 1
-            lastBit = revValue[lastBitPos]
 
-            if lastBit == 0:
+            if bitPos >= len(value):
+                lastBit = 1
+            else:
+                lastBit = revValue[lastBitPos]
+
+            if lastBit == "0":
                 labelC = str(k) + "C0"
-            elif lastBit == 1:
+            elif lastBit == "1":
                 labelC = str(k) + "C1"
             else:
                 labelC = None
                 print("Not a binary string ")
 
-            trPrime = uc.TransitionRule(labelA, labelBPrime, labelA, labelC)
+            trPrime = uc.TransitionRule(labelA, labelBPrime, labelA, labelC, "h")
             genSys.add_transition_rule(trPrime)
 
 
 
         ####### TR for last bits (STEP 1)
-        lastBitPos = (i * (cbrtLen**2)) + (cbrtLen**2) + cbrtLen - 1
+        lastBitPos = (i * (cbrtLen**2)) + (cbrtLen**2) - 1
         lastBit = revValue[lastBitPos]
 
-        if lastBit == 0:
+        if lastBit == "0":
             labelC = str(k) + "C0"
-        elif lastBit == 1:
+        elif lastBit == "1":
             labelC = str(k) + "C1"
 
-        tr2Prime = uc.TransitionRule(labelAPrime, labelB2Prime, labelAPrime, labelC)
+        tr2Prime = uc.TransitionRule(labelAPrime, labelB2Prime, labelAPrime, labelC, "h")
         genSys.add_transition_rule(tr2Prime)
                 
         ###### STEP 2: Error Checking
@@ -603,7 +611,26 @@ def cbrtBinString(value):
             for j in range(cbrtLen):
                 labelC = str(j) + "C"
 
+                # If the index matches we grabbed the right value 
+                if i == j:
+                    tr0 = uc.TransitionRule(labelC0, labelC, labelC0, "0", "h")
+                    tr1 = uc.TransitionRule(labelC1, labelC, labelC1, "1", "h")
+                else: 
+                    # If the index is incorrect we transtion back to the blank assembly
+                    tr0 = uc.TransitionRule(labelC0, labelC, "Bx", labelC, "h")
+                    tr1 = uc.TransitionRule(labelC1, labelC, "Bx", labelC, "h")
+
+                genSys.add_transition_rule(tr0)
+                genSys.add_transition_rule(tr1)
                 
+
+            ##### TRs to reset the B tile
+            labelB = str(i) + "B"
+            labelBs = str(i) + "Bs"
+            resetBtr = uc.TransitionRule("Bx", labelBs, labelB, labelBs, "v")
+            genSys.add_transition_rule(resetBtr)
+
+    return genSys
 
 
     
@@ -613,35 +640,13 @@ def cbrtBinString(value):
 if __name__ == "__main__":
     flag = 0
 
-    #sys = genDoubleIndexStates(16)
-    #SaveFile.main(sys, ["genTest16.xml"])
-
-    #sys = genDoubleIndexStates(25)
-    #SaveFile.main(sys, ["genTest25.xml"])
-
-    #sys = genSqrtBinString("110010001")
-    #SaveFile.main(sys, ["genTestString.xml"])
-
-    #sys = genSqrtBinString("1110100101000101")
-    #SaveFile.main(sys, ["genTestString16.xml"])
-
-    #sys = genSqrtBinCount("111010001")
-    #SaveFile.main(sys, ["genTestString.xml"])
-
-    #tallSys = genDoubleIndexStates(100)
-    #SaveFile.main(tallSys, ["tallSys.xml"])
-
-    #sys = genSqrtBinCount("111010101")
-    #SaveFile.main(sys, ["genTestCount.xml"])
-
-    #sys = genSqrtBinCount("110011100")
-    #SaveFile.main(sys, ["biggerTestCount.xml"])
-
-    #sys = genSqrtBinCount(1000)
-    #SaveFile.main(sys, ["biggerTestCount.xml"])
-
     if(flag == 0):
-        sys = genTripleIndexStates(27)
+        sys = cbrtBinString("100101011001010110010101010")
+
+        states = sys.returnStates()
+
+
+
         SaveFile.main(sys, ["tripleTest.xml"])
 
     if(flag == 1):

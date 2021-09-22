@@ -253,14 +253,15 @@ class Assembly:
                     (iTile.get_label(), neighborS.get_label()))
                 # rules.append(iVTranRules)
                 if rules != None:
-                    move = {"type": "t"}
-                    move["x"] = iTile.x
-                    move["y"] = iTile.y
-                    move["dir"] = "v"
-                    move["state1"] = iTile.get_state()
-                    move["state2"] = neighborS.get_state()
-
                     for i in range(0, len(rules), 2):
+                        move = {"type": "t"}
+                        move["x"] = iTile.x
+                        move["y"] = iTile.y
+                        move["dir"] = "v"
+                        move["state1"] = iTile.get_state()
+                        move["state2"] = neighborS.get_state()
+
+                   
                         move["state1Final"] = sy.get_state(
                             rules[i])  # .returnLabel1Final()
                         move["state2Final"] = sy.get_state(
@@ -275,15 +276,16 @@ class Assembly:
                 # rules.append(iHTranRules)
 
                 if rules != None:
-                    print(iTile.get_label() + " : " + str(len(rules)))
-                    move = {"type": "t"}
-                    move["x"] = iTile.x
-                    move["y"] = iTile.y
-                    move["dir"] = "h"
-                    move["state1"] = iTile.get_state()
-                    move["state2"] = neighborE.get_state()
-
+                    #print(iTile.get_label() + " : " + str(len(rules)))
                     for i in range(0, len(rules), 2):
+                        move = {"type": "t"}
+                        move["x"] = iTile.x
+                        move["y"] = iTile.y
+                        move["dir"] = "h"
+                        move["state1"] = iTile.get_state()
+                        move["state2"] = neighborE.get_state()
+
+                    
                         move["state1Final"] = sy.get_state(
                             rules[i])  # .returnLabel1Final()
                         move["state2Final"] = sy.get_state(
@@ -303,7 +305,7 @@ class Assembly:
         #change = trans["type"]
 
         # print(a.tiles[change])
-        print(trans["state2Final"].get_label())
+        #print(trans["state2Final"].get_label())
         #print(trans["type"])
         a.coords[toCoords(trans["x"], trans["y"])].set_state(
             trans["state1Final"])
@@ -438,14 +440,14 @@ class Assembly:
                         (iTile.get_label(), neighborS.get_label()))
                     # rules.append(iVTranRules)
                     if rules != None:
-                        move = {"type": "t"}
-                        move["x"] = iTile.x
-                        move["y"] = iTile.y
-                        move["dir"] = "v"
-                        move["state1"] = iTile.get_state()
-                        move["state2"] = neighborS.get_state()
-
-                        for i in range(0, len(rules), 2):   
+                        for i in range(0, len(rules), 2):     
+                            move = {"type": "t"}
+                            move["x"] = iTile.x
+                            move["y"] = iTile.y
+                            move["dir"] = "v"
+                            move["state1"] = iTile.get_state()
+                            move["state2"] = neighborS.get_state()
+                          
                             move["state1Final"] = sy.get_state(
                                 rules[i])  # .returnLabel1Final()
                             move["state2Final"] = sy.get_state(
@@ -461,14 +463,14 @@ class Assembly:
                         (iTile.get_label(), neighborE.get_label()))
                     # rules.append(iVTranRules)
                     if rules != None:
-                        move = {"type": "t"}
-                        move["x"] = iTile.x
-                        move["y"] = iTile.y
-                        move["dir"] = "h"
-                        move["state1"] = iTile.get_state()
-                        move["state2"] = neighborE.get_state()
-
-                        for i in range(0, len(rules), 2):   
+                        for i in range(0, len(rules), 2): 
+                            move = {"type": "t"}
+                            move["x"] = iTile.x
+                            move["y"] = iTile.y
+                            move["dir"] = "h"
+                            move["state1"] = iTile.get_state()
+                            move["state2"] = neighborE.get_state()
+  
                             move["state1Final"] = sy.get_state(
                                 rules[i])  # .returnLabel1Final()
                             move["state2Final"] = sy.get_state(
@@ -768,12 +770,30 @@ class System:
 
         if direct == "v":
             self.vertical_transitions_list.append(tr)
-            self.vertical_transitions_dict[label1, label2] = (
-                label1Final, label2Final)
+
+            oldList = self.vertical_transitions_dict.get((label1, label2))
+
+            if oldList == None:
+                oldList = [label1Final, label2Final]
+            else:
+                oldList.append(label1Final)
+                oldList.append(label2Final)
+
+            self.vertical_transitions_dict[label1, label2] = oldList
         else:
             self.horizontal_transitions_list.append(tr)
-            self.horizontal_transitions_dict[label1, label2] = (
-                label1Final, label2Final)
+
+            oldList = self.horizontal_transitions_dict.get((label1, label2))
+
+            if oldList == None:
+                oldList = [label1Final, label2Final]
+            else:
+                oldList.append(label1Final)
+                oldList.append(label2Final)
+
+            
+
+            self.horizontal_transitions_dict[label1, label2] = oldList
 
     def add_affinity(self, a):
         label1 = a.returnLabel1()

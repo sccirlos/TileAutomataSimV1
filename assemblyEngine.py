@@ -315,7 +315,7 @@ class Engine:
 
         #print("Adding",  len(newMoves), "moves")
         for nMove in newMoves:
-            #printMove(nMove)
+            printMove(nMove)
             self.validMoves.append(nMove)
 
 
