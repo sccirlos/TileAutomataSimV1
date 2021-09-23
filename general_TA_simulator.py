@@ -117,6 +117,10 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         self.SlowMode_button.clicked.connect(self.slowMode_toggle)
 
+        # 'Edit' from the Tools menu
+        #self.actionEdit.triggered.connect(self.Click_EditFile)
+        self.Edit_button.clicked.connect(self.Click_EditFile)
+
         # Function to Move window on mouse drag event on the title bar
         def moveWindow(e):
             # Detect if the window is  normal size
