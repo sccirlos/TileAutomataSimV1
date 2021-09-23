@@ -14,6 +14,7 @@ import SaveFile
 import Assembler_Proto
 import QuickRotate
 import QuickCombine
+import EditorWindow16
 
 import sys
 
@@ -513,12 +514,34 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.play = False
 
 
+    def Click_EditFile(self):
+         # if file loaded 
+          # open editorwindow
+         self.e = Ui_EditorWindow()
+         self.e.show()
+
+class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+
+         # action for 'apply' the changes made to the side edit window to the view states side 
+
+         # action for 'save' the changes made to the side edit window to the XML file
+        self.pushButton_2.clicked.connect(self.Click_EditSaveAs)
+
+    def Click_EditSaveAs(self):
+        print("Save As button clicked")
+
+     # functions - accessing dictionaries for states, rules
+
+
 if __name__ == "__main__":
 
-    # App Stuff
-    app = QApplication(sys.argv)
-    w = Ui_MainWindow()
-    w.show()
+     # App Stuff
+        app = QApplication(sys.argv)
+        w = Ui_MainWindow()
+        w.show()
 
-    sys.exit(app.exec_())
-#
+        sys.exit(app.exec_())
+        #
