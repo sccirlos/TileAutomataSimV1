@@ -14,6 +14,7 @@ import SaveFile
 import Assembler_Proto
 import QuickRotate
 import QuickCombine
+import QuickReflect
 
 import sys
 
@@ -50,7 +51,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
 
         ###Set main background to transparent####
-        #self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        # self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
 
         ###Shadow effect #####
         self.shadow = QtWidgets.QGraphicsDropShadowEffect(self)
@@ -68,21 +69,25 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         ### Minimize window ######
         self.minimize_button.clicked.connect(lambda: self.showMinimized())
-        self.minimize_button.setIcon(QtGui.QIcon('Icons/Programming-Minimize-Window-icon.png'))
+        self.minimize_button.setIcon(QtGui.QIcon(
+            'Icons/Programming-Minimize-Window-icon.png'))
 
         ### Close window ####
         self.close_button.clicked.connect(lambda: self.close())
         self.close_button.setIcon(QtGui.QIcon('Icons/X-icon.png'))
 
         ### Restore/Maximize window ####
-        self.maximize_button.clicked.connect(lambda: self.restore_or_maximize_window())
-        self.maximize_button.setIcon(QtGui.QIcon('Icons/Programming-Maximize-Window-icon.png'))
+        self.maximize_button.clicked.connect(
+            lambda: self.restore_or_maximize_window())
+        self.maximize_button.setIcon(QtGui.QIcon(
+            'Icons/Programming-Maximize-Window-icon.png'))
 
         ### Window Size grip to resize window ###
         QtWidgets.QSizeGrip(self.sizeDrag_Button)
-        self.sizeDrag_Button.setIcon(QtGui.QIcon('Icons/tabler-icon-resize.png'))
+        self.sizeDrag_Button.setIcon(
+            QtGui.QIcon('Icons/tabler-icon-resize.png'))
 
-        #Left Menu toggle button
+        # Left Menu toggle button
         self.Menu_button.clicked.connect(lambda: self.slideLeftMenu())
         self.Menu_button.setIcon(QtGui.QIcon('Icons/menu_icon.png'))
 
@@ -94,36 +99,47 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.SaveAs_button.setIcon(QtGui.QIcon('Icons/save-icon.png'))
 
         self.First_button.clicked.connect(self.first_step)
-        self.First_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-skip-back.png'))
+        self.First_button.setIcon(QtGui.QIcon(
+            'Icons/tabler-icon-player-skip-back.png'))
 
         self.Prev_button.clicked.connect(self.prev_step)
-        self.Prev_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-track-prev.png'))
+        self.Prev_button.setIcon(QtGui.QIcon(
+            'Icons/tabler-icon-player-track-prev.png'))
 
         self.Play_button.clicked.connect(self.play_sequence)
-        self.Play_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-play.png'))
+        self.Play_button.setIcon(QtGui.QIcon(
+            'Icons/tabler-icon-player-play.png'))
 
         self.Next_button.clicked.connect(self.next_step)
-        self.Next_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-track-next.png'))
+        self.Next_button.setIcon(QtGui.QIcon(
+            'Icons/tabler-icon-player-track-next.png'))
 
         self.Last_button.clicked.connect(self.last_step)
-        self.Last_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-skip-forward.png'))
+        self.Last_button.setIcon(QtGui.QIcon(
+            'Icons/tabler-icon-player-skip-forward.png'))
 
-         # "Quick Rotate"
+        # "Quick Rotate"
         self.Rotate_button.clicked.connect(self.Click_QuickRotate)
 
         # "Quick Combine"
         self.Combine_button.clicked.connect(self.Click_QuickCombine)
+
+        # "Quick Reflect-X."
+        self.X_reflect_button.clicked.connect(self.Click_XReflect)
+
+        # "Quick Reflect-Y"
+        self.Y_reflect_button.clicked.connect(self.Click_YReflect)
 
         self.SlowMode_button.clicked.connect(self.slowMode_toggle)
 
         # Function to Move window on mouse drag event on the title bar
         def moveWindow(e):
             # Detect if the window is  normal size
-            if self.isMaximized() == False: #Not maximized
-                # Move window only when window is normal size 
-                #if left mouse button is clicked (Only accept left mouse button clicks)
-                if e.buttons() == Qt.LeftButton:  
-                    #Move window 
+            if self.isMaximized() == False:  # Not maximized
+                # Move window only when window is normal size
+                # if left mouse button is clicked (Only accept left mouse button clicks)
+                if e.buttons() == Qt.LeftButton:
+                    # Move window
                     self.move(self.pos() + e.globalPos() - self.clickPosition)
                     self.clickPosition = e.globalPos()
                     e.accept()
@@ -134,9 +150,10 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         self.time = 0
         self.delay = 0
-        self.seedX = self.geometry().width() / 2 
-        self.seedY = self.geometry().height() / 2 
-        self.clickPosition = QtCore.QPoint(self.geometry().x(), self.geometry().y())
+        self.seedX = self.geometry().width() / 2
+        self.seedY = self.geometry().height() / 2
+        self.clickPosition = QtCore.QPoint(
+            self.geometry().x(), self.geometry().y())
 
         self.textX = self.seedX + 10
         self.textY = self.seedY + 25
@@ -148,15 +165,15 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.SysLoaded = False
         self.play = True
 
-        canvas = QtGui.QPixmap(self.geometry().width(), self.geometry().height())
+        canvas = QtGui.QPixmap(self.geometry().width(),
+                               self.geometry().height())
         canvas.fill(Qt.white)
         self.label.setPixmap(canvas)
 
         self.label_2.setText("")
 
-        
     # Slide left menu function
-    def slideLeftMenu(self):                    #ANIMATION NEEDS TO BE WORKED ON SO ITS BEEN TURNED OFF
+    def slideLeftMenu(self):  # ANIMATION NEEDS TO BE WORKED ON SO ITS BEEN TURNED OFF
         # Get current left menu width
         width = self.slide_menu_container.width()
 
@@ -164,13 +181,14 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         if width == 0:
             # Expand menu
             newWidth = 200
-            canvas = QtGui.QPixmap(self.geometry().width() - 200, self.geometry().height() - 45) 
+            canvas = QtGui.QPixmap(
+                self.geometry().width() - 200, self.geometry().height() - 45)
             canvas.fill(Qt.white)
-            
+
             self.slide_menu_container.setMaximumWidth(newWidth)
             #self.menu_animation(width, newWidth)
             self.label.setPixmap(canvas)
-            #self.open_close_side_bar_btn.setIcon(QtGui.QIcon(u":/icons/icons/chevron-left.svg"))
+            # self.open_close_side_bar_btn.setIcon(QtGui.QIcon(u":/icons/icons/chevron-left.svg"))
         # If maximized
         else:
             # Restore menu
@@ -179,28 +197,31 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             #self.menu_animation(width, newWidth)
             self.slide_menu_container.setMaximumWidth(newWidth)
 
-            canvas = QtGui.QPixmap(self.geometry().width(), self.geometry().height() - 45) 
+            canvas = QtGui.QPixmap(
+                self.geometry().width(), self.geometry().height() - 45)
             canvas.fill(Qt.white)
             self.label.setPixmap(canvas)
-            
-            #self.open_close_side_bar_btn.setIcon(QtGui.QIcon(u":/icons/icons/align-left.svg"))
-        
+
+            # self.open_close_side_bar_btn.setIcon(QtGui.QIcon(u":/icons/icons/align-left.svg"))
+
         if self.Engine != None:
             self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def menu_animation(self, width, newWidth):
         # Animate the transition
-        self.animation = QtCore.QPropertyAnimation(self.slide_menu_container, b"maximumWidth")#Animate minimumWidht
+        self.animation = QtCore.QPropertyAnimation(
+            self.slide_menu_container, b"maximumWidth")  # Animate minimumWidht
         self.animation.setDuration(250)
-        self.animation.setStartValue(width)#Start value is the current menu width
-        self.animation.setEndValue(newWidth)#end value is the new menu width
+        # Start value is the current menu width
+        self.animation.setStartValue(width)
+        self.animation.setEndValue(newWidth)  # end value is the new menu width
         self.animation.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
         self.animation.start()
 
     # Add mouse events to the window
     def mousePressEvent(self, event):
         # Get the current position of the mouse
-        #print(event.globalPos())
+        # print(event.globalPos())
         super().mousePressEvent(event)
         self.clickPosition = event.globalPos()
         # We will use this value to move the window
@@ -214,9 +235,12 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def resizeEvent(self, event):
         # If left menu is closed
         if self.slide_menu_container.width() == 0:
-            canvas = QtGui.QPixmap(self.geometry().width(), self.geometry().height() - 45)
+            canvas = QtGui.QPixmap(
+                self.geometry().width(), self.geometry().height() - 45)
         else:
-            canvas = QtGui.QPixmap(self.geometry().width() - 200, self.geometry().height() - 45) #prevents a bug that happens if menus open
+            # prevents a bug that happens if menus open
+            canvas = QtGui.QPixmap(
+                self.geometry().width() - 200, self.geometry().height() - 45)
 
         canvas.fill(Qt.white)
         self.label.setPixmap(canvas)
@@ -295,7 +319,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         painter.setPen(pen)
         painter.setBrush(brush)
         # this block is drawing a big white rectangle across the screen to "clear" it
-        painter.drawRect(0, 0, self.geometry().width(), self.geometry().height())
+        painter.drawRect(0, 0, self.geometry().width(),
+                         self.geometry().height())
 
         font.setFamily("Times")
         font.setBold(True)
@@ -308,11 +333,14 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
             painter.setPen(pen)
             painter.setBrush(brush)
-            painter.drawRect((tile.x * self.tileSize) + self.seedX, (tile.y * -self.tileSize) + self.seedY, self.tileSize, self.tileSize)
+            painter.drawRect((tile.x * self.tileSize) + self.seedX, (tile.y * -
+                             self.tileSize) + self.seedY, self.tileSize, self.tileSize)
             if len(tile.state.label) > 4:
-                painter.drawText((tile.x * self.tileSize) + self.textX, (tile.y * -self.tileSize) + self.textY, tile.state.label[0:3])
+                painter.drawText((tile.x * self.tileSize) + self.textX,
+                                 (tile.y * -self.tileSize) + self.textY, tile.state.label[0:3])
             else:
-                painter.drawText((tile.x * self.tileSize) + self.textX, (tile.y * -self.tileSize) + self.textY, tile.state.label)
+                painter.drawText((tile.x * self.tileSize) + self.textX,
+                                 (tile.y * -self.tileSize) + self.textY, tile.state.label)
 
         painter.end()
 
@@ -391,8 +419,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             print("Horizontal Transitions:")
             currentSystem.displayHorizontalTransitionDict()
 
-            self.seedX = (self.geometry().width() - 150)/ 2 #the -150 is to account for the slide menu
-            self.seedY = self.geometry().height() / 2 
+            # the -150 is to account for the slide menu
+            self.seedX = (self.geometry().width() - 150) / 2
+            self.seedY = self.geometry().height() / 2
             self.textX = self.seedX + 10
             self.textY = self.seedY + 25
 
@@ -443,6 +472,26 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.Engine = Engine(currentSystem)
             self.draw_tiles(self.Engine.getCurrentAssembly())
 
+    def Click_XReflect(self):
+        # Make a rotated system based off the current system, and instantly load the new system.
+        if(self.SysLoaded == True):
+            global currentSystem
+            QuickReflect.reflect_across_x(currentSystem)
+            currentSystem = QuickReflect.tempSystem
+            self.time = 0
+            self.Engine = Engine(currentSystem)
+            self.draw_tiles(self.Engine.getCurrentAssembly())
+
+    def Click_YReflect(self):
+        # Make a rotated system based off the current system, and instantly load the new system.
+        if(self.SysLoaded == True):
+            global currentSystem
+            QuickReflect.reflect_across_y(currentSystem)
+            currentSystem = QuickReflect.tempSystem
+            self.time = 0
+            self.Engine = Engine(currentSystem)
+            self.draw_tiles(self.Engine.getCurrentAssembly())
+
     # self.draw_tiles(LoadFile.) #starting assembly goes here
     def slowMode_toggle(self):
         if self.slowMode_Button.isChecked():
@@ -485,7 +534,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def play_sequence(self):
         if self.SysLoaded == True:
             if self.play == False:
-                self.Play_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-pause.png'))
+                self.Play_button.setIcon(QtGui.QIcon(
+                    'Icons/tabler-icon-player-pause.png'))
                 self.play = True
                 while((self.Engine.step() != -1) and self.play == True):
                     print(self.Engine.currentIndex)
@@ -504,10 +554,12 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
                 # self.step = len(self.Engine.assemblyList) - 1 #this line is here to prevent a crash that happens if you click last after play finishes
                 self.stop_sequence()
-                self.Play_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-play.png'))
+                self.Play_button.setIcon(QtGui.QIcon(
+                    'Icons/tabler-icon-player-play.png'))
 
-            if self.play == True:   
-                self.Play_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-play.png'))
+            if self.play == True:
+                self.Play_button.setIcon(QtGui.QIcon(
+                    'Icons/tabler-icon-player-play.png'))
                 self.stop_sequence()
 
     def stop_sequence(self):
