@@ -541,11 +541,9 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
 
 
 if __name__ == "__main__":
-
      # App Stuff
         app = QApplication(sys.argv)
         w = Ui_MainWindow()
         w.show()
-
         sys.exit(app.exec_())
         #
