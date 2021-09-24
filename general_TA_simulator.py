@@ -250,6 +250,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.seedX = self.seedX + 10
             self.textX = self.textX + 10
 
+        # Hotkeys for the toolbar
         elif event.key() == Qt.Key_H:
             self.first_step()
 
