@@ -75,9 +75,6 @@ class Ui_EditorWindow(object):
          self.tableWidget.setRowHeight(0, 40)
          self.tableWidget.setRowHeight(1, 40)
 
-
-
-
           # 09/10 now need to bring in data from loaded xml stuff into tablewidget
 
          #self.loadData()
@@ -87,8 +84,6 @@ class Ui_EditorWindow(object):
          # grab list for rules, turn back into dictionaries (functions)
      #def loadData(self):
         # connection = 
-
-
 
          self.toolBox.addItem(self.page_2, "")
          self.page_3 = QtWidgets.QWidget()
