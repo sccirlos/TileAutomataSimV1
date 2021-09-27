@@ -2,7 +2,7 @@
 # Unnamed TA Simulator
 # Version 1.0
 # Author: ASARG
-# Description: Implements the tile automata model as designed by Angel Cantu, Austin Luchsinger, Robert Schweller, and Tim Wylie.
+# Description: Implements the tile automata model as designed by Chalk et al.
 #################################################################################################################################
 # Unnamed TASimulator Manual
 

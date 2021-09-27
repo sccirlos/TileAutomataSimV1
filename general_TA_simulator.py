@@ -50,9 +50,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         ###Remove Window title bar ####
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
 
-        ###Set main background to transparent####
-        #self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-
         ###Shadow effect #####
         self.shadow = QtWidgets.QGraphicsDropShadowEffect(self)
         self.shadow.setBlurRadius(50)
@@ -118,7 +115,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.SlowMode_button.clicked.connect(self.slowMode_toggle)
 
         # 'Edit' from the Tools menu
-        #self.actionEdit.triggered.connect(self.Click_EditFile)
         self.Edit_button.clicked.connect(self.Click_EditFile)
 
         # Function to Move window on mouse drag event on the title bar
@@ -307,17 +303,16 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         font.setPixelSize(self.textSize)
         painter.setFont(font)
         for tile in assembly.tiles:
-            # print(tile[0].color)
             pen.setColor(QtGui.QColor("black"))
             brush.setColor(QtGui.QColor("#" + tile.get_color()))
 
             painter.setPen(pen)
             painter.setBrush(brush)
-            painter.drawRect((tile.x * self.tileSize) + self.seedX, (tile.y * -self.tileSize) + self.seedY, self.tileSize, self.tileSize)
+            painter.drawRect((tile.x * self.tileSize) + int(self.seedX), (tile.y * -self.tileSize) + int(self.seedY), self.tileSize, self.tileSize)
             if len(tile.state.label) > 4:
-                painter.drawText((tile.x * self.tileSize) + self.textX, (tile.y * -self.tileSize) + self.textY, tile.state.label[0:3])
+                painter.drawText((tile.x * self.tileSize) + int(self.textX), (tile.y * -self.tileSize) + int(self.textY), tile.state.label[0:3])
             else:
-                painter.drawText((tile.x * self.tileSize) + self.textX, (tile.y * -self.tileSize) + self.textY, tile.state.label)
+                painter.drawText((tile.x * self.tileSize) + int(self.textX), (tile.y * -self.tileSize) + int(self.textY), tile.state.label)
 
         painter.end()
 
@@ -330,17 +325,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.label_2.setText("Time elapsed: \n 0 time steps")
             self.label_3.setText("Current step time: \n 0 time steps")
 
-        # print(self.Engine.currentIndex)
         self.update()
-
-    def Click_Run_Simulation(self):  # Run application if everythings good
-        err_flag = False
-
-        if(err_flag == False):
-            self.step = 0
-            self.time = 0
-            # Assembler_Proto.Main()
-            self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
 
     def Click_FileSearch(self, id):
         self.stop_sequence()
@@ -406,11 +391,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
             self.time = 0
             self.Engine = Engine(currentSystem)
-            #a = Assembly()
-            #t = Tile(currentSystem.returnSeedStates(), 0, 0)
-            # a.tiles.append(t)
-            # currentAssemblyHistory.append(a)
-            # Assembler_Proto.Main()
             self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def Click_SaveFile(self):
@@ -448,7 +428,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.Engine = Engine(currentSystem)
             self.draw_tiles(self.Engine.getCurrentAssembly())
 
-    # self.draw_tiles(LoadFile.) #starting assembly goes here
     def slowMode_toggle(self):
         if self.slowMode_Button.isChecked():
             self.delay = 1000
@@ -505,9 +484,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                     loop.exec_()
 
                     self.draw_tiles(self.Engine.getCurrentAssembly())
-                    # if self.Engine.currentIndex != 0: #and self.Engine.currentIndex < self.Engine.lastIndex:
 
-                # self.step = len(self.Engine.assemblyList) - 1 #this line is here to prevent a crash that happens if you click last after play finishes
                 self.stop_sequence()
                 self.Play_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-play.png'))
 
