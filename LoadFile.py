@@ -1,5 +1,3 @@
-from os import stat
-from PyQt5.QtWidgets import QFileDialog
 import xml.etree.ElementTree as ET
 
 from UniversalClasses import State
@@ -62,7 +60,8 @@ def readxml(file):
         label1Final = rule_tag.get("Label1Final")
         label2Final = rule_tag.get("Label2Final")
 
-        tempRule = TransitionRule(label1, label2, label1Final, label2Final)
+        tempRule = TransitionRule(
+            label1, label2, label1Final, label2Final, "v")
         VerticalTransitionRules.append(tempRule)
 
     # Record Horizontal Transitions
@@ -72,16 +71,17 @@ def readxml(file):
         label1Final = rule_tag.get("Label1Final")
         label2Final = rule_tag.get("Label2Final")
 
-        tempRule = TransitionRule(label1, label2, label1Final, label2Final)
+        tempRule = TransitionRule(
+            label1, label2, label1Final, label2Final, "h")
         HorizontalTransitionRules.append(tempRule)
 
     # Record Vertical Affinities
-    for rule_tag in treeroot.findall("Vertical Affinities/Rule"):
+    for rule_tag in treeroot.findall("VerticalAffinities/Rule"):
         label1 = rule_tag.get("Label1")
         label2 = rule_tag.get("Label2")
         strength = rule_tag.get("Strength")
 
-        tempRule = AffinityRule(label1, label2, strength)
+        tempRule = AffinityRule(label1, label2, "v", strength)
         VerticalAffinityRules.append(tempRule)
 
     # Record Horizontal Affinities
@@ -90,5 +90,5 @@ def readxml(file):
         label2 = rule_tag.get("Label2")
         strength = rule_tag.get("Strength")
 
-        tempRule = AffinityRule(label1, label2, strength)
+        tempRule = AffinityRule(label1, label2, "h", strength)
         HorizontalAffinityRules.append(tempRule)
