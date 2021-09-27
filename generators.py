@@ -1,5 +1,8 @@
 import UniversalClasses as uc
 import SaveFile
+import QuickRotate
+import QuickCombine
+import copy
 
 import math
 
@@ -11,8 +14,7 @@ black = "323031"
 white = "DFE0E2"
 
 
-
-# Must be passed an interger 
+# Must be passed an interger
 def genDoubleIndexStates(vLen):
     seedA = uc.State("SA", black)
     genSys = uc.System(1, [], [], [seedA], [], [], [], [])
@@ -131,7 +133,6 @@ def genSqrtBinString(value):
     if isinstance(value, int):
         value = bin(value)[2:]
 
-
     revValue = value[::-1]
     genSys = genDoubleIndexStates(len(value))
 
@@ -172,15 +173,14 @@ def genSqrtBinString(value):
 # Can be passed an interger or string (binary string)
 def genSqrtBinCount(value):
     if isinstance(value, int):
-        # Since the system has one column that is behind the start of the counter 
-        # we subtract one to 
-
+        # Since the system has one column that is behind the start of the counter
+        # we subtract one to
 
         # get the cieling of the log of the number
         # This tells us how long the string will be
         bits = math.ceil(math.log(value, 2))
 
-        # Get the number we're counting up to 
+        # Get the number we're counting up to
         # The assembly stops at after overflow so we add one to the max count
         maxCount = 2**bits + 1
         start = maxCount - value
@@ -191,7 +191,6 @@ def genSqrtBinCount(value):
         lead0 = ""
         for i in range(count0):
             lead0 = lead0 + "0"
-
 
         value = lead0 + startBin
 
@@ -232,7 +231,7 @@ def genSqrtBinCount(value):
     zeroCarry = uc.State("0c", orange)
     genSys.add_State(zeroCarry)
 
-    #<Rule Label1="N" Label2="2A'" Dir="v" Strength="1"></Rule>
+    # <Rule Label1="N" Label2="2A'" Dir="v" Strength="1"></Rule>
     northAff = uc.AffinityRule("N", str(sqrtLen - 1) + "A'", "v")
     genSys.add_affinity(northAff)
     # <Rule Label1="SB" Label2="+" Dir="h" Strength="1"></Rule>
@@ -344,7 +343,7 @@ def genTripleIndexStates(vLen):
     # Little a prime state
     aPrime = uc.State(str((2 * cbrtLen) - 1) + "a'", red)
     genSys.add_State(aPrime)
-    # C prime states 
+    # C prime states
     Cprime = uc.State(str(cbrtLen - 1) + "C'", orange)
     genSys.add_State(Cprime)
     Cprime2 = uc.State(str(cbrtLen - 1) + "C''", orange)
@@ -360,9 +359,6 @@ def genTripleIndexStates(vLen):
     seedC = uc.State("SC", black)
     genSys.add_Initial_State(seedC)
     genSys.add_State(seedC)
-
-
- 
 
     # Adding Affinity Rules
     #       Seed Affinities to start building
@@ -415,9 +411,9 @@ def genTripleIndexStates(vLen):
                                str(cbrtLen - 1) + "C", "B'", str(cbrtLen - 1) + "C", "h")
     genSys.add_transition_rule(trBTop)
     #   Transition for to start A propagation when B column has reached it's last index
-    trATop = uc.TransitionRule(str((2 * cbrtLen) - 1) + "a", str(cbrtLen - 1) + "B'", "A'", str(cbrtLen - 1) + "B'", "h")
+    trATop = uc.TransitionRule(str((2 * cbrtLen) - 1) + "a",
+                               str(cbrtLen - 1) + "B'", "A'", str(cbrtLen - 1) + "B'", "h")
     genSys.add_transition_rule(trATop)
- 
 
     # Rule for starting propagation of A state
     AprimeProp = uc.TransitionRule(
@@ -432,7 +428,8 @@ def genTripleIndexStates(vLen):
     genSys.add_transition_rule(trAseed)
     trBseed = uc.TransitionRule("B", "SB", "0Bs", "SB", "v")
     genSys.add_transition_rule(trBseed)
-    trBreset = uc.TransitionRule("B", str(cbrtLen - 1) + "B''", "0Bs", str(cbrtLen - 1) + "B''", "v")
+    trBreset = uc.TransitionRule(
+        "B", str(cbrtLen - 1) + "B''", "0Bs", str(cbrtLen - 1) + "B''", "v")
     genSys.add_transition_rule(trBreset)
 
     # Rule to allow B to transition to allow a string to print
@@ -450,11 +447,9 @@ def genTripleIndexStates(vLen):
         Bprop = uc.TransitionRule("B", str(i) + "b", "B", "B", "v")
         genSys.add_transition_rule(Bprop)
 
-
-    ApropPrime = uc.TransitionRule("A", str(2 * cbrtLen - 1) + "a'", "A" , "A", "v")
+    ApropPrime = uc.TransitionRule(
+        "A", str(2 * cbrtLen - 1) + "a'", "A", "A", "v")
     genSys.add_transition_rule(ApropPrime)
-
-
 
     for i in range(cbrtLen):
         # Rule for A state reaches bottom of the column to increment
@@ -466,15 +461,17 @@ def genTripleIndexStates(vLen):
                 "B", str(i) + "B'", str(i + 1) + "Bs", str(i) + "B'", "v")
             genSys.add_transition_rule(trIncB)
             # Rule allowing B column to start the next section
-            trGrowA = uc.TransitionRule(str((2 * cbrtLen) - 1) + "a", str(i) + "B'", str((2 * cbrtLen) - 1) + "a'", str(i) + "B'", "h")
+            trGrowA = uc.TransitionRule(str((2 * cbrtLen) - 1) + "a", str(
+                i) + "B'", str((2 * cbrtLen) - 1) + "a'", str(i) + "B'", "h")
             genSys.add_transition_rule(trGrowA)
             # Rule allowing B column to start the next section
-            trGrowC = uc.TransitionRule(str(i) + "B'", str(cbrtLen - 1) + "C", str(i) + "B'", str(cbrtLen - 1) + "C'", "h")
+            trGrowC = uc.TransitionRule(str(
+                i) + "B'", str(cbrtLen - 1) + "C", str(i) + "B'", str(cbrtLen - 1) + "C'", "h")
             genSys.add_transition_rule(trGrowC)
             # Rule allowing B to start next section after A increments
-            trGrowB = uc.TransitionRule(str(i) + "A'", str(cbrtLen - 1) + "B'", str(i) + "A'", str(cbrtLen - 1) + "B''", "h")
+            trGrowB = uc.TransitionRule(str(
+                i) + "A'", str(cbrtLen - 1) + "B'", str(i) + "A'", str(cbrtLen - 1) + "B''", "h")
             genSys.add_transition_rule(trGrowB)
-
 
         # Rules for propagating the A index upward
         propUpA = uc.TransitionRule(
@@ -498,11 +495,9 @@ def genTripleIndexStates(vLen):
         genSys.add_transition_rule(propUpPrimeB)
 
         # Rule allowing B to start next section after A increments
-        trGrowC = uc.TransitionRule(str(cbrtLen - 1) + "B''", str(cbrtLen - 1) + "C", str(cbrtLen - 1) + "B''", str(cbrtLen - 1) + "C'", "h")
+        trGrowC = uc.TransitionRule(str(cbrtLen - 1) + "B''", str(
+            cbrtLen - 1) + "C", str(cbrtLen - 1) + "B''", str(cbrtLen - 1) + "C'", "h")
         genSys.add_transition_rule(trGrowC)
-
-
-
 
     return genSys
 
@@ -510,7 +505,6 @@ def genTripleIndexStates(vLen):
 def cbrtBinString(value):
     if isinstance(value, int):
         value = bin(value)[2:]
-
 
     revValue = value[::-1]
     vLen = len(value)
@@ -540,7 +534,7 @@ def cbrtBinString(value):
     # No new affinities are used
 
     # Transitions
-    # STEP 1: ND select a value using A and B 
+    # STEP 1: ND select a value using A and B
     # i will always be the index of the left state
     for i in range(cbrtLen):
         labelA = str(i) + "A"
@@ -581,9 +575,7 @@ def cbrtBinString(value):
             trPrime = uc.TransitionRule(labelA, labelBPrime, labelA, labelC)
             genSys.add_transition_rule(trPrime)
 
-
-
-        ####### TR for last bits (STEP 1)
+        # TR for last bits (STEP 1)
         lastBitPos = (i * (cbrtLen**2)) + (cbrtLen**2) + cbrtLen - 1
         lastBit = revValue[lastBitPos]
 
@@ -592,22 +584,17 @@ def cbrtBinString(value):
         elif lastBit == 1:
             labelC = str(k) + "C1"
 
-        tr2Prime = uc.TransitionRule(labelAPrime, labelB2Prime, labelAPrime, labelC)
+        tr2Prime = uc.TransitionRule(
+            labelAPrime, labelB2Prime, labelAPrime, labelC)
         genSys.add_transition_rule(tr2Prime)
-                
-        ###### STEP 2: Error Checking
-        for i in range(cbrtLen): 
+
+        # STEP 2: Error Checking
+        for i in range(cbrtLen):
             labelC0 = str(i) + "C0"
             labelC1 = str(i) + "C1"
 
             for j in range(cbrtLen):
                 labelC = str(j) + "C"
-
-                
-
-
-    
-
 
 
 if __name__ == "__main__":
@@ -642,22 +629,16 @@ if __name__ == "__main__":
 
     if(flag == 0):
         sys = genTripleIndexStates(27)
-        SaveFile.main(sys, ["tripleTest.xml"])
+        SaveFile.main(sys, ["tripleTest.xml"])  # System 1
+        QuickRotate.main(sys)
+        secondSys = QuickRotate.tempSystem
+        SaveFile.main(secondSys, ["tripleTest2.xml"])  # System 2
 
     if(flag == 1):
 
         value = input("Please Enter an interger")
         sys = genSqrtBinCount(int(value))
-        fileName = input("Please Enter file name: ")  + ".xml"
+        fileName = input("Please Enter file name: ") + ".xml"
 
         SaveFile.main(sys, [fileName])
         print("Generated File: saved as ", fileName)
-
-
-
-
-
-
-
-
-
