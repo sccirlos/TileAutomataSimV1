@@ -2,6 +2,7 @@ import UniversalClasses as uc
 import SaveFile
 import QuickRotate
 import QuickCombine
+import QuickReflect
 import copy
 
 import math
@@ -282,8 +283,8 @@ def genSqrtBinCount(value):
 
 
 def genTripleIndexStates(vLen):
-    seedA = uc.State("SA", black)
-    genSys = uc.System(1, [], [], [seedA], [], [], [], [])
+    seedX = uc.State("X", white)
+    genSys = uc.System(1, [], [], [seedX], [], [], [], [])
 
     cbrtLen = math.ceil(vLen**(1.0/3.0))
 
@@ -350,8 +351,10 @@ def genTripleIndexStates(vLen):
     genSys.add_State(Cprime2)
 
     # Seed States
+    seedA = uc.State("SA", black)
     genSys.add_State(seedA)
     #     seedB is an Initial State
+    genSys.add_Initial_State(seedA)
     seedB = uc.State("SB", black)
     genSys.add_Initial_State(seedB)
     genSys.add_State(seedB)
@@ -362,6 +365,9 @@ def genTripleIndexStates(vLen):
 
     # Adding Affinity Rules
     #       Seed Affinities to start building
+    # Potted Adaptation
+    affinityPot = uc.AffinityRule("SA", "X", "v", 1)
+    genSys.add_affinity(affinityPot)
     affinityA0 = uc.AffinityRule("0a", "SA", "v", 1)
     genSys.add_affinity(affinityA0)
     affinityB0 = uc.AffinityRule("0b", "SB", "v", 1)
@@ -633,6 +639,16 @@ if __name__ == "__main__":
         QuickRotate.main(sys)
         secondSys = QuickRotate.tempSystem
         SaveFile.main(secondSys, ["tripleTest2.xml"])  # System 2
+        QuickReflect.reflect_across_y(secondSys)
+        secondSysReflected = QuickReflect.tempSystem  # System 2 Reflected
+        QuickCombine.main(secondSysReflected, "tripleTest.xml")
+        secondSysReflected.clearVerticalTransitionDict()
+        secondSysReflected.clearHorizontalTransitionDict()
+        secondSysReflected.clearVerticalAffinityDict()
+        secondSysReflected.clearHorizontalAffinityDict()
+        secondSysReflected.translateListsToDicts()
+        # Sys 1 + Sys 2 (Reflected)
+        SaveFile.main(secondSysReflected, ["tripleTestCombined.xml"])
 
     if(flag == 1):
 
