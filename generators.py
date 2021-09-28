@@ -282,6 +282,31 @@ def genSqrtBinCount(value):
     return genSys
 
 
+def genSquare(value):
+    # Value (int) is the size of rectangle we will be building 
+    
+    # get your first system
+    sys1 = genSqrtBinCount(value)
+    sys2 = genSqrtBinCount(value)
+
+    # Do the stuff to make one of the systems have the $ 
+
+
+    # rotate and reflect
+
+
+    # merge the systems
+    #  mergedSys = 
+
+    # change the seed state to X (pot)
+
+
+    # add affinity between old seeds and X pot
+
+
+    return mergedSys
+
+
 def genTripleIndexStates(vLen):
     seedX = uc.State("X", white)
     genSys = uc.System(1, [], [], [seedX], [], [], [], [])
