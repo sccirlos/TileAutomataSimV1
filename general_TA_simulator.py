@@ -1,6 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog
-from PyQt5.QtGui import QPainter, QBrush, QPen
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QWidget, QGridLayout
+from PyQt5.QtGui import QPainter, QBrush, QPen, QColor, QFont
 
 
 from PyQt5.QtCore import Qt
@@ -41,6 +41,29 @@ currentAssemblyHistory = []
 # GUI showing step by step growth starting with seed state
 # Step button
 # Keep growing until their are no more rules that apply
+
+class Move(QWidget):
+    def __init__(self, text):
+        super().__init__()
+        self.initUI(text)
+    
+    def initUI(self, text):
+        self.text = text
+        self.show()
+    
+    def paintEvent(self, event):
+        qp = QPainter()
+        qp.begin(self)
+        self.draw(event, qp)
+        qp.end()
+    
+    def draw(self, event, qp):
+        qp.setPen(QColor(255, 255, 255))
+        qp.setFont(QFont("Times", 10))
+        qp.drawText(event.rect(), Qt.AlignCenter, self.text)
+    
+    def mousePressEvent(self, event):
+        print("clicked on move")
 
 class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def __init__(self):
@@ -131,6 +154,11 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.Y_reflect_button.clicked.connect(self.Click_YReflect)
 
         self.SlowMode_button.clicked.connect(self.slowMode_toggle)
+
+        # Available moves layout to place available moves
+        self.movesLayout = QGridLayout(self.page_3)
+        # List of Move Widgets
+        self.moveWidgets = []
 
         # Function to Move window on mouse drag event on the title bar
         def moveWindow(e):
@@ -352,6 +380,19 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         else:
             self.label_2.setText("Time elapsed: \n 0 time steps")
             self.label_3.setText("Current step time: \n 0 time steps")
+
+        # Remove old moves from the layout
+        for m in self.moveWidgets:
+            m.deleteLater()
+        self.moveWidgets = []
+
+        # Create moves and add to layout
+        i = 0
+        for m in self.Engine.validMoves:
+            mGUI = Move(m["type"] + " " + m["state1"].get_label())
+            self.moveWidgets.append(mGUI)
+            self.movesLayout.addWidget(mGUI, i, 0)
+            i += 1
 
         # print(self.Engine.currentIndex)
         self.update()
