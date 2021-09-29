@@ -288,7 +288,10 @@ def cbrtBinString(value):
                 bitIndex += k
 
                 # Get the current bit
-                bit = revValue[bitIndex]
+                if bitIndex < len(value):
+                    bit = revValue[bitIndex]
+                else:
+                    bit = "1"
 
                 # The current bit and the k index are used to indicate the final state
                 labelTempC = str(k) + "C" + bit
@@ -378,18 +381,21 @@ def cbrtBinCount(value):
     carry = uc.State("c", blue)
     genSys.add_State(carry)
     genSys.add_Initial_State(carry)
-    carryS = uc.State("cs", blue)
-    genSys.add_State(carryS)
-    genSys.add_Initial_State(carryS)
 
 
     # State for indicating no carry
     noCarry = uc.State("nc", red)
     genSys.add_State(noCarry)
     genSys.add_Initial_State(noCarry)
-    noCarryS = uc.State("ncs", red)
-    genSys.add_State(noCarryS)
-    genSys.add_Initial_State(noCarryS)
+
+
+    # North Bit states
+    n1 = uc.State("1n", white)
+    genSys.add_State(n1)
+    genSys.add_Initial_State(n1)
+    n0 = uc.State("0n", black)
+    genSys.add_State(n0)
+    genSys.add_Initial_State(n0)
 
     ##
     incState = uc.State("+", black)
@@ -405,18 +411,69 @@ def cbrtBinCount(value):
     southWall = uc.State("S", black)
     genSys.add_State(southWall)
 
-    zeroCarry = uc.State("0c", orange)
+    zeroCarry = uc.State("0c", black)
     genSys.add_State(zeroCarry)
-    zeroCarryS = uc.State("0cs", orange)
-    genSys.add_State(zeroCarryS)
+    zeroCarryN = uc.State("0cn", black)
+    genSys.add_State(zeroCarryN)
+    genSys.add_Initial_State(zeroCarryN)
 
-    #<Rule Label1="N" Label2="2A'" Dir="v" Strength="1"></Rule>
-    northAffA = uc.AffinityRule("N", str(cbrtLen - 1) + "A", "v")
-    genSys.add_affinity(northAffA)
-    northAffB = uc.AffinityRule("N", str(cbrtLen - 1) + "B'", "v")
-    genSys.add_affinity(northAffB)
+    ##### Affinities
+
+    # <Rule Label1="SB" Label2="+" Dir="h" Strength="1"></Rule>
+    incSeed = uc.AffinityRule("SC", "+", "h")
+    genSys.add_affinity(incSeed)
+    incSouth = uc.AffinityRule("S", "+", "h")
+    genSys.add_affinity(incSouth)
+
+    # Affinity to let carry attach
+    incCarry = uc.AffinityRule("c", "+", "v")
+    genSys.add_affinity(incCarry)
+    carry0aff = uc.AffinityRule("c", "0cn", "v")
+    genSys.add_affinity(carry0aff)
+    ncAff0 = uc.AffinityRule("nc", "0n", "v")
+    genSys.add_affinity(ncAff0)   
+    ncAff1 = uc.AffinityRule("nc", "1n", "v")
+    genSys.add_affinity(ncAff1)   
+
+    # Affinity to attach north bit state
+    north1Aff = uc.AffinityRule("1n", "1", "v")
+    genSys.add_affinity(north1Aff)
+    north0Aff = uc.AffinityRule("0n", "0", "v")
+    genSys.add_affinity(north0Aff)
+    north0carry = uc.AffinityRule("0cn", "0c", "v")
+    genSys.add_affinity(north0carry)
+
+
+    ###### Transitions
+    ### Carry state transitions
+    carry0 = uc.TransitionRule("0", "c", "0", "1", "h")
+    genSys.add_transition_rule(carry0)
+    carry1 = uc.TransitionRule("1", "c", "1", "0c", "h")
+    genSys.add_transition_rule(carry1)
+
+    ### No Carry transitions
+    noCarry0 = uc.TransitionRule("0", "nc", "0", "0", "h")
+    genSys.add_transition_rule(noCarry0)
+    noCarry1 = uc.TransitionRule("1", "nc", "1", "1", "h")
+    genSys.add_transition_rule(noCarry1)
+
+    ### Once a number is set in the Least Significant Bit transtions the '+' state to the south wall state "S"
+    resetInc1 = uc.TransitionRule("1", "+", "1", "S", "v")
+    genSys.add_transition_rule(resetInc1)
+    resetInc0 = uc.TransitionRule("0", "+", "0", "S", "v")
+    genSys.add_transition_rule(resetInc0)
+
+    ### Transition downward to only let the next column place if a 1 appears in the last number
+    northCarryReset1 = uc.TransitionRule("1", "0cn", "1", "0n", "v")
+    genSys.add_transition_rule(northCarryReset1)
+    northCarryReset0 = uc.TransitionRule("0", "0cn", "0", "0n", "v")
+    genSys.add_transition_rule(northCarryReset0)   
+    CarryReset = uc.TransitionRule("0n", "0c", "0n", "0", "v")
+    genSys.add_transition_rule(CarryReset)  
+
+    return genSys
     
 
 if __name__ == "__main__":
-    sys = cbrtBinString("101010100101010100101010100")
-    SaveFile.main(sys, ["tripleTest.xml"])
+    sys = cbrtBinCount(120)
+    SaveFile.main(sys, ["tripleTest2.xml"])
