@@ -1,9 +1,8 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QWidget, QGridLayout
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QWidget, QGridLayout, QVBoxLayout
 from PyQt5.QtGui import QPainter, QBrush, QPen, QColor, QFont
 
-
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QSize
 from random import randrange
 
 from assemblyEngine import Engine
@@ -43,12 +42,12 @@ currentAssemblyHistory = []
 # Keep growing until their are no more rules that apply
 
 class Move(QWidget):
-    def __init__(self, text):
+    def __init__(self, move):
         super().__init__()
-        self.initUI(text)
+        self.initUI(move)
     
-    def initUI(self, text):
-        self.text = text
+    def initUI(self, move):
+        self.move = move
         self.show()
     
     def paintEvent(self, event):
@@ -58,12 +57,27 @@ class Move(QWidget):
         qp.end()
     
     def draw(self, event, qp):
-        qp.setPen(QColor(255, 255, 255))
-        qp.setFont(QFont("Times", 10))
-        qp.drawText(event.rect(), Qt.AlignCenter, self.text)
+        moveText = ""
+
+        if self.move["type"] == "a":
+            moveText = "Attach\n" +  self.move["state1"].get_label() + " at " + str(self.move["x"]) + " , " + str(self.move["y"])
+        elif self.move["type"] == "t":
+            moveText = "Transition\n" + self.move["state1"].get_label() + ", " + self.move["state2"].get_label() + " to " + self.move["state1Final"].get_label() + ", " + self.move["state2Final"].get_label()
+
+        qp.setPen(QColor(255,255,255))
+        qp.setFont(QFont("Times", 12))
+        qp.drawText(event.rect(), Qt.AlignCenter, moveText)
+        qp.drawRect(event.rect())
     
     def mousePressEvent(self, event):
         print("clicked on move")
+    
+    # def printMove(move):
+    # if move["type"] == "a":
+    #     print("Attach: ", move["state1"].get_label(), " at ", move["x"], ", ", move["y"])
+    # if move["type"] == "t":
+    #     print("Transition ", move["state1"].get_label(), ", ", move["state2"].get_label(), " to ", move["state1Final"].get_label(), ", ", move["state2Final"].get_label())
+    #     print(" at ", move["x"], ", ", move["y"])
 
 class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def __init__(self):
@@ -156,7 +170,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.SlowMode_button.clicked.connect(self.slowMode_toggle)
 
         # Available moves layout to place available moves
-        self.movesLayout = QGridLayout(self.page_3)
+        self.movesLayout = QVBoxLayout(self.page_3)
+        self.movesLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
         # List of Move Widgets
         self.moveWidgets = []
 
@@ -387,12 +402,11 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.moveWidgets = []
 
         # Create moves and add to layout
-        i = 0
         for m in self.Engine.validMoves:
-            mGUI = Move(m["type"] + " " + m["state1"].get_label())
+            mGUI = Move(m)
+            mGUI.setFixedHeight(28)
             self.moveWidgets.append(mGUI)
-            self.movesLayout.addWidget(mGUI, i, 0)
-            i += 1
+            self.movesLayout.addWidget(mGUI)
 
         # print(self.Engine.currentIndex)
         self.update()
