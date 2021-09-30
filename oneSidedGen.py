@@ -125,19 +125,19 @@ def genTripleIndexStates(vLen):
         affGrowB = uc.AffinityRule("0b", str(i) + "B'", "v", 1)
         genSys.add_affinity(affGrowB)
 
-        affResetB = uc.AffinityRule("0b", str(cbrtLen - 1) + "B''", "v", 1)
-        genSys.add_affinity(affResetB)
+    affResetB = uc.AffinityRule("0b", str(cbrtLen - 1) + "B''", "v", 1)
+    genSys.add_affinity(affResetB)
 
     # Last C state affinity
-        affLC = uc.AffinityRule(str(cbrtLen - 1) + "C",
-                                str(cbrtLen - 1) + "Cs", "v", 1)
-        genSys.add_affinity(affLC)
-        affGrowC = uc.AffinityRule("0Cs", str(cbrtLen - 1) + "C'", "v", 1)
-        genSys.add_affinity(affGrowC)
+    affLC = uc.AffinityRule(str(cbrtLen - 1) + "C",
+                            str(cbrtLen - 1) + "Cs", "v", 1)
+    genSys.add_affinity(affLC)
+    affGrowC = uc.AffinityRule("0Cs", str(cbrtLen - 1) + "C'", "v", 1)
+    genSys.add_affinity(affGrowC)
     # State to continue column A
-        affGrowA2 = uc.AffinityRule(
-            "0a", str((2 * cbrtLen) - 1) + "a'", "v", 1)
-        genSys.add_affinity(affGrowA2)
+    affGrowA2 = uc.AffinityRule(
+        "0a", str((2 * cbrtLen) - 1) + "a'", "v", 1)
+    genSys.add_affinity(affGrowA2)
 
     # Transition Rules
     #   Transition for when the B and C columns of the sections are complete
