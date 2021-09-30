@@ -400,12 +400,13 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         # Remove old widgets from the layout
         for m in self.moveWidgets:
+            self.movesLayout.removeWidget(m)
             m.deleteLater()
         self.moveWidgets = []
 
-        # If playing, don't show moves
-        if self.play:
-            status = QLabel("Playing...")
+        # If no more moves, show it
+        if len(self.Engine.validMoves) == 0:
+            status = QLabel("No Available Moves")
             self.moveWidgets.append(status)
             self.movesLayout.addWidget(status)
         
@@ -417,12 +418,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 mGUI.setFixedHeight(28)
                 self.moveWidgets.append(mGUI)
                 self.movesLayout.addWidget(mGUI)
-        
-        # Assembly is terminal, no moves
-        else:
-            status = QLabel("No Available Moves")
-            self.moveWidgets.append(status)
-            self.movesLayout.addWidget(status)
 
         # print(self.Engine.currentIndex)
         self.update()
