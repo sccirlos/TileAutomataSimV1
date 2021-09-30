@@ -1,8 +1,9 @@
+from os import stat
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QWidget, QGridLayout, QVBoxLayout
+from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QFileDialog, QWidget, QVBoxLayout
 from PyQt5.QtGui import QPainter, QBrush, QPen, QColor, QFont
 
-from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtCore import Qt
 from random import randrange
 
 from assemblyEngine import Engine
@@ -42,12 +43,13 @@ currentAssemblyHistory = []
 # Keep growing until their are no more rules that apply
 
 class Move(QWidget):
-    def __init__(self, move):
+    def __init__(self, move, mw):
         super().__init__()
-        self.initUI(move)
-    
-    def initUI(self, move):
         self.move = move
+        self.mw = mw
+        self.initUI()
+    
+    def initUI(self):
         self.show()
     
     def paintEvent(self, event):
@@ -70,7 +72,7 @@ class Move(QWidget):
         qp.drawRect(event.rect())
     
     def mousePressEvent(self, event):
-        print("clicked on move")
+        self.mw.do_move(self.move)
     
     # def printMove(move):
     # if move["type"] == "a":
@@ -396,17 +398,31 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.label_2.setText("Time elapsed: \n 0 time steps")
             self.label_3.setText("Current step time: \n 0 time steps")
 
-        # Remove old moves from the layout
+        # Remove old widgets from the layout
         for m in self.moveWidgets:
             m.deleteLater()
         self.moveWidgets = []
 
-        # Create moves and add to layout
-        for m in self.Engine.validMoves:
-            mGUI = Move(m)
-            mGUI.setFixedHeight(28)
-            self.moveWidgets.append(mGUI)
-            self.movesLayout.addWidget(mGUI)
+        # If playing, don't show moves
+        if self.play:
+            status = QLabel("Playing...")
+            self.moveWidgets.append(status)
+            self.movesLayout.addWidget(status)
+        
+        # If there are moves to pick, show them
+        elif not len(self.Engine.validMoves) == 0:
+            # Create moves and add to layout
+            for m in self.Engine.validMoves:
+                mGUI = Move(m, self)
+                mGUI.setFixedHeight(28)
+                self.moveWidgets.append(mGUI)
+                self.movesLayout.addWidget(mGUI)
+        
+        # Assembly is terminal, no moves
+        else:
+            status = QLabel("No Available Moves")
+            self.moveWidgets.append(status)
+            self.movesLayout.addWidget(status)
 
         # print(self.Engine.currentIndex)
         self.update()
@@ -553,6 +569,15 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.delay = 1000
         else:
             self.delay = 0
+
+    def do_move(self, move):
+        # Shouldn't need all this code but copying from next_step() anyways
+        self.stop_sequence()
+        if self.SysLoaded == True:
+            if self.Engine.step(move) != -1:
+                # Might need to go above
+                self.time = self.time + (self.Engine.timeTaken())
+                self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def first_step(self):
         if self.SysLoaded == True:

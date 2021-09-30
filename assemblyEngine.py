@@ -41,7 +41,7 @@ class Engine:
 
         self.validMoves = self.currentAssembly.getMoves(self.system)
 
-    def step(self):
+    def step(self, nextMove=None):
         if(self.currentIndex < self.lastIndex): 
             move = self.moveList[self.currentIndex]
             self.currentAssembly = self.currentAssembly.performMove(move)
@@ -49,7 +49,7 @@ class Engine:
             self.currentIndex = self.currentIndex + 1
             return 0
         else:
-            return self.build()
+            return self.build(nextMove)
                 
     def back(self):
         if(self.currentIndex > 0): 
@@ -72,7 +72,7 @@ class Engine:
     def getCurrentIndex(self):
         return self.currentIndex
 
-    def build(self):
+    def build(self, nextMove=None):
         # Get current Assembly
         cAssembly = self.getCurrentAssembly()
         #moveList = cAssembly.getMoves(self.system)
@@ -93,7 +93,12 @@ class Engine:
         self.currentIndex = self.currentIndex + 1
 
         # Get next assembly and add to list
-        move = random.choice(self.validMoves)
+        # If given a move, choose that one, otherwise do random move
+        move = None
+        if nextMove == None:
+            move = random.choice(self.validMoves)
+        else:
+            move = nextMove
 
         self.currentAssembly = cAssembly.performMove(move)
         self.moveList.append(move)
