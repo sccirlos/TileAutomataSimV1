@@ -71,8 +71,8 @@ class Move(QWidget):
                 moveText = "H "
             moveText += "Transition\n" + self.move["state1"].get_label() + ", " + self.move["state2"].get_label() + " to " + self.move["state1Final"].get_label() + ", " + self.move["state2Final"].get_label()
 
-        qp.setPen(QColor(255,255,255))
-        qp.setFont(QFont("Times", 12))
+        pen = QApplication.palette().text().color()
+        qp.setPen(pen)
         qp.drawText(event.rect(), Qt.AlignCenter, moveText)
         qp.drawRect(event.rect())
     
@@ -413,7 +413,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             # Create moves and add to layout
             for m in self.Engine.validMoves:
                 mGUI = Move(m, self, self.centralwidget)
-                mGUI.setFixedHeight(28)
+                mGUI.setFixedHeight(34)
                 self.moveWidgets.append(mGUI)
                 self.movesLayout.addWidget(mGUI)
 
