@@ -43,8 +43,8 @@ currentAssemblyHistory = []
 # Keep growing until their are no more rules that apply
 
 class Move(QWidget):
-    def __init__(self, move, mw):
-        super().__init__()
+    def __init__(self, move, mw, parent):
+        super().__init__(parent)
         self.move = move
         self.mw = mw
         self.initUI()
@@ -74,13 +74,6 @@ class Move(QWidget):
     def mousePressEvent(self, event):
         self.mw.do_move(self.move)
     
-    # def printMove(move):
-    # if move["type"] == "a":
-    #     print("Attach: ", move["state1"].get_label(), " at ", move["x"], ", ", move["y"])
-    # if move["type"] == "t":
-    #     print("Transition ", move["state1"].get_label(), ", ", move["state2"].get_label(), " to ", move["state1Final"].get_label(), ", ", move["state2Final"].get_label())
-    #     print(" at ", move["x"], ", ", move["y"])
-
 class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def __init__(self):
         super().__init__()
@@ -414,7 +407,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         elif not len(self.Engine.validMoves) == 0:
             # Create moves and add to layout
             for m in self.Engine.validMoves:
-                mGUI = Move(m, self)
+                mGUI = Move(m, self, self.centralwidget)
                 mGUI.setFixedHeight(28)
                 self.moveWidgets.append(mGUI)
                 self.movesLayout.addWidget(mGUI)
