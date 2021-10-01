@@ -416,15 +416,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 mGUI.setFixedHeight(34)
                 self.moveWidgets.append(mGUI)
                 self.movesLayout.addWidget(mGUI)
-        
-        # Debug
-        print()
-        print("Draw Called!")
-        print("current index", self.Engine.currentIndex)
-        print("last index", self.Engine.lastIndex)
-        print("movelist size", len(self.Engine.moveList))
-        print("valid moves", len(self.Engine.validMoves))
-        print()
 
         # print(self.Engine.currentIndex)
         self.update()
