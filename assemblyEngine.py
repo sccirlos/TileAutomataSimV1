@@ -49,13 +49,15 @@ class Engine:
             self.currentIndex = self.currentIndex + 1
             return 0
         else:
+            self.lastIndex += 1
+            self.currentIndex += 1
             return self.build(nextMove)
                 
     def back(self):
         if(self.currentIndex > 0): 
             self.currentIndex = self.currentIndex - 1
             move = self.moveList[self.currentIndex]
-            self.currentAssembly = self.currentAssembly.undoMove(move)
+            self.build(move, False)
 
     def first(self):
         self.currentIndex = 0
@@ -72,7 +74,7 @@ class Engine:
     def getCurrentIndex(self):
         return self.currentIndex
 
-    def build(self, nextMove=None):
+    def build(self, nextMove=None, forwards=True):
         # Get current Assembly
         cAssembly = self.getCurrentAssembly()
         #moveList = cAssembly.getMoves(self.system)
@@ -88,10 +90,6 @@ class Engine:
 
         self.TimeTaken.append(len(self.validMoves))
 
-        # Update lastIndex
-        self.lastIndex = self.lastIndex + 1
-        self.currentIndex = self.currentIndex + 1
-
         # Get next assembly and add to list
         # If given a move, choose that one, otherwise do random move
         move = None
@@ -100,8 +98,11 @@ class Engine:
         else:
             move = nextMove
 
-        self.currentAssembly = cAssembly.performMove(move)
-        self.moveList.append(move)
+        if forwards:
+            self.currentAssembly = cAssembly.performMove(move)
+            self.moveList.append(move)
+        else:
+            self.currentAssembly = cAssembly.undoMove(move)
 
         #print("Next Move: ")
         #printMove(move)
@@ -132,15 +133,24 @@ class Engine:
             # Add Attachments for neighbors
             nAtts = self.currentAssembly.getAttat(self.system, moveX, moveY + 1)
             self.addMoves(nAtts)
+            print("valid moves", len(self.validMoves))
 
             sAtts = self.currentAssembly.getAttat(self.system, moveX, moveY - 1)
             self.addMoves(sAtts)
+            print("valid moves", len(self.validMoves))
 
             wAtts = self.currentAssembly.getAttat(self.system, moveX - 1, moveY)
             self.addMoves(wAtts)
+            print("valid moves", len(self.validMoves))
 
             eAtts = self.currentAssembly.getAttat(self.system, moveX + 1, moveY)
             self.addMoves(eAtts)
+            print("valid moves", len(self.validMoves))
+
+            # Add attachments for the current x,y when going backwards
+            if not forwards:
+                backwardMoves = self.currentAssembly.getAttat(self.system, moveX, moveY)
+                self.addMoves(backwardMoves)
             
 
             # Add transitions for self
