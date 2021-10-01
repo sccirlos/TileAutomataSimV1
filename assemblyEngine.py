@@ -83,6 +83,7 @@ class Engine:
     def first(self):
         self.currentIndex = 0
         self.currentAssembly = self.seedAssembly
+        self.validMoves = self.currentAssembly.getMoves(self.system)
 
     def last(self):
         while self.currentIndex < self.lastIndex:
@@ -370,11 +371,7 @@ class Engine:
 
 
     def timeTaken(self):
-        print("in timeTaken current index", self.currentIndex)
-        print("time list is", *self.TimeTaken)
         if len(self.TimeTaken) > 0:
             return 1 / self.TimeTaken[self.currentIndex - 1]
         else:
             return 0
-
-    
