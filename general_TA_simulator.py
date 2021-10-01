@@ -64,7 +64,12 @@ class Move(QWidget):
         if self.move["type"] == "a":
             moveText = "Attach\n" +  self.move["state1"].get_label() + " at " + str(self.move["x"]) + " , " + str(self.move["y"])
         elif self.move["type"] == "t":
-            moveText = "Transition\n" + self.move["state1"].get_label() + ", " + self.move["state2"].get_label() + " to " + self.move["state1Final"].get_label() + ", " + self.move["state2Final"].get_label()
+            # Add Transition Direction
+            if self.move["dir"] == "v":
+                moveText = "V "
+            else:
+                moveText = "H "
+            moveText += "Transition\n" + self.move["state1"].get_label() + ", " + self.move["state2"].get_label() + " to " + self.move["state1Final"].get_label() + ", " + self.move["state2Final"].get_label()
 
         qp.setPen(QColor(255,255,255))
         qp.setFont(QFont("Times", 12))
