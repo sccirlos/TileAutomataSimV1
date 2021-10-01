@@ -228,6 +228,11 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
     def restore_or_maximize_window(self):
         if self.isMaximized():
+            #self.seedX = self.seedX #some function to move the assembly to stay in screen
+            #self.textX = self.textX
+            #self.seedY = self.seedY
+            #self.textY = self.textY 
+
             self.showNormal()
         else:
             self.showMaximized()
