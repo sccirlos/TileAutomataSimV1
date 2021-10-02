@@ -243,9 +243,326 @@ def genQuadIndexStates(vLen):
 
     return genSys
 
+def genQuadBinString(value):
+    if isinstance(value, int):
+        value = bin(value)[2:]
+
+
+    revValue = value[::-1]
+    vLen = len(value)
+    genSys = genQuadIndexStates(vLen)
+
+    rt4Len = math.ceil(vLen**(1.0/4.0))
+
+    # Add Binary Symbol states
+    state0 = uc.State("0", black)
+    state1 = uc.State("1", white)
+    genSys.add_State(state0)
+    genSys.add_State(state1)
+
+    # Add look up states for A and D to store values
+    for i in range(rt4Len):
+        iA0 = uc.State(str(i) + "A0", black)
+        genSys.add_State(iA0)
+        iA1 = uc.State(str(i) + "A1", white)
+        genSys.add_State(iA1)
+        iD0 = uc.State(str(i) + "D0", black)
+        genSys.add_State(iD0)
+        iD1 = uc.State(str(i) + "D1", white)
+        genSys.add_State(iD1)
+
+        # Base B prime states. Used to prevent early look up transitions
+        southBState = uc.State(str(i) + "Bs'", blue)
+        genSys.add_State(southBState)
+
+    # Additional Index States are needed
+    blankB = uc.State("Bx", blue)
+    genSys.add_State(blankB)
+    blankC = uc.State("Cx", orange)
+    genSys.add_State(blankC)
+
+    # Look up states transtion to these pass and fail states based on whether or not they match the As or Ds state
+    passA0 = uc.State("PA0", black)
+    genSys.add_State(passA0)
+    passA1 = uc.State("PA1", white)
+    genSys.add_State(passA1)
+    passD0 = uc.State("PD0", black)
+    genSys.add_State(passD0)
+    passD1 = uc.State("PD1", white)
+    genSys.add_State(passD1)
+
+    failA = uc.State("FA", blue)
+    genSys.add_State(failA)
+    failD = uc.State("FD", orange)
+    genSys.add_State(failD)
+
+
+
+    # For each index we add a look up rule between the B and C states
+    for a in range(rt4Len):
+        for b in range(rt4Len):
+
+            # Transition to change iBs to iBs'
+            iAs = str(a) + "As"
+            iBs = str(b) + "Bs"
+
+            trBsPrime = uc.TransitionRule(iAs, iBs, iAs, iBs + "'", "h")
+            genSys.add_transition_rule(trBsPrime)
+
+
+            for c in range(rt4Len):
+                for d in range(rt4Len):
+                    # Compute the bit index
+                    bitI = a * (rt4Len**3)
+                    bitI += b * (rt4Len**2)
+                    bitI += c * rt4Len
+                    bitI += d
+
+                    # Get the current bit
+                    if bitI < vLen:
+                        bit = revValue[bitI]
+                    else:
+                        bit = "1"
+
+                    # The B and C state are the first pair in the rule
+                    bB = str(b) + "Bs'"
+                    cC = str(c) + "Cs"
+                    # The A and D state will be the second pair in the rule and will store the bit value
+                    aA = str(a) + "A" + bit
+                    dD = str(d) + "D" + bit
+
+                    # Look up transition rule
+                    trLU = uc.TransitionRule(bB, cC, aA, dD, "h")
+                    genSys.add_transition_rule(trLU)
+
+    # Verification checks i will be index of A/D of the outer states and j will be the index of the inner states
+    for i in range(rt4Len):
+        for j in range(rt4Len):
+            iAs = str(i) + "As"
+            jA1 = str(j) + "A1"
+            jA0 = str(j) + "A0"
+
+            iDs = str(i) + "Ds"
+            jD1 = str(j) + "D1"
+            jD0 = str(j) + "D0"
+
+            if i == j:
+                trApass0 = uc.TransitionRule(iAs, jA0, iAs, "PA0", "h")
+                genSys.add_transition_rule(trApass0)
+                trApass1 = uc.TransitionRule(iAs, jA1, iAs, "PA1", "h")
+                genSys.add_transition_rule(trApass1)
+
+                trDpass0 = uc.TransitionRule(jD0, iDs, "PD0", iDs, "h")
+                genSys.add_transition_rule(trDpass0)
+                trDpass1 = uc.TransitionRule(jD1, iDs,"PD1", iDs, "h")
+                genSys.add_transition_rule(trDpass1)
+            else:
+                trAfail0 = uc.TransitionRule(iAs, jA0, iAs, "FA", "h")
+                genSys.add_transition_rule(trAfail0)
+                trAfail1 = uc.TransitionRule(iAs, jA1, iAs, "FA", "h")
+                genSys.add_transition_rule(trAfail1)
+
+                trDfail0 = uc.TransitionRule(jD0, iDs, "FD", iDs, "h")
+                genSys.add_transition_rule(trDfail0)
+                trDfail1 = uc.TransitionRule(jD1, iDs,"FD", iDs, "h")
+                genSys.add_transition_rule(trDfail1)
+
+    # Transition rule for when both transitions pass
+    trADpass0 = uc.TransitionRule("PA0", "PD0", "PA0", "0", "h")
+    genSys.add_transition_rule(trADpass0)
+    trADpass1 = uc.TransitionRule("PA1", "PD1", "PA1", "1", "h")
+    genSys.add_transition_rule(trADpass1)
+
+    trAfail0 = uc.TransitionRule("PA0", "FD", "Bx", "Cx", "h")
+    genSys.add_transition_rule(trAfail0)
+    trAfail1 = uc.TransitionRule("PA1", "FD", "Bx", "Cx", "h")
+    genSys.add_transition_rule(trAfail1)
+
+    trDfail0 = uc.TransitionRule("FA", "PD0", "Bx", "Cx", "h")
+    genSys.add_transition_rule(trDfail0)
+    trDfail1 = uc.TransitionRule("FA", "PD1", "Bx", "Cx", "h")
+    genSys.add_transition_rule(trDfail1)
+
+    trADfail = uc.TransitionRule("FA", "FD", "Bx", "Cx", "h")
+    genSys.add_transition_rule(trADfail)
+
+
+    
+    for i in range(rt4Len):
+        ##### TRs to reset the B tile
+        labelB = str(i) + "B"
+        labelBprime = str(i) + "B'"
+        labelBprime2 = str(i) + "B''"
+        labelBs = str(i) + "Bs'"
+        resetBtr = uc.TransitionRule(labelB, "Bx", labelB, labelBs, "v")
+        genSys.add_transition_rule(resetBtr)
+        resetBtrPrime = uc.TransitionRule(labelBprime, "Bx", labelBprime, labelBs, "v")
+        genSys.add_transition_rule(resetBtrPrime)
+        resetBtrPrime2 = uc.TransitionRule(labelBprime2, "Bx", labelBprime2, labelBs, "v")
+        genSys.add_transition_rule(resetBtrPrime2)
+
+        ##### TRs to reset the C tile
+        labelC = str(i) + "C"
+        labelCprime = str(i) + "C'"
+        labelCprime2 = str(i) + "C''"
+        labelCs = str(i) + "Cs"
+        resetCtr = uc.TransitionRule(labelC, "Cx", labelC, labelCs, "v")
+        genSys.add_transition_rule(resetCtr)
+        resetCtrPrime = uc.TransitionRule(labelCprime, "Cx", labelCprime, labelCs, "v")
+        genSys.add_transition_rule(resetCtrPrime)
+        resetCtrPrime2 = uc.TransitionRule(labelCprime2, "Cx", labelCprime2, labelCs, "v")
+        genSys.add_transition_rule(resetCtrPrime2)
+
+        labelDs = str(i) + "Ds"
+        tr0Ds = uc.TransitionRule("0", labelDs, "0", "0", "h")
+        genSys.add_transition_rule(tr0Ds)
+        tr1Ds = uc.TransitionRule("1", labelDs, "1", "1", "h")
+        genSys.add_transition_rule(tr1Ds)
+
+
+
+
+    return genSys
+
+def quadBinCount(value):
+    if isinstance(value, int):
+        # Since the system has one column that is behind the start of the counter 
+        # we subtract one to 
+
+
+        # get the cieling of the log of the number
+        # This tells us how long the string will be
+        bits = math.ceil(math.log(value, 2))
+
+        # Get the number we're counting up to 
+        # The assembly stops at after overflow so we add one to the max count
+        maxCount = 2**bits + 1
+        start = maxCount - value
+        startBin = bin(start)[2:]
+
+        # Need to add leading 0s
+        count0 = bits - len(startBin)
+        lead0 = ""
+        for i in range(count0):
+            lead0 = lead0 + "0"
+
+
+        value = lead0 + startBin
+
+    cbrtLen = math.ceil(len(value)**(1.0/3.0))
+
+    genSys = genQuadBinString(value)
+
+    # Add Binary Counter States
+
+    # New Initial States
+    # State for indicating carry
+    carry = uc.State("c", blue)
+    genSys.add_State(carry)
+    genSys.add_Initial_State(carry)
+
+
+    # State for indicating no carry
+    noCarry = uc.State("nc", red)
+    genSys.add_State(noCarry)
+    genSys.add_Initial_State(noCarry)
+
+
+    # North Bit states
+    n1 = uc.State("1n", white)
+    genSys.add_State(n1)
+    genSys.add_Initial_State(n1)
+    n0 = uc.State("0n", black)
+    genSys.add_State(n0)
+    genSys.add_Initial_State(n0)
+
+    ##
+    incState = uc.State("+", black)
+    genSys.add_State(incState)
+    genSys.add_Initial_State(incState)
+
+    northWall = uc.State("N", black)
+    genSys.add_State(northWall)
+    genSys.add_Initial_State(northWall)
+
+    # Other States
+
+    southWall = uc.State("S", black)
+    genSys.add_State(southWall)
+
+    zeroCarry = uc.State("0c", black)
+    genSys.add_State(zeroCarry)
+    zeroCarryN = uc.State("0cn", black)
+    genSys.add_State(zeroCarryN)
+    genSys.add_Initial_State(zeroCarryN)
+
+    ##### Affinities
+
+    # <Rule Label1="SB" Label2="+" Dir="h" Strength="1"></Rule>
+    incSeed = uc.AffinityRule("SD", "+", "h")
+    genSys.add_affinity(incSeed)
+    incSouth = uc.AffinityRule("S", "+", "h")
+    genSys.add_affinity(incSouth)
+
+    # Affinity to let carry attach
+    incCarry = uc.AffinityRule("c", "+", "v")
+    genSys.add_affinity(incCarry)
+    carry0aff = uc.AffinityRule("c", "0cn", "v")
+    genSys.add_affinity(carry0aff)
+    ncAff0 = uc.AffinityRule("nc", "0n", "v")
+    genSys.add_affinity(ncAff0)   
+    ncAff1 = uc.AffinityRule("nc", "1n", "v")
+    genSys.add_affinity(ncAff1)   
+
+    # Affinity to attach north bit state
+    north1Aff = uc.AffinityRule("1n", "1", "v")
+    genSys.add_affinity(north1Aff)
+    north0Aff = uc.AffinityRule("0n", "0", "v")
+    genSys.add_affinity(north0Aff)
+    north0carry = uc.AffinityRule("0cn", "0c", "v")
+    genSys.add_affinity(north0carry)
+
+
+    ###### Transitions
+    ### Carry state transitions
+    carry0 = uc.TransitionRule("0", "c", "0", "1", "h")
+    genSys.add_transition_rule(carry0)
+    carry1 = uc.TransitionRule("1", "c", "1", "0c", "h")
+    genSys.add_transition_rule(carry1)
+
+    ### No Carry transitions
+    noCarry0 = uc.TransitionRule("0", "nc", "0", "0", "h")
+    genSys.add_transition_rule(noCarry0)
+    noCarry1 = uc.TransitionRule("1", "nc", "1", "1", "h")
+    genSys.add_transition_rule(noCarry1)
+
+    ### Once a number is set in the Least Significant Bit transtions the '+' state to the south wall state "S"
+    resetInc1 = uc.TransitionRule("1", "+", "1", "S", "v")
+    genSys.add_transition_rule(resetInc1)
+    resetInc0 = uc.TransitionRule("0", "+", "0", "S", "v")
+    genSys.add_transition_rule(resetInc0)
+
+    ### Transition downward to only let the next column place if a 1 appears in the last number
+    northCarryReset1 = uc.TransitionRule("1", "0cn", "1", "0n", "v")
+    genSys.add_transition_rule(northCarryReset1)
+    northCarryReset0 = uc.TransitionRule("0", "0cn", "0", "0n", "v")
+    genSys.add_transition_rule(northCarryReset0)   
+    CarryReset = uc.TransitionRule("0n", "0c", "0n", "0", "v")
+    genSys.add_transition_rule(CarryReset)  
+
+    return genSys          
+
+                    
+
 
 
 if __name__ == "__main__":
-    sys = genQuadIndexStates(81)
-    SaveFile.main(sys, ["quadTest.xml"])
+
+    num = ""
+
+    for i in range(27):
+        num += "101"
+
+    sys = quadBinCount(num)
+    SaveFile.main(sys, ["quadCountTest.xml"])
 
