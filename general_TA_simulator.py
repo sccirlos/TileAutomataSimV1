@@ -1,7 +1,7 @@
+from os import stat
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog
-from PyQt5.QtGui import QPainter, QBrush, QPen
-
+from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QFileDialog, QWidget, QVBoxLayout
+from PyQt5.QtGui import QPainter, QBrush, QPen, QColor, QFont
 
 from PyQt5.QtCore import Qt
 from random import randrange
@@ -41,7 +41,7 @@ currentAssemblyHistory = []
 # GUI showing step by step growth starting with seed state
 # Step button
 # Keep growing until their are no more rules that apply
-
+    
 class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def __init__(self):
         super().__init__()
@@ -131,6 +131,12 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.Y_reflect_button.clicked.connect(self.Click_YReflect)
 
         self.SlowMode_button.clicked.connect(self.slowMode_toggle)
+
+        # Available moves layout to place available moves
+        self.movesLayout = QVBoxLayout(self.page_3)
+        self.movesLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        # List of Move Widgets
+        self.moveWidgets = []
 
         # Function to Move window on mouse drag event on the title bar
         def moveWindow(e):
@@ -353,6 +359,27 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.label_2.setText("Time elapsed: \n 0 time steps")
             self.label_3.setText("Current step time: \n 0 time steps")
 
+        # Remove old widgets from the layout
+        for m in self.moveWidgets:
+            self.movesLayout.removeWidget(m)
+            m.deleteLater()
+        self.moveWidgets = []
+
+        # If no more moves, show it
+        if len(self.Engine.validMoves) == 0:
+            status = QLabel("No Available Moves")
+            self.moveWidgets.append(status)
+            self.movesLayout.addWidget(status)
+        
+        # If there are moves to pick, show them
+        elif not len(self.Engine.validMoves) == 0:
+            # Create moves and add to layout
+            for m in self.Engine.validMoves:
+                mGUI = Move(m, self, self.centralwidget)
+                mGUI.setFixedHeight(34)
+                self.moveWidgets.append(mGUI)
+                self.movesLayout.addWidget(mGUI)
+
         # print(self.Engine.currentIndex)
         self.update()
 
@@ -499,37 +526,48 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         else:
             self.delay = 0
 
-    def first_step(self):
-        if self.SysLoaded == True:
+    def do_move(self, move):
+        if not self.play:
+            # Shouldn't need all this code but copying from next_step() anyways
             self.stop_sequence()
-            self.Engine.first()
-            self.time = 0
-            self.draw_tiles(self.Engine.getCurrentAssembly())
+            if self.SysLoaded == True:
+                if self.Engine.step(move) != -1:
+                    # Might need to go above
+                    self.time = self.time + (self.Engine.timeTaken())
+                    self.draw_tiles(self.Engine.getCurrentAssembly())
+
+    def first_step(self):
+        if not self.play:
+            if self.SysLoaded == True:
+                self.stop_sequence()
+                self.Engine.first()
+                self.time = 0
+                self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def prev_step(self):
-        self.stop_sequence()
-        if self.SysLoaded == True:
-            if self.Engine.currentIndex > 0:
-                self.Engine.back()
-                # Might need to go below
-                self.time = self.time - (self.Engine.timeTaken())
-                self.draw_tiles(self.Engine.getCurrentAssembly())
+        if not self.play:
+            if self.SysLoaded == True:
+                if self.Engine.currentIndex > 0:
+                    self.Engine.back()
+                    # Might need to go below
+                    self.time = self.time - (self.Engine.timeTaken())
+                    self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def next_step(self):
-        self.stop_sequence()
-        if self.SysLoaded == True:
-            if self.Engine.step() != -1:
-                # Might need to go above
-                self.time = self.time + (self.Engine.timeTaken())
-                self.draw_tiles(self.Engine.getCurrentAssembly())
+        if not self.play:
+            if self.SysLoaded == True:
+                if self.Engine.step() != -1:
+                    # Might need to go above
+                    self.time = self.time + (self.Engine.timeTaken())
+                    self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def last_step(self):
-        self.stop_sequence()
-        if self.SysLoaded == True:
-            while (self.Engine.step() != -1):
-                self.time = self.time + (self.Engine.timeTaken())
+        if not self.play:
+            if self.SysLoaded == True:
+                while (self.Engine.step() != -1):
+                    self.time = self.time + (self.Engine.timeTaken())
 
-            self.draw_tiles(self.Engine.getCurrentAssembly())
+                self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def play_sequence(self):
         if self.SysLoaded == True:
@@ -564,6 +602,43 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
     def stop_sequence(self):
         self.play = False
+
+class Move(QWidget):
+    def __init__(self, move, mw, parent):
+        super().__init__(parent)
+        self.move = move
+        self.mw = mw
+        self.initUI()
+    
+    def initUI(self):
+        self.show()
+    
+    def paintEvent(self, event):
+        qp = QPainter()
+        qp.begin(self)
+        self.draw(event, qp)
+        qp.end()
+    
+    def draw(self, event, qp):
+        moveText = ""
+
+        if self.move["type"] == "a":
+            moveText = "Attach\n" +  self.move["state1"].get_label() + " at " + str(self.move["x"]) + " , " + str(self.move["y"])
+        elif self.move["type"] == "t":
+            # Add Transition Direction
+            if self.move["dir"] == "v":
+                moveText = "V "
+            else:
+                moveText = "H "
+            moveText += "Transition\n" + self.move["state1"].get_label() + ", " + self.move["state2"].get_label() + " to " + self.move["state1Final"].get_label() + ", " + self.move["state2Final"].get_label()
+
+        pen = QApplication.palette().text().color()
+        qp.setPen(pen)
+        qp.drawText(event.rect(), Qt.AlignCenter, moveText)
+        qp.drawRect(event.rect())
+    
+    def mousePressEvent(self, event):
+        self.mw.do_move(self.move)
 
 
 if __name__ == "__main__":
