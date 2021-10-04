@@ -205,7 +205,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             # self.open_close_side_bar_btn.setIcon(QtGui.QIcon(u":/icons/icons/align-left.svg"))
 
         if self.Engine != None:
-            self.draw_tiles(self.Engine.getCurrentAssembly())
+            self.draw_assembly(self.Engine.getCurrentAssembly())
 
     def menu_animation(self, width, newWidth):
         # Animate the transition
@@ -249,7 +249,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.seedY = self.geometry().height() / 2
             self.textX = self.seedX + 10
             self.textY = self.seedY + 25
-            self.draw_tiles(self.Engine.getCurrentAssembly())
+            self.draw_assembly(self.Engine.getCurrentAssembly())
 
     def keyPressEvent(self, event):
         #### Moving tiles across screen functions #####
@@ -290,7 +290,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.last_step()
 
         if self.Engine != None:
-            self.draw_tiles(self.Engine.getCurrentAssembly())
+            self.draw_assembly(self.Engine.getCurrentAssembly())
 
     def wheelEvent(self, event):
         #### Zoom in functions for the scroll wheel ####
@@ -306,9 +306,24 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.textSize = int(self.tileSize / 3)
 
         if self.Engine != None:
-            self.draw_tiles(self.Engine.getCurrentAssembly())
+            self.draw_assembly(self.Engine.getCurrentAssembly())
 
-    def draw_tiles(self, assembly):
+    def draw_tiles(self, move):    
+        painter = QPainter(self.label.pixmap())
+        pen = QtGui.QPen()
+        brush = QtGui.QBrush()
+        font = QtGui.QFont()
+
+        pen.setWidth(3)
+
+        brush.setStyle(Qt.SolidPattern)
+
+        pen.setColor(QtGui.QColor("white"))
+        brush.setColor(QtGui.QColor("white"))
+        painter.setPen(pen)
+        painter.setBrush(brush)
+
+    def draw_assembly(self, assembly):
         painter = QPainter(self.label.pixmap())
         pen = QtGui.QPen()
         brush = QtGui.QBrush()
@@ -364,7 +379,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.label_2.setText("Time elapsed: \n 0 time steps")
             self.label_3.setText("Current step time: \n 0 time steps")
 
-        # print(self.Engine.currentIndex)
         self.update()
 
     def Click_Run_Simulation(self):  # Run application if everythings good
@@ -374,7 +388,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.step = 0
             self.time = 0
             # Assembler_Proto.Main()
-            self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
+            self.draw_assembly(Assembler_Proto.CompleteAssemblyHistory[self.step])
 
     def Click_FileSearch(self, id):
         self.stop_sequence()
@@ -446,7 +460,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             # a.tiles.append(t)
             # currentAssemblyHistory.append(a)
             # Assembler_Proto.Main()
-            self.draw_tiles(self.Engine.getCurrentAssembly())
+            self.draw_assembly(self.Engine.getCurrentAssembly())
 
     def Click_SaveFile(self):
         # Creating a System object from data read.
@@ -465,7 +479,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             currentSystem = QuickRotate.tempSystem
             self.time = 0
             self.Engine = Engine(currentSystem)
-            self.draw_tiles(self.Engine.getCurrentAssembly())
+            self.draw_assembly(self.Engine.getCurrentAssembly())
 
     def Click_QuickCombine(self):
         if(self.SysLoaded == True):
@@ -481,7 +495,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             currentSystem.translateListsToDicts()
             self.time = 0
             self.Engine = Engine(currentSystem)
-            self.draw_tiles(self.Engine.getCurrentAssembly())
+            self.draw_assembly(self.Engine.getCurrentAssembly())
 
     def Click_XReflect(self):
         # Make a rotated system based off the current system, and instantly load the new system.
@@ -491,7 +505,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             currentSystem = QuickReflect.tempSystem
             self.time = 0
             self.Engine = Engine(currentSystem)
-            self.draw_tiles(self.Engine.getCurrentAssembly())
+            self.draw_assembly(self.Engine.getCurrentAssembly())
 
     def Click_YReflect(self):
         # Make a rotated system based off the current system, and instantly load the new system.
@@ -501,9 +515,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             currentSystem = QuickReflect.tempSystem
             self.time = 0
             self.Engine = Engine(currentSystem)
-            self.draw_tiles(self.Engine.getCurrentAssembly())
+            self.draw_assembly(self.Engine.getCurrentAssembly())
 
-    # self.draw_tiles(LoadFile.) #starting assembly goes here
+    # self.draw_assembly(LoadFile.) #starting assembly goes here
     def slowMode_toggle(self):
         if self.slowMode_Button.isChecked():
             self.delay = 1000
@@ -515,7 +529,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.stop_sequence()
             self.Engine.first()
             self.time = 0
-            self.draw_tiles(self.Engine.getCurrentAssembly())
+            self.draw_assembly(self.Engine.getCurrentAssembly())
 
     def prev_step(self):
         self.stop_sequence()
@@ -524,7 +538,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 self.Engine.back()
                 # Might need to go below
                 self.time = self.time - (self.Engine.timeTaken())
-                self.draw_tiles(self.Engine.getCurrentAssembly())
+                self.draw_assembly(self.Engine.getCurrentAssembly())
 
     def next_step(self):
         self.stop_sequence()
@@ -532,7 +546,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             if self.Engine.step() != -1:
                 # Might need to go above
                 self.time = self.time + (self.Engine.timeTaken())
-                self.draw_tiles(self.Engine.getCurrentAssembly())
+                self.draw_assembly(self.Engine.getCurrentAssembly())
 
     def last_step(self):
         self.stop_sequence()
@@ -540,7 +554,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             while (self.Engine.step() != -1):
                 self.time = self.time + (self.Engine.timeTaken())
 
-            self.draw_tiles(self.Engine.getCurrentAssembly())
+            self.draw_assembly(self.Engine.getCurrentAssembly())
 
     def play_sequence(self):
         if self.SysLoaded == True:
@@ -560,7 +574,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                         QtCore.QTimer.singleShot(self.delay, loop.quit)
                     loop.exec_()
 
-                    self.draw_tiles(self.Engine.getCurrentAssembly())
+                    self.draw_assembly(self.Engine.getCurrentAssembly())
                     # if self.Engine.currentIndex != 0: #and self.Engine.currentIndex < self.Engine.lastIndex:
 
                 # self.step = len(self.Engine.assemblyList) - 1 #this line is here to prevent a crash that happens if you click last after play finishes
