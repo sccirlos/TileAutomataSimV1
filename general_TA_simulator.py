@@ -330,13 +330,20 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         font.setBold(True)
         font.setPixelSize(self.textSize)
         painter.setFont(font)
+
+        pen.setColor(QtGui.QColor("black"))
+        painter.setPen(pen)
         for tile in assembly.tiles:
-            # print(tile[0].color)
-            pen.setColor(QtGui.QColor("black"))
+            if((tile.x * self.tileSize) + self.seedX > self.geometry().width() or (tile.x * self.tileSize) + self.seedX < -self.tileSize):
+                continue #this if statement is so we don't draw tiles that aren't on screen width
+            if((tile.y * -self.tileSize) + self.seedY > self.geometry().height() or (tile.y * -self.tileSize) + self.seedY < -self.tileSize):
+                continue #this if statement is so we don't draw tiles that aren't on screen height
+
             brush.setColor(QtGui.QColor("#" + tile.get_color()))
 
-            painter.setPen(pen)
             painter.setBrush(brush)
+            
+
             painter.drawRect((tile.x * self.tileSize) + self.seedX, (tile.y * -
                              self.tileSize) + self.seedY, self.tileSize, self.tileSize)
             if len(tile.state.label) > 4:
