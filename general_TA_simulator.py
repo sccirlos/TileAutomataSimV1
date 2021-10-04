@@ -518,27 +518,66 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.play = False
 
 
+    # opens editor window 
     def Click_EditFile(self):
-         # if file loaded 
-          # open editorwindow
-         self.e = Ui_EditorWindow()
-         self.e.show()
+         # if system loaded, open editorwindow
+        if self.SysLoaded == True:
+            self.e = Ui_EditorWindow()
+            self.e.show()
+        else: 
+            print("Please load a file to edit.")
 
+
+    
 class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-
-         # action for 'apply' the changes made to the side edit window to the view states side 
-
+    
+     # action for 'apply' the changes made to the side edit window to the view states side 
+        self.pushButton.clicked.connect(self.Click_EditApply)
          # action for 'save' the changes made to the side edit window to the XML file
         self.pushButton_2.clicked.connect(self.Click_EditSaveAs)
+
+
+    # get currentSystem and display states on editor by color and label
+    # want to get states color in table first 
+    # states are in a list, need the list to display down the column
+    def getSys(self):
+        if self.SysLoaded == True:
+            global currentSystem
+          #  stateLabel = UniversalClasses.State()
+          # right now this gets states label only
+            self.Engine.getSys4Editor()
+            # fill label column in tablewidget
+            # set row count as long as the number of states
+            self.tableWidget.setRowCount(len(self.))
+
+
+
+
+            # print out on command line first to check!
+            print("states to be added to table:")
+
+
+
+
+        
+
+
+
+
+        
+
+    def Click_EditApply(self):
+        print("Apply button clicked")
+
 
     def Click_EditSaveAs(self):
         print("Save As button clicked")
 
      # functions - accessing dictionaries for states, rules
-
+    
 
 if __name__ == "__main__":
      # App Stuff
