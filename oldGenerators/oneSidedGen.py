@@ -11,20 +11,22 @@ orange = "f39237"
 black = "323031"
 white = "DFE0E2"
 
-#################
-# Generators for one sided non determinsitic TA
-# All system are temp 1
-# One sided means only a transition rule only changes of the states.
 
-
-# Builds a 3 x O(n)
-# Input a integer n 
 def genTripleIndexStates(vLen):
     seedA = uc.State("SA", black)
     genSys = uc.System(1, [], [], [seedA], [], [], [], [])
 
     cbrtLen = math.ceil(vLen**(1.0/3.0))
 
+    for i in range(2 * cbrtLen):
+        # Little a states (Initial States)
+        aState = uc.State(str(i) + "a", red)
+        genSys.add_State(aState)
+        genSys.add_Initial_State(aState)
+        # Little b states (Initial States)
+        bState = uc.State(str(i) + "b", blue)
+        genSys.add_State(bState)
+        genSys.add_Initial_State(bState)
 
     for i in range(cbrtLen):
         # Big A states
@@ -59,21 +61,19 @@ def genTripleIndexStates(vLen):
     # Blank A and A' states
     singleA = uc.State("A", red)
     genSys.add_State(singleA)
-    genSys.add_Initial_State(singleA)
     singleAPrime = uc.State("A'", red)
     genSys.add_State(singleAPrime)
-    genSys.add_Initial_State(singleAPrime)
     # Blank B and B' states
     singleB = uc.State("B", blue)
     genSys.add_State(singleB)
-    genSys.add_Initial_State(singleB)
     BPrime = uc.State("B'", blue)
     genSys.add_State(BPrime)
-    genSys.add_Initial_State(BPrime)
     BPrime2 = uc.State("B''", blue)
     genSys.add_State(BPrime2)
 
-
+    # Little a prime state
+    aPrime = uc.State(str((2 * cbrtLen) - 1) + "a'", red)
+    genSys.add_State(aPrime)
     # C prime states 
     Cprime = uc.State(str(cbrtLen - 1) + "C'", orange)
     genSys.add_State(Cprime)
@@ -96,6 +96,10 @@ def genTripleIndexStates(vLen):
 
     # Adding Affinity Rules
     #       Seed Affinities to start building
+    affinityA0 = uc.AffinityRule("0a", "SA", "v", 1)
+    genSys.add_affinity(affinityA0)
+    affinityB0 = uc.AffinityRule("0b", "SB", "v", 1)
+    genSys.add_affinity(affinityB0)
     affinityB0 = uc.AffinityRule("0Cs", "SC", "v", 1)
     genSys.add_affinity(affinityB0)
     affinitySeed = uc.AffinityRule("SA", "SB", "h", 1)
@@ -103,14 +107,26 @@ def genTripleIndexStates(vLen):
     affinitySeed2 = uc.AffinityRule("SB", "SC", "h", 1)
     genSys.add_affinity(affinitySeed2)
 
+    for i in range((2 * cbrtLen) - 1):
+        # Affinity Rules to build each column
+        affA = uc.AffinityRule(str(i + 1) + "a", str(i) + "a", "v", 1)
+        genSys.add_affinity(affA)
+        affB = uc.AffinityRule(str(i + 1) + "b", str(i) + "b", "v", 1)
+        genSys.add_affinity(affB)
 
     for i in range(cbrtLen - 1):
         affC = uc.AffinityRule(str(i) + "C", str(i) + "Cs", "v", 1)
         genSys.add_affinity(affC)
         affC = uc.AffinityRule(str(i + 1) + "Cs", str(i) + "C", "v", 1)
         genSys.add_affinity(affC)
+        # Affinity Rule to start the next section of the A and B column
+        affGrowA = uc.AffinityRule("0a", str(i) + "A'", "v", 1)
+        genSys.add_affinity(affGrowA)
+        affGrowB = uc.AffinityRule("0b", str(i) + "B'", "v", 1)
+        genSys.add_affinity(affGrowB)
 
-
+    affResetB = uc.AffinityRule("0b", str(cbrtLen - 1) + "B''", "v", 1)
+    genSys.add_affinity(affResetB)
 
     # Last C state affinity
     affLC = uc.AffinityRule(str(cbrtLen - 1) + "C",
@@ -118,11 +134,28 @@ def genTripleIndexStates(vLen):
     genSys.add_affinity(affLC)
     affGrowC = uc.AffinityRule("0Cs", str(cbrtLen - 1) + "C'", "v", 1)
     genSys.add_affinity(affGrowC)
+    # State to continue column A
+    affGrowA2 = uc.AffinityRule(
+        "0a", str((2 * cbrtLen) - 1) + "a'", "v", 1)
+    genSys.add_affinity(affGrowA2)
 
-
-
+    # Transition Rules
+    #   Transition for when the B and C columns of the sections are complete
+    trBTop = uc.TransitionRule(str((2 * cbrtLen) - 1) + "b",
+                               str(cbrtLen - 1) + "C", "B'", str(cbrtLen - 1) + "C", "h")
+    genSys.add_transition_rule(trBTop)
+    #   Transition for to start A propagation when B column has reached it's last index
+    trATop = uc.TransitionRule(str((2 * cbrtLen) - 1) + "a", str(cbrtLen - 1) + "B'", "A'", str(cbrtLen - 1) + "B'", "h")
+    genSys.add_transition_rule(trATop)
  
 
+    # Rule for starting propagation of A state
+    AprimeProp = uc.TransitionRule(
+        "A'", str((2 * cbrtLen) - 2) + "a", "A'", "A", "v")
+    genSys.add_transition_rule(AprimeProp)
+    BprimeProp = uc.TransitionRule(
+        "B'", str((2 * cbrtLen) - 2) + "b", "B'", "B", "v")
+    genSys.add_transition_rule(BprimeProp)
 
     # Rule for when A/B state reaches seed or last B' and marked as 0As/0Bs
     trAseed = uc.TransitionRule("A", "SA", "0As", "SA", "v")
@@ -132,26 +165,24 @@ def genTripleIndexStates(vLen):
     trBreset = uc.TransitionRule("B", str(cbrtLen - 1) + "B''", "0Bs", str(cbrtLen - 1) + "B''", "v")
     genSys.add_transition_rule(trBreset)
 
+    # Rule to allow B to transition to allow a string to print
+    veriB2 = uc.TransitionRule("0Bs", str(
+        cbrtLen - 1) + "B'", "0Bs", str(cbrtLen - 1) + "B''", "v")
+    genSys.add_transition_rule(veriB2)
+    veriC = uc.TransitionRule("0Cs", str(
+        cbrtLen - 1) + "C'", "0Cs", str(cbrtLen - 1) + "C''", "v")
+    genSys.add_transition_rule(veriC)
 
-    # The last state of the C column allows for B' to attach to the left 
-    affLC = uc.AffinityRule("B'", str(cbrtLen - 1) + "C", "h", 1)
-    genSys.add_affinity(affLC)
-    # B prime allows for the B states to attach below
-    affBPrime = uc.AffinityRule("B'", "B", "v", 1)
-    genSys.add_affinity(affBPrime)
-    affBDown = uc.AffinityRule("B", "B", "v", 1)
-    genSys.add_affinity(affBDown)
-
-    # The last state of the B column allows for A' to attach to the left 
-    affLB = uc.AffinityRule("A'", str(cbrtLen - 1) + "B'", "h", 1)
-    genSys.add_affinity(affLB)
-    # B prime allows for the B states to attach below
-    affAPrime = uc.AffinityRule("A'", "A", "v", 1)
-    genSys.add_affinity(affAPrime)
-    affADown = uc.AffinityRule("A", "A", "v", 1)
-    genSys.add_affinity(affADown)
+    for i in range(2 * cbrtLen - 1):
+        # Rule for continued propagation of A state downward
+        Aprop = uc.TransitionRule("A", str(i) + "a", "A", "A", "v")
+        genSys.add_transition_rule(Aprop)
+        Bprop = uc.TransitionRule("B", str(i) + "b", "B", "B", "v")
+        genSys.add_transition_rule(Bprop)
 
 
+    ApropPrime = uc.TransitionRule("A", str(2 * cbrtLen - 1) + "a'", "A" , "A", "v")
+    genSys.add_transition_rule(ApropPrime)
 
 
 
@@ -206,8 +237,6 @@ def genTripleIndexStates(vLen):
     return genSys
 
 
-# Builds a O(|S|) x 3 assembly that represent a binary string
-# Input a binary string S
 def cbrtBinString(value):
     if isinstance(value, int):
         value = bin(value)[2:]
@@ -316,9 +345,6 @@ def cbrtBinString(value):
 
     return genSys
 
-
-# Builds a n x O(log n) rectangle
-# Input an Integer
 def cbrtBinCount(value):
     if isinstance(value, int):
         # Since the system has one column that is behind the start of the counter 
@@ -449,8 +475,5 @@ def cbrtBinCount(value):
     
 
 if __name__ == "__main__":
-    #sys = genTripleIndexStates(27)
-    #SaveFile.main(sys, ["tripleTest2.xml"])
-
-    sys = cbrtBinCount(1500)
-    SaveFile.main(sys, ["tripleTest3.xml"])
+    sys = cbrtBinCount(120)
+    SaveFile.main(sys, ["tripleTest2.xml"])
