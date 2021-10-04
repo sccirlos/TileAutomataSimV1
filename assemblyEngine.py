@@ -96,6 +96,10 @@ class Engine:
     def getCurrentIndex(self):
         return self.currentIndex
 
+    def getCurrentMove(self):
+        if len(moveList) != 0:
+            return self.moveList[self.getCurrentIndex()]
+
     def build(self, nextMove=None, forwards=True):
         # Get current Assembly
         cAssembly = self.getCurrentAssembly()

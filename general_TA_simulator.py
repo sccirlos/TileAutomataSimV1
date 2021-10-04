@@ -314,22 +314,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         if self.Engine != None:
             self.draw_assembly(self.Engine.getCurrentAssembly())
 
-    def draw_tiles(self, move):    
-        painter = QPainter(self.label.pixmap())
-        pen = QtGui.QPen()
-        brush = QtGui.QBrush()
-        font = QtGui.QFont()
-
-        pen.setWidth(3)
-
-        brush.setStyle(Qt.SolidPattern)
-
-        pen.setColor(QtGui.QColor("white"))
-        brush.setColor(QtGui.QColor("white"))
-        painter.setPen(pen)
-        painter.setBrush(brush)
-
-    def draw_assembly(self, assembly):
+    def draw_move(self, move):    
         painter = QPainter(self.label.pixmap())
         pen = QtGui.QPen()
         brush = QtGui.QBrush()
@@ -376,14 +361,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         painter.end()
 
-        if self.Engine.currentIndex != 0:
-            self.label_2.setText("Time elapsed: \n" +
-                                 str(round(self.time, 2)) + " time steps")
-            self.label_3.setText("Current step time: \n" +
-                                 str(round(self.Engine.timeTaken(), 2)) + " time steps")
-        else:
-            self.label_2.setText("Time elapsed: \n 0 time steps")
-            self.label_3.setText("Current step time: \n 0 time steps")
+        self.Update_time_onScreen()
 
         # Remove old widgets from the layout
         for m in self.moveWidgets:
@@ -406,8 +384,90 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 self.moveWidgets.append(mGUI)
                 self.movesLayout.addWidget(mGUI)
 
-        # print(self.Engine.currentIndex)
         self.update()
+
+
+
+    def draw_assembly(self, assembly):
+        painter = QPainter(self.label.pixmap())
+        pen = QtGui.QPen()
+        brush = QtGui.QBrush()
+        font = QtGui.QFont()
+
+        pen.setWidth(3)
+
+        brush.setStyle(Qt.SolidPattern)
+
+        pen.setColor(QtGui.QColor("white"))
+        brush.setColor(QtGui.QColor("white"))
+        painter.setPen(pen)
+        painter.setBrush(brush)
+        # this block is drawing a big white rectangle across the screen to "clear" it
+        painter.drawRect(0, 0, self.geometry().width(),
+                         self.geometry().height())
+
+        font.setFamily("Times")
+        font.setBold(True)
+        font.setPixelSize(self.textSize)
+        painter.setFont(font)
+
+        pen.setColor(QtGui.QColor("black"))
+        painter.setPen(pen)
+        for tile in assembly.tiles:
+            if((tile.x * self.tileSize) + self.seedX > self.geometry().width() or (tile.x * self.tileSize) + self.seedX < -self.tileSize):
+                continue #this if statement is so we don't draw tiles that aren't on screen width
+            if((tile.y * -self.tileSize) + self.seedY > self.geometry().height() or (tile.y * -self.tileSize) + self.seedY < -self.tileSize):
+                continue #this if statement is so we don't draw tiles that aren't on screen height
+
+            brush.setColor(QtGui.QColor("#" + tile.get_color()))
+
+            painter.setBrush(brush)
+            
+            painter.drawRect((tile.x * self.tileSize) + self.seedX, (tile.y * -
+                             self.tileSize) + self.seedY, self.tileSize, self.tileSize)
+            if len(tile.state.label) > 4:
+                painter.drawText((tile.x * self.tileSize) + self.textX,
+                                 (tile.y * -self.tileSize) + self.textY, tile.state.label[0:3])
+            else:
+                painter.drawText((tile.x * self.tileSize) + self.textX,
+                                 (tile.y * -self.tileSize) + self.textY, tile.state.label)
+
+        painter.end()
+
+        self.Update_time_onScreen()
+
+        # Remove old widgets from the layout
+        for m in self.moveWidgets:
+            self.movesLayout.removeWidget(m)
+            m.deleteLater()
+        self.moveWidgets = []
+
+        # If no more moves, show it
+        if len(self.Engine.validMoves) == 0:
+            status = QLabel("No Available Moves")
+            self.moveWidgets.append(status)
+            self.movesLayout.addWidget(status)
+        
+        # If there are moves to pick, show them
+        elif not len(self.Engine.validMoves) == 0:
+            # Create moves and add to layout
+            for m in self.Engine.validMoves:
+                mGUI = Move(m, self, self.centralwidget)
+                mGUI.setFixedHeight(34)
+                self.moveWidgets.append(mGUI)
+                self.movesLayout.addWidget(mGUI)
+
+        self.update()
+
+    def Update_time_onScreen(self):
+        if self.Engine.currentIndex != 0:
+            self.label_2.setText("Time elapsed: \n" +
+                                 str(round(self.time, 2)) + " time steps")
+            self.label_3.setText("Current step time: \n" +
+                                 str(round(self.Engine.timeTaken(), 2)) + " time steps")
+        else:
+            self.label_2.setText("Time elapsed: \n 0 time steps")
+            self.label_3.setText("Current step time: \n 0 time steps")
 
     def Click_Run_Simulation(self):  # Run application if everythings good
         err_flag = False
@@ -560,7 +620,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 if self.Engine.step(move) != -1:
                     # Might need to go above
                     self.time = self.time + (self.Engine.timeTaken())
-                    self.draw_tiles(self.Engine.getCurrentAssembly())
+                    self.draw_assembly(self.Engine.getCurrentAssembly())
 
     def first_step(self):
         if self.SysLoaded == True:
