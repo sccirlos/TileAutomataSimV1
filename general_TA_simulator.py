@@ -228,11 +228,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
     def restore_or_maximize_window(self):
         if self.isMaximized():
-            #self.seedX = self.seedX #some function to move the assembly to stay in screen
-            #self.textX = self.textX
-            #self.seedY = self.seedY
-            #self.textY = self.textY 
-
             self.showNormal()
         else:
             self.showMaximized()
@@ -250,6 +245,10 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         canvas.fill(Qt.white)
         self.label.setPixmap(canvas)
         if self.Engine != None:
+            self.seedX = self.geometry().width() / 2
+            self.seedY = self.geometry().height() / 2
+            self.textX = self.seedX + 10
+            self.textY = self.seedY + 25
             self.draw_tiles(self.Engine.getCurrentAssembly())
 
     def keyPressEvent(self, event):
