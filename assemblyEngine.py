@@ -41,25 +41,49 @@ class Engine:
 
         self.validMoves = self.currentAssembly.getMoves(self.system)
 
-    def step(self):
-        if(self.currentIndex < self.lastIndex): 
-            move = self.moveList[self.currentIndex]
-            self.currentAssembly = self.currentAssembly.performMove(move)
+    def step(self, nextMove=None):
 
-            self.currentIndex = self.currentIndex + 1
-            return 0
+        # we are in our history, but they did NOT give us a new move
+        if nextMove == None and self.currentIndex < self.lastIndex:
+            move = self.moveList[self.currentIndex]
+            res = self.build(move)
+            if res == -1:
+                return res
+            else:
+                # added a duplicate inside of build, remove it
+                self.moveList.pop()
+                self.currentIndex += 1
+                return 0
+
+        # we are in our history, and they gave us a new move to use instead
+        if nextMove != None and self.currentIndex < self.lastIndex:
+            # remove move list entries that are ahead of us
+            while self.currentIndex != self.lastIndex:
+                self.moveList.pop()
+                self.lastIndex -= 1
+            
+            # now we can act like this is just a normal step
+            # fall out the if statement into the normal step case
+            
+        # No history to worry about, just call build
+        res = self.build(nextMove)
+        if res == -1:
+            return res
         else:
-            return self.build()
+            self.lastIndex += 1
+            self.currentIndex += 1
+            return 0
                 
     def back(self):
         if(self.currentIndex > 0): 
             self.currentIndex = self.currentIndex - 1
             move = self.moveList[self.currentIndex]
-            self.currentAssembly = self.currentAssembly.undoMove(move)
+            self.build(move, False)
 
     def first(self):
         self.currentIndex = 0
         self.currentAssembly = self.seedAssembly
+        self.validMoves = self.currentAssembly.getMoves(self.system)
 
     def last(self):
         while self.currentIndex < self.lastIndex:
@@ -72,35 +96,38 @@ class Engine:
     def getCurrentIndex(self):
         return self.currentIndex
 
-    def getCurrentMove(self):
-        if len(self.moveList) > 0:
-            return self.moveList[self.currentIndex]
-
-    def build(self):
+    def build(self, nextMove=None, forwards=True):
         # Get current Assembly
         cAssembly = self.getCurrentAssembly()
         #moveList = cAssembly.getMoves(self.system)
 
-
-
         #print(moveList.length())
         # Check if assembly is terminal
-        if(len(self.validMoves) == 0): 
+        if(len(self.validMoves) == 0 and forwards): 
             print("Terminal")
             cAssembly.print_size()
             return -1
 
-        self.TimeTaken.append(len(self.validMoves))
-
-        # Update lastIndex
-        self.lastIndex = self.lastIndex + 1
-        self.currentIndex = self.currentIndex + 1
+        # Add or Update only if we going forwards
+        if forwards:
+            if len(self.TimeTaken) <= self.currentIndex:
+                self.TimeTaken.append(len(self.validMoves))
+            else:
+                self.TimeTaken[self.currentIndex] = len(self.validMoves)
 
         # Get next assembly and add to list
-        move = random.choice(self.validMoves)
+        # If given a move, choose that one, otherwise do random move
+        move = None
+        if nextMove == None:
+            move = random.choice(self.validMoves)
+        else:
+            move = nextMove
 
-        self.currentAssembly = cAssembly.performMove(move)
-        self.moveList.append(move)
+        if forwards:
+            self.currentAssembly = cAssembly.performMove(move)
+            self.moveList.append(move)
+        else:
+            self.currentAssembly = cAssembly.undoMove(move)
 
         #print("Next Move: ")
         #printMove(move)
@@ -128,6 +155,20 @@ class Engine:
             eAtts = cAssembly.getAttat(self.system, moveX + 1, moveY)
             self.removeMoves(eAtts)
 
+            # remove transitions when going backwards
+            if not forwards:
+                # remove other move for self
+                trOldMoves = cAssembly.getTRat(self.system, moveX, moveY)
+                self.removeMoves(trOldMoves)
+
+                # remove "v" TR moves from N neighbor
+                vOldMoves = cAssembly.getTRat(self.system, moveX, moveY + 1, "v")
+                self.removeMoves(vOldMoves)
+
+                # remove "h" TR moves from W Neighbor
+                hOldMoves = cAssembly.getTRat(self.system, moveX - 1, moveY, "h")
+                self.removeMoves(hOldMoves)
+
             # Add Attachments for neighbors
             nAtts = self.currentAssembly.getAttat(self.system, moveX, moveY + 1)
             self.addMoves(nAtts)
@@ -140,6 +181,11 @@ class Engine:
 
             eAtts = self.currentAssembly.getAttat(self.system, moveX + 1, moveY)
             self.addMoves(eAtts)
+
+            # Add attachments for the current x,y when going backwards
+            if not forwards:
+                backwardMoves = self.currentAssembly.getAttat(self.system, moveX, moveY)
+                self.addMoves(backwardMoves)
             
 
             # Add transitions for self
@@ -329,5 +375,3 @@ class Engine:
             return 1 / self.TimeTaken[self.currentIndex - 1]
         else:
             return 0
-
-    
