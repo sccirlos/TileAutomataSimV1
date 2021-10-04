@@ -64,14 +64,15 @@ def main(system, fileName):
     for key, value in vertical_transitions.items():
         label1 = key[0]
         label2 = key[1]
-        label1Final = value[0]
-        label2Final = value[1]
+        for i in range(0, len(value), 2):
+            label1Final = value[i]
+            label2Final = value[i + 1]
 
-        rule_tag = ET.SubElement(vertical_transitions_tag, "Rule")
-        rule_tag.set('Label1', label1)
-        rule_tag.set('Label2', label2)
-        rule_tag.set('Label1Final', label1Final)
-        rule_tag.set('Label2Final', label2Final)
+            rule_tag = ET.SubElement(vertical_transitions_tag, "Rule")
+            rule_tag.set('Label1', label1)
+            rule_tag.set('Label2', label2)
+            rule_tag.set('Label1Final', label1Final)
+            rule_tag.set('Label2Final', label2Final)
 
     # Add horizontal transition rules
     horizontal_transitions_tag = ET.Element("HorizontalTransitions")
@@ -79,14 +80,15 @@ def main(system, fileName):
     for key, value in horizontal_transitions.items():
         label1 = key[0]
         label2 = key[1]
-        label1Final = value[0]
-        label2Final = value[1]
+        for i in range(0, len(value), 2):
+            label1Final = value[i]
+            label2Final = value[i + 1]
 
-        rule_tag = ET.SubElement(horizontal_transitions_tag, "Rule")
-        rule_tag.set('Label1', label1)
-        rule_tag.set('Label2', label2)
-        rule_tag.set('Label1Final', label1Final)
-        rule_tag.set('Label2Final', label2Final)
+            rule_tag = ET.SubElement(horizontal_transitions_tag, "Rule")
+            rule_tag.set('Label1', label1)
+            rule_tag.set('Label2', label2)
+            rule_tag.set('Label1Final', label1Final)
+            rule_tag.set('Label2Final', label2Final)
 
     # Add vertical affinity rules
     vertical_affinities_tag = ET.Element("VerticalAffinities")
