@@ -17,6 +17,9 @@ class State:
     def returnColor(self):
         return self.color
 
+    def get_color(self):      # for editor window
+        return self.color
+
 
 def toCoords(x, y):
     return "(" + str(x) + "," + str(y) + ")"
