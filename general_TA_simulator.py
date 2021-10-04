@@ -263,21 +263,29 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         if event.key() == Qt.Key_W:
             self.seedY = self.seedY - 10
             self.textY = self.textY - 10
+            if self.Engine != None:
+                self.draw_assembly(self.Engine.getCurrentAssembly())
 
         # down arrow key is pressed
         elif event.key() == Qt.Key_S:
             self.seedY = self.seedY + 10
             self.textY = self.textY + 10
+            if self.Engine != None:
+                self.draw_assembly(self.Engine.getCurrentAssembly())
 
         # left arrow key is pressed
         elif event.key() == Qt.Key_A:
             self.seedX = self.seedX - 10
             self.textX = self.textX - 10
+            if self.Engine != None:
+                self.draw_assembly(self.Engine.getCurrentAssembly())
 
         # down arrow key is pressed
         elif event.key() == Qt.Key_D:
             self.seedX = self.seedX + 10
             self.textX = self.textX + 10
+            if self.Engine != None:
+                self.draw_assembly(self.Engine.getCurrentAssembly())
 
         # Hotkeys for the toolbar
         elif event.key() == Qt.Key_H:
@@ -294,9 +302,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         elif event.key() == Qt.Key_Semicolon:
             self.last_step()
-
-        if self.Engine != None:
-            self.draw_assembly(self.Engine.getCurrentAssembly())
 
     def wheelEvent(self, event):
         #### Zoom in functions for the scroll wheel ####
@@ -331,33 +336,44 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         pen.setColor(QtGui.QColor("black"))
         painter.setPen(pen)
-        for tile in assembly.tiles:
-            if((tile.x * self.tileSize) + self.seedX > self.geometry().width() or (tile.x * self.tileSize) + self.seedX < -self.tileSize):
-                continue #this if statement is so we don't draw tiles that aren't on screen width
-            if((tile.y * -self.tileSize) + self.seedY > self.geometry().height() or (tile.y * -self.tileSize) + self.seedY < -self.tileSize):
-                continue #this if statement is so we don't draw tiles that aren't on screen height
 
-            brush.setColor(QtGui.QColor("#" + tile.get_color()))
-
+        if move['type'] == 'a': #(type, x, y, state1)
+            print("its an attachment!")
+            brush.setColor(QtGui.QColor("#" + move['state1'].returnColor()))
             painter.setBrush(brush)
-            
 
-            painter.drawRect((tile.x * self.tileSize) + self.seedX, (tile.y * -
-                             self.tileSize) + self.seedY, self.tileSize, self.tileSize)
-            if len(tile.state.label) > 4:
-                painter.drawText((tile.x * self.tileSize) + self.textX,
-                                 (tile.y * -self.tileSize) + self.textY, tile.state.label[0:3])
+            painter.drawRect((move['x'] * self.tileSize) + self.seedX, (move['y'] * -self.tileSize) + self.seedY, self.tileSize, self.tileSize)
+            if len(move['state1'].get_label()) > 4:
+                painter.drawText((move['x'] * self.tileSize) + self.textX, (move['y'] * -self.tileSize) + self.textY, move['state1'].get_label()[0:3])
             else:
-                painter.drawText((tile.x * self.tileSize) + self.textX,
-                                 (tile.y * -self.tileSize) + self.textY, tile.state.label)
+                painter.drawText((move['x'] * self.tileSize) + self.textX, (move['y'] * -self.tileSize) + self.textY, move['state1'].get_label())
 
+        elif move['type'] == 't': #(type, x, y, dir, state1, state2, state1Final, state2Final)
+            print("Its a transition")
+
+        #for tile in move:
+        #    if((tile.x * self.tileSize) + self.seedX > self.geometry().width() or (tile.x * self.tileSize) + self.seedX < -self.tileSize):
+        #        continue #this if statement is so we don't draw tiles that aren't on screen width
+        #    if((tile.y * -self.tileSize) + self.seedY > self.geometry().height() or (tile.y * -self.tileSize) + self.seedY < -self.tileSize):
+        #        continue #this if statement is so we don't draw tiles that aren't on screen height
+#
+#            brush.setColor(QtGui.QColor("#" + tile.get_color()))
+#            painter.setBrush(brush)
+#            
+#            painter.drawRect((tile.x * self.tileSize) + self.seedX, (tile.y * -
+#                             self.tileSize) + self.seedY, self.tileSize, self.tileSize)
+#            if len(tile.state.label) > 4:
+#                painter.drawText((tile.x * self.tileSize) + self.textX,
+#                                 (tile.y * -self.tileSize) + self.textY, tile.state.label[0:3])
+#            else:
+#                painter.drawText((tile.x * self.tileSize) + self.textX,
+#                                 (tile.y * -self.tileSize) + self.textY, tile.state.label)
+#
         painter.end()
 
-        self.Update_time_onScreen()
-        self.Update_available_moves()
+#        self.Update_time_onScreen()
+#        self.Update_available_moves()
         self.update()
-
-
 
     def draw_assembly(self, assembly):
         painter = QPainter(self.label.pixmap())
@@ -391,7 +407,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 continue #this if statement is so we don't draw tiles that aren't on screen height
 
             brush.setColor(QtGui.QColor("#" + tile.get_color()))
-
             painter.setBrush(brush)
             
             painter.drawRect((tile.x * self.tileSize) + self.seedX, (tile.y * -
@@ -616,7 +631,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             if self.Engine.step() != -1:
                 # Might need to go above
                 self.time = self.time + (self.Engine.timeTaken())
-                self.draw_assembly(self.Engine.getCurrentAssembly())
+                self.draw_move(self.Engine.getCurrentMove())
+                #self.draw_assembly(self.Engine.getCurrentAssembly())
 
     def last_step(self):
         self.stop_sequence()
