@@ -324,14 +324,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         brush.setStyle(Qt.SolidPattern)
 
-        pen.setColor(QtGui.QColor("white"))
-        brush.setColor(QtGui.QColor("white"))
-        painter.setPen(pen)
-        painter.setBrush(brush)
-        # this block is drawing a big white rectangle across the screen to "clear" it
-        painter.drawRect(0, 0, self.geometry().width(),
-                         self.geometry().height())
-
         font.setFamily("Times")
         font.setBold(True)
         font.setPixelSize(self.textSize)
@@ -362,28 +354,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         painter.end()
 
         self.Update_time_onScreen()
-
-        # Remove old widgets from the layout
-        for m in self.moveWidgets:
-            self.movesLayout.removeWidget(m)
-            m.deleteLater()
-        self.moveWidgets = []
-
-        # If no more moves, show it
-        if len(self.Engine.validMoves) == 0:
-            status = QLabel("No Available Moves")
-            self.moveWidgets.append(status)
-            self.movesLayout.addWidget(status)
-        
-        # If there are moves to pick, show them
-        elif not len(self.Engine.validMoves) == 0:
-            # Create moves and add to layout
-            for m in self.Engine.validMoves:
-                mGUI = Move(m, self, self.centralwidget)
-                mGUI.setFixedHeight(34)
-                self.moveWidgets.append(mGUI)
-                self.movesLayout.addWidget(mGUI)
-
+        self.Update_available_moves()
         self.update()
 
 
@@ -435,7 +406,20 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         painter.end()
 
         self.Update_time_onScreen()
+        self.Update_available_moves()
+        self.update()
 
+    def Update_time_onScreen(self):
+        if self.Engine.currentIndex != 0:
+            self.label_2.setText("Time elapsed: \n" +
+                                 str(round(self.time, 2)) + " time steps")
+            self.label_3.setText("Current step time: \n" +
+                                 str(round(self.Engine.timeTaken(), 2)) + " time steps")
+        else:
+            self.label_2.setText("Time elapsed: \n 0 time steps")
+            self.label_3.setText("Current step time: \n 0 time steps")
+
+    def Update_available_moves(self):
         # Remove old widgets from the layout
         for m in self.moveWidgets:
             self.movesLayout.removeWidget(m)
@@ -456,18 +440,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 mGUI.setFixedHeight(34)
                 self.moveWidgets.append(mGUI)
                 self.movesLayout.addWidget(mGUI)
-
-        self.update()
-
-    def Update_time_onScreen(self):
-        if self.Engine.currentIndex != 0:
-            self.label_2.setText("Time elapsed: \n" +
-                                 str(round(self.time, 2)) + " time steps")
-            self.label_3.setText("Current step time: \n" +
-                                 str(round(self.Engine.timeTaken(), 2)) + " time steps")
-        else:
-            self.label_2.setText("Time elapsed: \n 0 time steps")
-            self.label_3.setText("Current step time: \n 0 time steps")
 
     def Click_Run_Simulation(self):  # Run application if everythings good
         err_flag = False
