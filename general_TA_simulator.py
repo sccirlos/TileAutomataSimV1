@@ -373,15 +373,24 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             assembly = self.Engine.getCurrentAssembly()
             pen.setColor(QtGui.QColor("black"))
             painter.setPen(pen)
-
-            north = "(" + str(move['x']) + "," + str(move['y'] + 1) + ")"
-            south = "(" + str(move['x']) + "," + str(move['y'] - 1) + ")"
-            east = "(" + str(move['x'] + 1) + "," + str(move['y']) + ")"
-            west = "(" + str(move['x'] - 1) + "," + str(move['y']) + ")"
+   
+            neighborN = assembly.coords.get("(" + str(move['x']) + "," + str(move['y'] + 1) + ")")
+            neighborS = assembly.coords.get("(" + str(move['x']) + "," + str(move['y'] - 1) + ")")
+            neighborE = assembly.coords.get("(" + str(move['x'] + 1) + "," + str(move['y']) + ")")
+            neighborW = assembly.coords.get("(" + str(move['x'] - 1) + "," + str(move['y']) + ")")
             
-            if assembly.coords[east] != None:
-                brush.setColor(QtGui.QColor("#" + assembly.coords[east].get_color()))
-                self.draw_to_screen(move['x'] + 1, move['y'], assembly.coords[east].get_label(), painter, brush)
+            if neighborN != None:
+                brush.setColor(QtGui.QColor("#" + neighborN.get_color()))
+                self.draw_to_screen(move['x'], move['y'] + 1, neighborN.get_label(), painter, brush)
+            if neighborS != None:
+                brush.setColor(QtGui.QColor("#" + neighborS.get_color()))
+                self.draw_to_screen(move['x'], move['y'] - 1, neighborS.get_label(), painter, brush)
+            if neighborE != None:
+                brush.setColor(QtGui.QColor("#" + neighborE.get_color()))
+                self.draw_to_screen(move['x'] + 1, move['y'], neighborE.get_label(), painter, brush)
+            if neighborW != None:
+                brush.setColor(QtGui.QColor("#" + neighborW.get_color()))
+                self.draw_to_screen(move['x'] - 1, move['y'], neighborW.get_label(), painter, brush)
         
         #reversing transition on screen
         elif move['type'] == 't' and forward == 0: #(type, x, y, dir, state1, state2, state1Final, state2Final)
@@ -663,10 +672,11 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.stop_sequence()
         if self.SysLoaded == True:
             if self.Engine.currentIndex > 0:
+                self.draw_move(self.Engine.getCurrentMove(), 0)
                 self.Engine.back()
                 # Might need to go below
                 self.time = self.time - (self.Engine.timeTaken())
-                self.draw_move(self.Engine.getCurrentMove(), 0)
+                
 
     def next_step(self):
         self.stop_sequence()
