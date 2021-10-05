@@ -1,13 +1,13 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog
+from PyQt5.QtWidgets import QApplication, QCheckBox, QMainWindow, QFileDialog, QTableWidgetItem
 from PyQt5.QtGui import QPainter, QBrush, QPen
 
 
 from PyQt5.QtCore import Qt
-from random import randrange
+from random import randrange, seed
 
 from assemblyEngine import Engine
-from UniversalClasses import System, Assembly, Tile
+from UniversalClasses import System, Assembly, Tile, State
 import TAMainWindow
 import LoadFile
 import SaveFile
@@ -522,7 +522,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def Click_EditFile(self):
          # if system loaded, open editorwindow
         if self.SysLoaded == True:
-            self.e = Ui_EditorWindow()
+            self.e = Ui_EditorWindow(self.Engine)
             self.e.show()
         else: 
             print("Please load a file to edit.")
@@ -530,47 +530,126 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
     
 class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
-    def __init__(self):
+    def __init__(self, engine):
         super().__init__()
         self.setupUi(self)
+        self.Engine = engine
+        self.system = engine.system
+        self.newStateIndex = len(self.system.states)
+
+        self.tableWidget.setRowCount(len(self.system.states))
+        print(len(self.system.states))
+
+        # connect the color change
+        self.tableWidget.cellChanged.connect(self.cellchanged)
+
+        r = 0
+        for s in self.system.states:
+            color_cell = QTableWidgetItem()
+            color_cell.setText(s.get_color())
+            color_cell.setForeground(QtGui.QColor("#" + s.get_color()))
+            color_cell.setBackground(QtGui.QColor("#" + s.get_color()))
+            self.tableWidget.setItem(r, 0, color_cell)
+
+            label_cell = QTableWidgetItem()
+            label_cell.setText(s.get_label())
+            self.tableWidget.setItem(r, 1, label_cell)
+
+            seed_cell = QCheckBox(self.tableWidget)
+            for sstate in self.system.seed_states:
+                if sstate.get_label() == s.get_label():
+                    seed_cell.setChecked(True)
+            
+            self.tableWidget.setCellWidget(r, 2, seed_cell)
+
+            initial_cell = QCheckBox(self.tableWidget)
+            for istate in self.system.initial_states:
+                if istate.get_label() == s.get_label():
+                    initial_cell.setChecked(True)
+            
+            self.tableWidget.setCellWidget(r, 3, initial_cell)
+
+            r += 1
+
+        # cell1 = QTableWidgetItem()
+        # cell1.setText("test")
+
+        # self.tableWidget.setItem(0,0, cell1)
     
      # action for 'apply' the changes made to the side edit window to the view states side 
         self.pushButton.clicked.connect(self.Click_EditApply)
          # action for 'save' the changes made to the side edit window to the XML file
         self.pushButton_2.clicked.connect(self.Click_EditSaveAs)
+        self.pushButton_3.clicked.connect(self.Click_AddRowStates)
 
 
-    # get currentSystem and display states on editor by color and label
-    # want to get states color in table first 
-    # states are in a list, need the list to display down the column
-    def getSys(self):
-        if self.SysLoaded == True:
-            global currentSystem
-          #  stateLabel = UniversalClasses.State()
-          # right now this gets states label only
-            self.Engine.getSys4Editor()
-            # fill label column in tablewidget
-            # set row count as long as the number of states
-            self.tableWidget.setRowCount(len(self.))
-
-
-
-
-            # print out on command line first to check!
-            print("states to be added to table:")
+    # # get currentSystem and display states on editor by color and label
+    # # want to get states color in table first 
+    # # states are in a list, need the list to display down the column
+    # def getSys(self):
+    #     if self.SysLoaded == True:
+    #         global currentSystem
+    #       #  stateLabel = UniversalClasses.State()
+    #       # right now this gets states label only
+    #         self.Engine.getSys4Editor()
+    #         # fill label column in tablewidget
+    #         # set row count as long as the number of states
+    #         self.tableWidget.setRowCount(len(self.))
 
 
 
 
-        
+    #         # print out on command line first to check!
+    #         print("states to be added to table:")
+
+    def cellchanged(self, row, col):
+        # only do anything is we are in the color column (0)
+        if col == 0:
+            print("in color column")
+
+            color_cell = self.tableWidget.item(row, col)
+            color = color_cell.text()
+            color_cell.setForeground(QtGui.QColor("#" + color))
+            color_cell.setBackground(QtGui.QColor("#" + color))
 
 
+    def Click_AddRowStates(self):
+        print("Add Row in States clicked")
+        newrow = self.tableWidget.rowCount()
+        self.tableWidget.setRowCount(newrow + 1)
 
+        color_cell = QTableWidgetItem()
+        self.tableWidget.setItem(newrow, 0, color_cell)
 
+        label_cell = QTableWidgetItem()
+        self.tableWidget.setItem(newrow, 1, label_cell)
+
+        seed_cell = QCheckBox(self.tableWidget)
+        self.tableWidget.setCellWidget(newrow, 2, seed_cell)
+
+        initial_cell = QCheckBox(self.tableWidget)        
+        self.tableWidget.setCellWidget(newrow, 3, initial_cell)
         
 
     def Click_EditApply(self):
         print("Apply button clicked")
+
+        # go through new rows, create states, add states to system
+        for row in range(self.newStateIndex, self.tableWidget.rowCount()):
+            color_cell = self.tableWidget.item(row, 0)
+            label_cell = self.tableWidget.item(row, 1)
+            inital_cell = self.tableWidget.cellWidget(row, 3)
+
+            color = color_cell.text()
+            label = label_cell.text()
+            initial = inital_cell.isChecked()
+
+            s = State(label, color)
+
+            self.system.add_State(s)
+
+            if initial:
+                self.system.add_Initial_State(s)
 
 
     def Click_EditSaveAs(self):

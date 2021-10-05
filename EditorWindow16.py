@@ -16,7 +16,6 @@ import general_TA_simulator
  #engine gives tools to get assmelies and it stores moves and stuff 
  #engine is good > system cause it has what we need and more
 
-
 class Ui_EditorWindow(object):
      def setupUi(self, EditorWindow):
          EditorWindow.setObjectName("EditorWindow")
@@ -74,6 +73,10 @@ class Ui_EditorWindow(object):
          self.tableWidget.setRowCount(2)
          self.tableWidget.setRowHeight(0, 40)
          self.tableWidget.setRowHeight(1, 40)
+
+         self.pushButton_3 = QtWidgets.QPushButton(self.page_2)
+         self.pushButton_3.setGeometry(QtCore.QRect(10, 10, 113, 32))
+         self.pushButton_3.setObjectName("pushButton_3")
 
           # 09/10 now need to bring in data from loaded xml stuff into tablewidget
 
@@ -133,6 +136,7 @@ class Ui_EditorWindow(object):
          self.toolBox.setItemText(self.toolBox.indexOf(self.page_4), _translate("EditorWindow", "Add Transition Rule"))
          self.pushButton.setText(_translate("EditorWindow", "Apply"))
          self.pushButton_2.setText(_translate("EditorWindow", "Save as"))
+         self.pushButton_3.setText(_translate("EditorWindow", "Add Row"))
 
 
 if __name__ == "__main__":
