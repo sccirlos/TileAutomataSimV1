@@ -307,13 +307,13 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         #### Zoom in functions for the scroll wheel ####
         if event.angleDelta().y() == 120:
             self.tileSize = self.tileSize + 10
-            self.textX = self.textX + 3
-            self.textY = self.textY + 5
+            self.textX = self.textX + 2
+            self.textY = self.textY + 6
         else:
             if self.tileSize > 10:
                 self.tileSize = self.tileSize - 10
-                self.textX = self.textX - 3
-                self.textY = self.textY - 5
+                self.textX = self.textX - 2
+                self.textY = self.textY - 6
         self.textSize = int(self.tileSize / 3)
 
         if self.Engine != None:
@@ -466,11 +466,11 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def draw_to_screen(self, x, y, label, painter, brush):
         painter.setBrush(brush)
 
-        painter.drawRect((x * self.tileSize) + self.seedX, (y * -self.tileSize) + self.seedY, self.tileSize, self.tileSize)
+        painter.drawRect(int((x * self.tileSize) + self.seedX), int((y * -self.tileSize) + self.seedY), self.tileSize, self.tileSize)
         if len(label) > 4:
-            painter.drawText((x * self.tileSize) + self.textX, (y * -self.tileSize) + self.textY, label[0:3])
+            painter.drawText(int(x * self.tileSize) + self.textX, int(y * -self.tileSize) + self.textY, label[0:3])
         else:
-            painter.drawText((x * self.tileSize) + self.textX, (y * -self.tileSize) + self.textY, label)
+            painter.drawText(int((x * self.tileSize) + self.textX), int((y * -self.tileSize) + self.textY), label)
 
     def transition_draw_function(self, move, state1, state2, painter, brush):
         horizontal = 0
@@ -693,7 +693,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                     'Icons/tabler-icon-player-pause.png'))
                 self.play = True
                 while((self.Engine.step() != -1) and self.play == True):
-                    print(self.Engine.currentIndex)
+                    #print(self.Engine.currentIndex)
                     self.time = self.time + (self.Engine.timeTaken())
 
                     loop = QtCore.QEventLoop()
