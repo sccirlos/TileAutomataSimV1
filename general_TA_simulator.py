@@ -319,7 +319,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         if self.Engine != None:
             self.draw_assembly(self.Engine.getCurrentAssembly())
 
-    def draw_move(self, move):    
+    def draw_move(self, move, forward):    
         painter = QPainter(self.label.pixmap())
         pen = QtGui.QPen()
         brush = QtGui.QBrush()
@@ -337,14 +337,14 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         pen.setColor(QtGui.QColor("black"))
         painter.setPen(pen)
 
-        if move['type'] == 'a': #(type, x, y, state1)
-            print("its an attachment!")
+        #adding attachment on screen
+        if move['type'] == 'a' and forward == 1: #(type, x, y, state1)
             brush.setColor(QtGui.QColor("#" + move['state1'].returnColor()))
 
             self.draw_to_screen(move['x'], move['y'], move['state1'].get_label(), painter, brush)
-
-        elif move['type'] == 't': #(type, x, y, dir, state1, state2, state1Final, state2Final)
-            print("Its a transition")
+        
+        #showing transition on screen
+        elif move['type'] == 't' and forward == 1: #(type, x, y, dir, state1, state2, state1Final, state2Final)
             horizontal = 0
             vertical = 0
             brush.setColor(QtGui.QColor("white"))
@@ -361,6 +361,46 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
             brush.setColor(QtGui.QColor("#" + move['state2Final'].returnColor()))
             self.draw_to_screen(move['x'] + horizontal, move['y'] + vertical, move['state2Final'].get_label(), painter, brush)
+
+        #getting rid of attachment on screen
+        elif move['type'] == 'a' and forward == 0: #(type, x, y, state1)
+            brush.setColor(QtGui.QColor("white"))
+            pen.setColor(QtGui.QColor("white"))
+            painter.setPen(pen)
+
+            self.draw_to_screen(move['x'], move['y'], "", painter, brush)
+
+            assembly = self.Engine.getCurrentAssembly()
+            pen.setColor(QtGui.QColor("black"))
+            painter.setPen(pen)
+
+            north = "(" + str(move['x']) + "," + str(move['y'] + 1) + ")"
+            south = "(" + str(move['x']) + "," + str(move['y'] - 1) + ")"
+            east = "(" + str(move['x'] + 1) + "," + str(move['y']) + ")"
+            west = "(" + str(move['x'] - 1) + "," + str(move['y']) + ")"
+            
+            if assembly.coords[east] != None:
+                brush.setColor(QtGui.QColor("#" + assembly.coords[east].get_color()))
+                self.draw_to_screen(move['x'] + 1, move['y'], assembly.coords[east].get_label(), painter, brush)
+        
+        #reversing transition on screen
+        elif move['type'] == 't' and forward == 0: #(type, x, y, dir, state1, state2, state1Final, state2Final)
+            horizontal = 0
+            vertical = 0
+            brush.setColor(QtGui.QColor("white"))
+            if move['dir'] == 'h':
+                horizontal = 1
+            elif move['dir'] == 'v':
+                vertical = -1
+            
+            self.draw_to_screen(move['x'], move['y'], "", painter, brush)
+            self.draw_to_screen(move['x'] + horizontal, move['y'] + vertical, "", painter, brush)
+
+            brush.setColor(QtGui.QColor("#" + move['state1'].returnColor()))
+            self.draw_to_screen(move['x'], move['y'], move['state1'].get_label(), painter, brush)
+
+            brush.setColor(QtGui.QColor("#" + move['state2'].returnColor()))
+            self.draw_to_screen(move['x'] + horizontal, move['y'] + vertical, move['state2'].get_label(), painter, brush)
 
 
         #for tile in move:
@@ -408,16 +448,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 continue #this if statement is so we don't draw tiles that aren't on screen height
 
             brush.setColor(QtGui.QColor("#" + tile.get_color()))
-            painter.setBrush(brush)
-            
-            painter.drawRect((tile.x * self.tileSize) + self.seedX, (tile.y * -
-                             self.tileSize) + self.seedY, self.tileSize, self.tileSize)
-            if len(tile.state.label) > 4:
-                painter.drawText((tile.x * self.tileSize) + self.textX,
-                                 (tile.y * -self.tileSize) + self.textY, tile.state.label[0:3])
-            else:
-                painter.drawText((tile.x * self.tileSize) + self.textX,
-                                 (tile.y * -self.tileSize) + self.textY, tile.state.label)
+
+            self.draw_to_screen(tile.x, tile.y, tile.state.label, painter, brush)
 
         painter.end()
 
@@ -634,7 +666,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 self.Engine.back()
                 # Might need to go below
                 self.time = self.time - (self.Engine.timeTaken())
-                self.draw_assembly(self.Engine.getCurrentAssembly())
+                self.draw_move(self.Engine.getCurrentMove(), 0)
 
     def next_step(self):
         self.stop_sequence()
@@ -642,8 +674,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             if self.Engine.step() != -1:
                 # Might need to go above
                 self.time = self.time + (self.Engine.timeTaken())
-                self.draw_move(self.Engine.getCurrentMove())
-                #self.draw_assembly(self.Engine.getCurrentAssembly())
+                self.draw_move(self.Engine.getCurrentMove(), 1)
 
     def last_step(self):
         self.stop_sequence()
