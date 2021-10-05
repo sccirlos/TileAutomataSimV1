@@ -712,7 +712,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                         QtCore.QTimer.singleShot(self.delay, loop.quit)
                     loop.exec_()
 
-                    self.draw_assembly(self.Engine.getCurrentAssembly())
+                    self.draw_move(self.Engine.getCurrentMove(), 1)
                     # if self.Engine.currentIndex != 0: #and self.Engine.currentIndex < self.Engine.lastIndex:
 
                 # self.step = len(self.Engine.assemblyList) - 1 #this line is here to prevent a crash that happens if you click last after play finishes
