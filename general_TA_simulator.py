@@ -340,13 +340,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         if move['type'] == 'a': #(type, x, y, state1)
             print("its an attachment!")
             brush.setColor(QtGui.QColor("#" + move['state1'].returnColor()))
-            painter.setBrush(brush)
 
-            painter.drawRect((move['x'] * self.tileSize) + self.seedX, (move['y'] * -self.tileSize) + self.seedY, self.tileSize, self.tileSize)
-            if len(move['state1'].get_label()) > 4:
-                painter.drawText((move['x'] * self.tileSize) + self.textX, (move['y'] * -self.tileSize) + self.textY, move['state1'].get_label()[0:3])
-            else:
-                painter.drawText((move['x'] * self.tileSize) + self.textX, (move['y'] * -self.tileSize) + self.textY, move['state1'].get_label())
+            self.draw_to_screen(move['x'], move['y'], move['state1'].get_label(), painter, brush)
 
         elif move['type'] == 't': #(type, x, y, dir, state1, state2, state1Final, state2Final)
             print("Its a transition")
@@ -371,8 +366,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 #
         painter.end()
 
-#        self.Update_time_onScreen()
-#        self.Update_available_moves()
+        self.Update_time_onScreen()
+        self.Update_available_moves()
         self.update()
 
     def draw_assembly(self, assembly):
@@ -455,6 +450,16 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 mGUI.setFixedHeight(34)
                 self.moveWidgets.append(mGUI)
                 self.movesLayout.addWidget(mGUI)
+
+    def draw_to_screen(self, x, y, label, painter, brush):
+        painter.setBrush(brush)
+
+        painter.drawRect((x * self.tileSize) + self.seedX, (y * -self.tileSize) + self.seedY, self.tileSize, self.tileSize)
+        if len(label) > 4:
+            painter.drawText((x * self.tileSize) + self.textX, (y * -self.tileSize) + self.textY, label[0:3])
+        else:
+            painter.drawText((x * self.tileSize) + self.textX, (y * -self.tileSize) + self.textY, label)
+      
 
     def Click_Run_Simulation(self):  # Run application if everythings good
         err_flag = False
