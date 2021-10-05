@@ -345,25 +345,31 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         elif move['type'] == 't': #(type, x, y, dir, state1, state2, state1Final, state2Final)
             print("Its a transition")
+            horizontal = 0
+            vertical = 0
+            brush.setColor(QtGui.QColor("white"))
+            if move['dir'] == 'h':
+                horizontal = 1
+            elif move['dir'] == 'v':
+                vertical = -1
+            
+            self.draw_to_screen(move['x'], move['y'], "", painter, brush)
+            self.draw_to_screen(move['x'] + horizontal, move['y'] + vertical, "", painter, brush)
+
+            brush.setColor(QtGui.QColor("#" + move['state1Final'].returnColor()))
+            self.draw_to_screen(move['x'], move['y'], move['state1Final'].get_label(), painter, brush)
+
+            brush.setColor(QtGui.QColor("#" + move['state2Final'].returnColor()))
+            self.draw_to_screen(move['x'] + horizontal, move['y'] + vertical, move['state2Final'].get_label(), painter, brush)
+
 
         #for tile in move:
         #    if((tile.x * self.tileSize) + self.seedX > self.geometry().width() or (tile.x * self.tileSize) + self.seedX < -self.tileSize):
         #        continue #this if statement is so we don't draw tiles that aren't on screen width
         #    if((tile.y * -self.tileSize) + self.seedY > self.geometry().height() or (tile.y * -self.tileSize) + self.seedY < -self.tileSize):
         #        continue #this if statement is so we don't draw tiles that aren't on screen height
-#
-#            brush.setColor(QtGui.QColor("#" + tile.get_color()))
-#            painter.setBrush(brush)
-#            
-#            painter.drawRect((tile.x * self.tileSize) + self.seedX, (tile.y * -
-#                             self.tileSize) + self.seedY, self.tileSize, self.tileSize)
-#            if len(tile.state.label) > 4:
-#                painter.drawText((tile.x * self.tileSize) + self.textX,
-#                                 (tile.y * -self.tileSize) + self.textY, tile.state.label[0:3])
-#            else:
-#                painter.drawText((tile.x * self.tileSize) + self.textX,
-#                                 (tile.y * -self.tileSize) + self.textY, tile.state.label)
-#
+
+
         painter.end()
 
         self.Update_time_onScreen()
