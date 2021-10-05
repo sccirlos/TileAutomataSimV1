@@ -389,7 +389,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         painter.end()
 
         self.Update_time_onScreen()
-        self.Update_available_moves()
+        if self.play == False:
+            self.Update_available_moves()
+
         self.update()
 
     def draw_assembly(self, assembly):
@@ -427,8 +429,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         painter.end()
 
-        self.Update_time_onScreen()
-        self.Update_available_moves()
+        #self.Update_time_onScreen()
+        #self.Update_available_moves(
         self.update()
 
     def Update_time_onScreen(self):
@@ -580,6 +582,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             # currentAssemblyHistory.append(a)
             # Assembler_Proto.Main()
             self.draw_assembly(self.Engine.getCurrentAssembly())
+            self.Update_available_moves()
 
     def Click_SaveFile(self):
         # Creating a System object from data read.
@@ -638,7 +641,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
     # self.draw_assembly(LoadFile.) #starting assembly goes here
     def slowMode_toggle(self):
-        if self.slowMode_Button.isChecked():
+        if self.SlowMode_button.isChecked():
             self.delay = 1000
         else:
             self.delay = 0
@@ -709,6 +712,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
                 # self.step = len(self.Engine.assemblyList) - 1 #this line is here to prevent a crash that happens if you click last after play finishes
                 self.stop_sequence()
+                self.draw_assembly(self.Engine.getCurrentAssembly())
+                self.Update_available_moves()
                 self.Play_button.setIcon(QtGui.QIcon(
                     'Icons/tabler-icon-player-play.png'))
 
@@ -716,6 +721,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 self.Play_button.setIcon(QtGui.QIcon(
                     'Icons/tabler-icon-player-play.png'))
                 self.stop_sequence()
+                self.Update_available_moves()
 
     def stop_sequence(self):
         self.play = False
