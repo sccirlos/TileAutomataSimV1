@@ -418,10 +418,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         pen.setColor(QtGui.QColor("black"))
         painter.setPen(pen)
         for tile in assembly.tiles:
-            if((tile.x * self.tileSize) + self.seedX > self.geometry().width() or (tile.x * self.tileSize) + self.seedX < -self.tileSize):
-                continue #this if statement is so we don't draw tiles that aren't on screen width
-            if((tile.y * -self.tileSize) + self.seedY > self.geometry().height() or (tile.y * -self.tileSize) + self.seedY < -self.tileSize):
-                continue #this if statement is so we don't draw tiles that aren't on screen height
+            if self.onScreen_check(tile.x, tile.y) == 1:
+                continue
 
             brush.setColor(QtGui.QColor("#" + tile.get_color()))
 
