@@ -16,7 +16,8 @@ import general_TA_simulator
  #engine gives tools to get assmelies and it stores moves and stuff 
  #engine is good > system cause it has what we need and more
 
-
+# tablewdiget has 
+# add button 
 class Ui_EditorWindow(object):
      def setupUi(self, EditorWindow):
          EditorWindow.setObjectName("EditorWindow")
@@ -118,6 +119,9 @@ class Ui_EditorWindow(object):
          self.horizontalLayout.addWidget(self.pushButton_2)
          self.verticalLayout.addWidget(self.frame_2, 0, QtCore.Qt.AlignRight|QtCore.Qt.AlignBottom)
          EditorWindow.setCentralWidget(self.centralwidget)
+
+
+       
 
          self.retranslateUi(EditorWindow)
          self.toolBox.setCurrentIndex(1)

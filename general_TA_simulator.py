@@ -526,6 +526,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.e.show()
         else: 
             print("Please load a file to edit.")
+# add self, engine - then fill the table 
+# engine has the system 
 
 
     
@@ -543,34 +545,28 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
     # get currentSystem and display states on editor by color and label
     # want to get states color in table first 
     # states are in a list, need the list to display down the column
-    def getSys(self):
-        if self.SysLoaded == True:
-            global currentSystem
+    # pass engine to editor - wiil help for future stuff 
+
+   # def getSys(self):
+        
+     #   if self.SysLoaded == True:
+     #       global currentSystem
           #  stateLabel = UniversalClasses.State()
           # right now this gets states label only
-            self.Engine.getSys4Editor()
+     #       self.Engine.getSys4Editor()
             # fill label column in tablewidget
             # set row count as long as the number of states
-            self.tableWidget.setRowCount(len(self.))
-
+      #      self.tableWidget.setRowCount(len()
+    
 
 
 
             # print out on command line first to check!
-            print("states to be added to table:")
+            ## print("states to be added to table:")
 
 
-
-
-        
-
-
-
-
-        
-
-    def Click_EditApply(self):
-        print("Apply button clicked")
+  ##  def Click_EditApply(self):
+   ##     print("Apply button clicked")
 
 
     def Click_EditSaveAs(self):
