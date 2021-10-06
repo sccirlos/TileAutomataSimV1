@@ -141,6 +141,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         # Assembly History
         self.historian = Historian()
+        self.historian.set_ui_parent(self)
         
         self.SaveHistory_button = QPushButton(self.page)
         self.verticalLayout_6.addWidget(self.SaveHistory_button)
@@ -470,7 +471,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.time = 0
             self.Engine = Engine(currentSystem)
             self.historian.set_engine(self.Engine)
-            self.SaveHistory_button.clicked.connect(self.historian.dumps)
+            self.SaveHistory_button.clicked.connect(self.historian.dump)
             self.LoadHistory_button.clicked.connect(self.historian.loads)
             #a = Assembly()
             #t = Tile(currentSystem.returnSeedStates(), 0, 0)
