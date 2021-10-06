@@ -70,7 +70,41 @@ def split_label_pnp(label):
         split_num = label[1:]
         split_label.append(int(split_num))    
     return split_label
+
+def transition_to_forward(label):
+    new_label = "F" + label[1:]
+    return new_label    
+
+def transition_to_backward(label):
+    if not("B'" in label):
+        new_label = "B" + label[1:]
+        return new_label
     
+
+def check_nums_same(labelA, labelB):
+    split_labelA = split_label_pnp(labelA)    
+    split_labelB = split_label_pnp(labelB)
+    if split_labelA[1] == split_labelB[1]:
+        return True
+    else:
+        return False   
+
+def check_A_greater(labelA, labelB):
+    split_labelA = split_label_pnp(labelA)    
+    split_labelB = split_label_pnp(labelB)
+    if split_labelA[1] > split_labelB[1]:
+        return True
+    else:
+        return False    
+
+def check_A_less(labelA, labelB):
+    split_labelA = split_label_pnp(labelA)    
+    split_labelB = split_label_pnp(labelB)
+    if split_labelA[1] < split_labelB[1]:
+        return True
+    else:
+        return False 
+        
 # States Tests    
 def states_test_14(states):
     #Hard Coded for N = 14
@@ -583,3 +617,76 @@ def affinities_test_9(aff_dict):
     missing.sort()
     for p in missing:
         print("Missing: ", p)            
+
+def transition_rules_check_14(trans_dict):
+    
+    all_transitions = {
+        ("S", "B0"):("S", "F0"),
+        ("S", "B1"):("S", "F1"),
+        ("S", "B2"):("S", "F2"),
+        ("S", "B3"):("S", "R3"),
+        ("F0", "B0"):("F0", "B'0"),
+        ("F0", "B'0"):("B1", "B'0"),
+        ("F1", "B'0"):("F1", "F'1"),
+        ("F2", "B'0"):("F2", "F'2"),
+        ("R3", "B'0"):("R3", "R'3"),
+        ("R2", "B'0"):("R2", "R'2"),
+        
+        ("F2", "B2"):("F2", "F2"),
+        ("F'1", "B1"):("B2", "B1"),
+        
+        ("F'2", "B2"):("B3", "B2"),
+        ("F1", "B2"):("B2", "B2"),
+        ("F2", "B3"):("B3", "B3"),
+        ("F'1", "B0"):("F'1", "F0"),
+        ("F'2", "B0"):("F'2", "F0"),
+        ("F'2", "B1"):("F'2", "F1"),
+        ("R'3", "B0"):("R'3", "F0"),
+        ("R'3", "B1"):("R'3", "F1"),
+        ("R'3", "B2"):("R'3", "R2"),
+        ("R'2", "B0"):("R'2", "R'0"),
+
+        ("R3", "B1"):("R3", "R3"),
+        ("R3", "B2"):("R3", "R3"),
+        ("R3", "B3"):("R3", "R3"),
+
+        ("R2", "B2"):("R2", "R2"),
+        ("R2", "B1"):("R2", "R2"),
+
+        ("F2", "B1"):("F2", "F2"),
+        
+        
+        }
+
+    trans_copy = trans_dict.copy()
+    passes = {}
+    missing = all_transitions.copy()
+    failures = {}
+    
+    j = 0
+    for key in trans_copy:
+        if key in all_transitions and (trans_copy[key] == all_transitions[key]):
+            passes[key] = trans_copy[key]
+            missing.pop(key)
+        else:
+            failures[key] = trans_copy[key]
+               
+    for key in missing:
+        if key in failures:
+            failures.pop(key)
+            
+    print("All transitions test:")
+    print("Number Passed: ", len(passes), "Out of: ", len(all_transitions))
+  
+    for p in passes:
+        print("Passed: ", p)
+        
+    print("Number Failed: ", len(failures), "Out of: ", len(all_transitions))
+    
+    for p in failures:
+        print("Failed: ", p)
+
+    print("Number Missing: ", len(missing), "Out of: ", len(all_transitions))
+    
+    for p in missing:
+        print("Missing: ", p)

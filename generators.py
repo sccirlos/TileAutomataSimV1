@@ -1,6 +1,6 @@
 import UniversalClasses as uc 
 import SaveFile
-from components import increment_string, make_prime, states_test_14, states_test_27, affinities_test_14, split_nonprime_label, split_prime_label, affinities_test_17, affinities_test_9, check_is_prime, split_label_pnp
+from components import increment_string, make_prime, states_test_14, states_test_27, affinities_test_14, split_nonprime_label, split_prime_label, affinities_test_17, affinities_test_9, check_is_prime, split_label_pnp, transition_to_forward, check_nums_same, check_A_greater, check_A_less, transition_to_backward, transition_rules_check_14
 
 import math
 
@@ -264,6 +264,7 @@ class NLength_LineGenerator(LinesGenerator):
         self.affinities_by_type = [["Seed Affinities"], ["Self Affinities"], ["Self Prime Affinities"], ["Prime b0 f0 Affinities"], ["Back Walk Affinities"], ["Forward Walk Affinities"]]
         self.generate_states()
         self.add_affinities()
+        self.add_transitions()
          
 
     def generate_states(self):
@@ -696,9 +697,120 @@ class NLength_LineGenerator(LinesGenerator):
              
         return 
             
-    def add_transitions(self):
-        # Seed transitions
+
+    def add_seed_transitions(self, labelA, labelB):
+        if labelA == "S":
+            split_b = split_label_pnp(labelB)
+            if split_b[1] == self.reseed_state_nums[0]:
+                labelB_Final = self.reseed_states[0]
+                tr = uc.TransitionRule(labelA, labelB, labelA, labelB_Final, "h")
+                self.genSys.add_transition_rule(tr)
+            else:
+                labelB_Final = transition_to_forward(labelB)
+                tr = uc.TransitionRule(labelA, labelB, labelA, labelB_Final, "h")
+                self.genSys.add_transition_rule(tr)   
+
+    def add_reseed_transitions(self, labelA, labelB):
+        if "R'" in labelA:
+            labelA_r_split = split_label_pnp(labelA)
+            labelB_split = split_label_pnp(labelB)
+            if labelB_split[0] == "B":
+                if labelB_split[1] in self.reseed_state_nums:
+                    if not(labelA == self.smallest_reseed):
+                        if self.reseed_state_nums.index(labelA_r_split[1]) == (self.reseed_state_nums.index(labelB_split[1]) - 1):
+                            labelA_index = self.reseed_states.index(labelA)
+                            if len(self.reseed_states) > (labelA_index + 1):
+                                labelB_Final = self.reseed_states[labelA_index + 1]
+                                tr = uc.TransitionRule(labelA, labelB, labelA, labelB_Final, "h")
+                                self.genSys.add_transition_rule(tr)
+
+        elif "R" in labelA and not("R" in labelB):
+            if "B'" in labelB:
+                labelB_Final = make_prime(labelA)
+            else:
+                labelB_Final = labelA
+                
+            tr = uc.TransitionRule(labelA, labelB, labelA, labelB_Final, "h")
+            self.genSys.add_transition_rule(tr)    
+
+    def add_forward_transition(self, labelA, labelB):
+        states = self.genSys.return_list_of_state_labels()
         
+        if "F'" in labelA:
+            if check_A_greater(labelA, labelB):
+                labelB_Final = transition_to_forward(labelB)
+                tr = uc.TransitionRule(labelA, labelB, labelA, labelB_Final, "h")
+                self.genSys.add_transition_rule(tr)
+        
+        elif "F" in labelA and labelA in states: 
+            if "B'" in labelB:
+                if check_A_greater(labelA, labelB):
+                    labelB_Final = make_prime(labelA)
+                    tr = uc.TransitionRule(labelA, labelB, labelA, labelB_Final, "h")
+                    self.genSys.add_transition_rule(tr)
+            elif "B" in labelB:
+                if check_A_greater(labelA, labelB):
+                    labelB_Final = labelA
+                    tr = uc.TransitionRule(labelA, labelB, labelA, labelB_Final, "h")
+                    self.genSys.add_transition_rule(tr)
+                    
+    def add_back_transition(self, labelA, labelB):
+        if "R" in labelA or "S" in labelA:
+            return
+        elif "B" in labelA:
+            return
+        elif "B" in labelB:
+            if check_nums_same(labelA, labelB):
+                labelA_Final = increment_string(labelA)
+                labelA_Final = transition_to_backward(labelA_Final)
+                tr = uc.TransitionRule(labelA, labelB, labelA_Final, labelB, "h")
+                self.genSys.add_transition_rule(tr)
+                
+            elif check_A_less(labelA, labelB):
+                labelA_Final = labelB
+                tr = uc.TransitionRule(labelA, labelB, labelA_Final, labelB, "h")
+                self.genSys.add_transition_rule(tr)
+        
+    def add_transitions(self):
+        #tr = uc.TransitionRule(labelA, labelB, labelA_Final, labelB_Final, "h")
+        #self.genSys.add_transition_rule(tr)
+        seed = "S"
+        b0 = "B0"
+        bp0 = "B'0"
+        f0 = "F0"
+        line_len = self.line_length
+        if line_len > 1:
+        # Seed transitions
+            tr = uc.TransitionRule(seed, b0, seed, f0, "h")
+            self.genSys.add_transition_rule(tr)
+            
+            if line_len > 2:
+                
+                tr = uc.TransitionRule(f0, b0, f0, bp0, "h")
+                self.genSys.add_transition_rule(tr)
+                
+                tr = uc.TransitionRule(f0, bp0, "B1", bp0, "h")
+                self.genSys.add_transition_rule(tr)
+
+                if line_len > 4:
+                    labelA = seed
+                    labelB = "B1"
+                    labelA_Final = seed
+                    labelB_Final = "F1"
+
+                    self.add_seed_transitions(labelA, labelB)
+                    affinities_list = self.genSys.returnHorizontalAffinityDict()
+                    for key in affinities_list:
+                        self.add_seed_transitions(key[0], key[1])
+                        self.add_reseed_transitions(key[0], key[1])
+                        self.add_forward_transition(key[0], key[1])
+                        self.add_back_transition(key[0], key[1])
+                    
+
+                    
+
+        transition_rules = self.genSys.returnHorizontalTransitionDict()
+        transition_rules_check_14(transition_rules)            
         # B0 F0
         # B0 transitions
         # B'0 transitions
