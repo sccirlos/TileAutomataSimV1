@@ -654,7 +654,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 if self.Engine.step(move) != -1:
                     # Might need to go above
                     self.time = self.time + (self.Engine.timeTaken())
-                    self.draw_move(move, 0)
+                    self.draw_move(move, 1)
 
     def first_step(self):
         if self.SysLoaded == True:
