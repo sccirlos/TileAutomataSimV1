@@ -1,7 +1,8 @@
 from os import stat
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QFileDialog, QWidget, QVBoxLayout
-from PyQt5.QtGui import QPainter, QBrush, QPen, QColor, QFont
+from PyQt5.QtGui import QPainter
+from PyQt5.QtCore import QObject, QThread, pyqtSignal
 
 from PyQt5.QtCore import Qt
 from random import randrange
@@ -359,26 +360,27 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.label_2.setText("Time elapsed: \n 0 time steps")
             self.label_3.setText("Current step time: \n 0 time steps")
 
-        # Remove old widgets from the layout
-        for m in self.moveWidgets:
-            self.movesLayout.removeWidget(m)
-            m.deleteLater()
-        self.moveWidgets = []
+        if not self.play:
+            # Remove old widgets from the layout
+            for m in self.moveWidgets:
+                self.movesLayout.removeWidget(m)
+                m.deleteLater()
+            self.moveWidgets = []
 
-        # If no more moves, show it
-        if len(self.Engine.validMoves) == 0:
-            status = QLabel("No Available Moves")
-            self.moveWidgets.append(status)
-            self.movesLayout.addWidget(status)
-        
-        # If there are moves to pick, show them
-        elif not len(self.Engine.validMoves) == 0:
-            # Create moves and add to layout
-            for m in self.Engine.validMoves:
-                mGUI = Move(m, self, self.centralwidget)
-                mGUI.setFixedHeight(34)
-                self.moveWidgets.append(mGUI)
-                self.movesLayout.addWidget(mGUI)
+            # If no more moves, show it
+            if len(self.Engine.validMoves) == 0:
+                status = QLabel("No Available Moves")
+                self.moveWidgets.append(status)
+                self.movesLayout.addWidget(status)
+            
+            # If there are moves to pick, show them
+            elif not len(self.Engine.validMoves) == 0:
+                # Create moves and add to layout
+                for m in self.Engine.validMoves:
+                    mGUI = Move(m, self, self.centralwidget)
+                    mGUI.setFixedHeight(34)
+                    self.moveWidgets.append(mGUI)
+                    self.movesLayout.addWidget(mGUI)
 
         # print(self.Engine.currentIndex)
         self.update()
@@ -569,32 +571,84 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
                 self.draw_tiles(self.Engine.getCurrentAssembly())
 
+    # Multithreading experimentation
+    #
+    # https://realpython.com/python-pyqt-qthread/
+    # copied from here
+    
+    # Allows for easier signal connection, no parameters required here
+    def draw_current(self):
+        self.draw_tiles(self.Engine.getCurrentAssembly())
+
+    # Worker
+    # Just a class that a thread can call functions from, apparently needs to inherit from Object
+    class Worker(QObject):
+        # Signals
+
+        # A signal that will 'emit' once the work is done (or whenever you call the emit() function)
+        finished = pyqtSignal()
+
+        # A signal to update something, in the example they update ONE number, while we have to update a lot of tiles
+        # Could possibly do something smart with this
+        progress = pyqtSignal(int)
+
+        # default __init__ requires some fancy parameters that I didn't feel like learning about
+        # must call this and give it the UiWindow
+        def give_ui(self, ui):
+            self.ui = ui
+
+        # the main function that gets ran, does not really have to be called run, could be any function really
+        def run(self):
+            self.ui.Play_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-pause.png'))
+            self.ui.play = True
+
+            # main issue with doing multithreading like this
+            #
+            # the draw_tiles call takes way to long while the actual computation is extremely fast in comparison
+            # the draw_tiles calls begin to overlap with eachother and you can see glitching in the GUI
+            # could do a lot of smart things here
+            #
+            # 1. don't draw at all while playing, only update when stop is pressed
+            # lazy, but fastest to implement. could have a spinning icon, and still different from the last step button
+            # 
+            # 2. draw periodaclly
+            # better, but harder as well. for smaller systems, drawing would be faster and we could update more often
+            # but as they get larger, they take longer to draw, so we would have to variably update the GUI, seems gross
+            #
+            # 3. create new draw_tiles / overhaul draw_tiles to only draw new things
+            # pretty sure Micheal is doing this / is already finished with it
+            # this is perfect, as each draw_tile (or whatever its named) would only draw a max of 2 new things (in a transition case)
+            # can be blazing fast
+            while((self.ui.Engine.step() != -1) and self.ui.play == True):
+                print(self.ui.Engine.currentIndex)
+                self.ui.time = self.ui.time + (self.ui.Engine.timeTaken())
+                # self.ui.draw_tiles(self.ui.Engine.getCurrentAssembly())
+
+            # stop playing
+            self.ui.stop_sequence()
+            self.ui.Play_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-play.png'))
+
+            # tell whoever cares about the work being completed
+            self.finished.emit()
+
     def play_sequence(self):
         if self.SysLoaded == True:
             if self.play == False:
-                self.Play_button.setIcon(QtGui.QIcon(
-                    'Icons/tabler-icon-player-pause.png'))
-                self.play = True
-                while((self.Engine.step() != -1) and self.play == True):
-                    print(self.Engine.currentIndex)
-                    self.time = self.time + (self.Engine.timeTaken())
+                # Create a thread and worker
+                self.thread = QThread()
+                self.worker = self.Worker()
+                self.worker.give_ui(self)
+                self.worker.moveToThread(self.thread)
 
-                    loop = QtCore.QEventLoop()
-                    if self.Engine.currentIndex != 0:
-                        QtCore.QTimer.singleShot(
-                            int(self.delay * self.Engine.timeTaken()), loop.quit)
-                    else:
-                        QtCore.QTimer.singleShot(self.delay, loop.quit)
-                    loop.exec_()
+                # Set up all the signals, what functions we want called when certain things happen
+                self.thread.started.connect(self.worker.run)
+                self.worker.finished.connect(self.thread.quit)
+                self.worker.finished.connect(self.worker.deleteLater)
+                self.worker.finished.connect(self.draw_current)
+                self.thread.finished.connect(self.thread.deleteLater)
 
-                    self.draw_tiles(self.Engine.getCurrentAssembly())
-                    # if self.Engine.currentIndex != 0: #and self.Engine.currentIndex < self.Engine.lastIndex:
-
-                # self.step = len(self.Engine.assemblyList) - 1 #this line is here to prevent a crash that happens if you click last after play finishes
-                self.stop_sequence()
-                self.Play_button.setIcon(QtGui.QIcon(
-                    'Icons/tabler-icon-player-play.png'))
-
+                # start drawing
+                self.thread.start()
             if self.play == True:
                 self.Play_button.setIcon(QtGui.QIcon(
                     'Icons/tabler-icon-player-play.png'))
