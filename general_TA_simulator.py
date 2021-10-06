@@ -602,6 +602,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.time = 0
             self.Engine = Engine(currentSystem)
             self.draw_assembly(self.Engine.getCurrentAssembly())
+            self.Update_available_moves()
 
     def Click_QuickCombine(self):
         if(self.SysLoaded == True):
@@ -618,6 +619,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.time = 0
             self.Engine = Engine(currentSystem)
             self.draw_assembly(self.Engine.getCurrentAssembly())
+            self.Update_available_moves()
 
     def Click_XReflect(self):
         # Make a rotated system based off the current system, and instantly load the new system.
@@ -628,6 +630,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.time = 0
             self.Engine = Engine(currentSystem)
             self.draw_assembly(self.Engine.getCurrentAssembly())
+            self.Update_available_moves()
 
     def Click_YReflect(self):
         # Make a rotated system based off the current system, and instantly load the new system.
@@ -638,6 +641,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.time = 0
             self.Engine = Engine(currentSystem)
             self.draw_assembly(self.Engine.getCurrentAssembly())
+            self.Update_available_moves()
 
     # self.draw_assembly(LoadFile.) #starting assembly goes here
     def slowMode_toggle(self):
@@ -662,6 +666,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.Engine.first()
             self.time = 0
             self.draw_assembly(self.Engine.getCurrentAssembly())
+            self.Update_available_moves()
 
     def prev_step(self):
         self.stop_sequence()
@@ -689,6 +694,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 self.time = self.time + (self.Engine.timeTaken())
 
             self.draw_assembly(self.Engine.getCurrentAssembly())
+            self.Update_available_moves()
 
     def play_sequence(self):
         if self.SysLoaded == True:
