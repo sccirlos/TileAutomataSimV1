@@ -307,13 +307,13 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         #### Zoom in functions for the scroll wheel ####
         if event.angleDelta().y() == 120:
             self.tileSize = self.tileSize + 10
-            self.textX = self.textX + 3
-            self.textY = self.textY + 5
+            self.textX = self.textX + 2
+            self.textY = self.textY + 6
         else:
             if self.tileSize > 10:
                 self.tileSize = self.tileSize - 10
-                self.textX = self.textX - 3
-                self.textY = self.textY - 5
+                self.textX = self.textX - 2
+                self.textY = self.textY - 6
         self.textSize = int(self.tileSize / 3)
 
         if self.Engine != None:
@@ -389,7 +389,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         painter.end()
 
         self.Update_time_onScreen()
-        self.Update_available_moves()
+        if self.play == False:
+            self.Update_available_moves()
+
         self.update()
 
     def draw_assembly(self, assembly):
@@ -427,8 +429,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         painter.end()
 
-        self.Update_time_onScreen()
-        self.Update_available_moves()
+        #self.Update_time_onScreen()
+        #self.Update_available_moves()
         self.update()
 
     def Update_time_onScreen(self):
@@ -466,11 +468,11 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def draw_to_screen(self, x, y, label, painter, brush):
         painter.setBrush(brush)
 
-        painter.drawRect((x * self.tileSize) + self.seedX, (y * -self.tileSize) + self.seedY, self.tileSize, self.tileSize)
+        painter.drawRect(int((x * self.tileSize) + self.seedX), int((y * -self.tileSize) + self.seedY), self.tileSize, self.tileSize)
         if len(label) > 4:
-            painter.drawText((x * self.tileSize) + self.textX, (y * -self.tileSize) + self.textY, label[0:3])
+            painter.drawText(int(x * self.tileSize) + self.textX, int(y * -self.tileSize) + self.textY, label[0:3])
         else:
-            painter.drawText((x * self.tileSize) + self.textX, (y * -self.tileSize) + self.textY, label)
+            painter.drawText(int((x * self.tileSize) + self.textX), int((y * -self.tileSize) + self.textY), label)
 
     def transition_draw_function(self, move, state1, state2, painter, brush):
         horizontal = 0
@@ -580,6 +582,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             # currentAssemblyHistory.append(a)
             # Assembler_Proto.Main()
             self.draw_assembly(self.Engine.getCurrentAssembly())
+            self.Update_available_moves()
 
     def Click_SaveFile(self):
         # Creating a System object from data read.
@@ -599,6 +602,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.time = 0
             self.Engine = Engine(currentSystem)
             self.draw_assembly(self.Engine.getCurrentAssembly())
+            self.Update_available_moves()
 
     def Click_QuickCombine(self):
         if(self.SysLoaded == True):
@@ -615,6 +619,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.time = 0
             self.Engine = Engine(currentSystem)
             self.draw_assembly(self.Engine.getCurrentAssembly())
+            self.Update_available_moves()
 
     def Click_XReflect(self):
         # Make a rotated system based off the current system, and instantly load the new system.
@@ -625,6 +630,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.time = 0
             self.Engine = Engine(currentSystem)
             self.draw_assembly(self.Engine.getCurrentAssembly())
+            self.Update_available_moves()
 
     def Click_YReflect(self):
         # Make a rotated system based off the current system, and instantly load the new system.
@@ -635,10 +641,11 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.time = 0
             self.Engine = Engine(currentSystem)
             self.draw_assembly(self.Engine.getCurrentAssembly())
+            self.Update_available_moves()
 
     # self.draw_assembly(LoadFile.) #starting assembly goes here
     def slowMode_toggle(self):
-        if self.slowMode_Button.isChecked():
+        if self.SlowMode_button.isChecked():
             self.delay = 1000
         else:
             self.delay = 0
@@ -651,7 +658,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 if self.Engine.step(move) != -1:
                     # Might need to go above
                     self.time = self.time + (self.Engine.timeTaken())
-                    self.draw_assembly(self.Engine.getCurrentAssembly())
+                    self.draw_move(move, 1)
 
     def first_step(self):
         if self.SysLoaded == True:
@@ -659,13 +666,15 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.Engine.first()
             self.time = 0
             self.draw_assembly(self.Engine.getCurrentAssembly())
+            self.Update_available_moves()
 
     def prev_step(self):
         self.stop_sequence()
         if self.SysLoaded == True:
             if self.Engine.currentIndex > 0:
-                self.draw_move(self.Engine.getCurrentMove(), 0)
                 self.Engine.back()
+                self.draw_move(self.Engine.getLastMove(), 0)
+                
                 # Might need to go below
                 self.time = self.time - (self.Engine.timeTaken())
                 
@@ -685,6 +694,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 self.time = self.time + (self.Engine.timeTaken())
 
             self.draw_assembly(self.Engine.getCurrentAssembly())
+            self.Update_available_moves()
 
     def play_sequence(self):
         if self.SysLoaded == True:
@@ -709,6 +719,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
                 # self.step = len(self.Engine.assemblyList) - 1 #this line is here to prevent a crash that happens if you click last after play finishes
                 self.stop_sequence()
+                self.draw_assembly(self.Engine.getCurrentAssembly())
+                self.Update_available_moves()
                 self.Play_button.setIcon(QtGui.QIcon(
                     'Icons/tabler-icon-player-play.png'))
 
@@ -716,6 +728,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 self.Play_button.setIcon(QtGui.QIcon(
                     'Icons/tabler-icon-player-play.png'))
                 self.stop_sequence()
+                self.Update_available_moves()
 
     def stop_sequence(self):
         self.play = False

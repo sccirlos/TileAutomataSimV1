@@ -100,6 +100,10 @@ class Engine:
         if len(self.moveList) != 0:
             return self.moveList[self.getCurrentIndex() - 1]
 
+    def getLastMove(self):
+        if len(self.moveList) != 0:
+            return self.moveList[self.getCurrentIndex()]
+
     def build(self, nextMove=None, forwards=True):
         # Get current Assembly
         cAssembly = self.getCurrentAssembly()
