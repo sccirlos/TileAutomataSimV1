@@ -40,10 +40,10 @@ if __name__ == "__main__":
     SaveFile.main(sys8, ["XML Files/samples/largeDecimalStringDet.xml"])
 
     sys9 = detGen.genSqrtBaseBCount("9950", 10)
-    SaveFile.main(sys9, ["XML Files/samples/smallBinCountDet.xml"])
+    SaveFile.main(sys9, ["XML Files/samples/smallDecimalCountDet.xml"])
 
     sys10 = detGen.genSqrtBaseBString("999999000", 10)
-    SaveFile.main(sys10, ["XML Files/samples/largeBinCountDet.xml"])
+    SaveFile.main(sys10, ["XML Files/samples/largeDecimalCountDet.xml"])
 
     # Sample One Sided systems
     sys11 = oneSidedGen.genTripleIndexStates(27)
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     sys13 = oneSidedGen.cbrtBinString("110011010110011010110011010")
     SaveFile.main(sys13, ["XML Files/samples/BinString1S.xml"])
 
-    sys14 = oneSidedGen.genSqrtBinCount(1000)
+    sys14 = oneSidedGen.cbrtBinCount(1000)
     SaveFile.main(sys14, ["XML Files/samples/smallBinCount1S.xml"])
 
     # Sample General systems
