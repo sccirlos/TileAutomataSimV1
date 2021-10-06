@@ -731,13 +731,7 @@ class NLength_LineGenerator(LinesGenerator):
         if self.line_length == 14:
             affinities_test_14(shd)
         elif self.line_length == 17:
-            affinities_test_17(shd)
-        
-                
-            
-                
-                     
-             
+            affinities_test_17(shd)        
         return 
             
 
