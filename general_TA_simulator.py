@@ -430,7 +430,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         painter.end()
 
         #self.Update_time_onScreen()
-        #self.Update_available_moves(
+        #self.Update_available_moves()
         self.update()
 
     def Update_time_onScreen(self):
@@ -654,7 +654,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 if self.Engine.step(move) != -1:
                     # Might need to go above
                     self.time = self.time + (self.Engine.timeTaken())
-                    self.draw_assembly(self.Engine.getCurrentAssembly())
+                    self.draw_move(move, 0)
 
     def first_step(self):
         if self.SysLoaded == True:
@@ -667,8 +667,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.stop_sequence()
         if self.SysLoaded == True:
             if self.Engine.currentIndex > 0:
-                self.draw_move(self.Engine.getCurrentMove(), 0)
                 self.Engine.back()
+                self.draw_move(self.Engine.getLastMove(), 0)
+                
                 # Might need to go below
                 self.time = self.time - (self.Engine.timeTaken())
                 
