@@ -21,18 +21,20 @@ class Historian:
         self.engine = engine
     
     def dump(self):
-        self.dumps()
         filename = QFileDialog.getSaveFileName(self.ui, "Assembly JSON File", "", "JSON Files (*.json)")
 
         if(filename[0] != ''):
             fp = open(filename[0], 'w')
             assemblies = self.Assemblies(self.engine.moveList, self.engine.currentAssembly)
-            json.dump(assemblies, fp, sort_keys=False, default=self.encoder, indent=3)
+            # Dumping into one line saves a ton of space, but becomes completly unreadable, worse than it already is
+            # json.dump(assemblies, fp, sort_keys=False, default=self.encoder)
+            # Dumping with some indentation makes it nice-ish, but takes a large amount of space for \n and \t and ' '
+            json.dump(assemblies, fp, sort_keys=False, default=self.encoder, indent=2)
 
     def dumps(self):
         print("Dumping Assemblies")
         assemblies = self.Assemblies(self.engine.moveList, self.engine.currentAssembly)
-        print(json.dumps(assemblies, sort_keys=False, default=self.encoder, indent=3))
+        print(json.dumps(assemblies, sort_keys=False, default=self.encoder, indent=2))
     
     def loads(self):
         print("Loading Assembiles")
