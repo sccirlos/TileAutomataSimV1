@@ -854,7 +854,9 @@ class NLength_LineGenerator(LinesGenerator):
         
         return         
            
-
+class NonFreezingLines:
+    def __init__(self):
+        pass
 
 if __name__ == "__main__":
     #sys = genDoubleIndexStates(16)
