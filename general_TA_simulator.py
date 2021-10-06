@@ -1,10 +1,11 @@
 from os import stat
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QFileDialog, QWidget, QVBoxLayout
+from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QFileDialog, QPushButton, QWidget, QVBoxLayout
 from PyQt5.QtGui import QPainter, QBrush, QPen, QColor, QFont
 
 from PyQt5.QtCore import Qt
 from random import randrange
+from Historian import Historian
 
 from assemblyEngine import Engine
 from UniversalClasses import System, Assembly, Tile
@@ -137,6 +138,17 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.movesLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
         # List of Move Widgets
         self.moveWidgets = []
+
+        # Assembly History
+        self.historian = Historian()
+        
+        self.SaveHistory_button = QPushButton(self.page)
+        self.verticalLayout_6.addWidget(self.SaveHistory_button)
+        self.SaveHistory_button.setText("Save History")
+
+        self.LoadHistory_button = QPushButton(self.page)
+        self.verticalLayout_6.addWidget(self.LoadHistory_button)
+        self.LoadHistory_button.setText("Load History")
 
         # Function to Move window on mouse drag event on the title bar
         def moveWindow(e):
@@ -457,6 +469,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
             self.time = 0
             self.Engine = Engine(currentSystem)
+            self.historian.set_engine(self.Engine)
+            self.SaveHistory_button.clicked.connect(self.historian.dumps)
+            self.LoadHistory_button.clicked.connect(self.historian.loads)
             #a = Assembly()
             #t = Tile(currentSystem.returnSeedStates(), 0, 0)
             # a.tiles.append(t)
