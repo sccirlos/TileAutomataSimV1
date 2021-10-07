@@ -530,7 +530,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 # engine has the system 
 
 
-    
+# do i need another function per page??
 class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
     def __init__(self, engine):
         super().__init__()
@@ -541,6 +541,10 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
 
         self.tableWidget.setRowCount(len(self.system.states))
         print(len(self.system.states))
+
+       #testing
+       # self.tableWidget_2.setRowCount(len(self.system.states))
+       # print(len(self.system.states))
 
         # connect the color change
         self.tableWidget.cellChanged.connect(self.cellchanged)

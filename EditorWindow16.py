@@ -55,18 +55,19 @@ class Ui_EditorWindow(object):
          self.comboBox.setGeometry(QtCore.QRect(90, 20, 91, 32))
          self.comboBox.setObjectName("comboBox")
          self.toolBox.addItem(self.page, "")
+
          self.page_2 = QtWidgets.QWidget()
          self.page_2.setGeometry(QtCore.QRect(0, 0, 765, 340))
          self.page_2.setObjectName("page_2")
 
-
+         # table for states
          self.tableWidget = QtWidgets.QTableWidget(self.page_2)
          self.tableWidget.setGeometry(QtCore.QRect(0, 70, 771, 261))
          self.tableWidget.setObjectName("tableWidget")
          self.tableWidget.setColumnCount(4)
          columns = ['Color', 'Label', 'Seed', 'Initial']
-         self.tableWidget.setColumnWidth(0, 250)
-         self.tableWidget.setColumnWidth(1, 250)
+         self.tableWidget.setColumnWidth(0, 150)
+         self.tableWidget.setColumnWidth(1, 150)
          self.tableWidget.setColumnWidth(2, 150)
          self.tableWidget.setColumnWidth(3, 150)
          self.tableWidget.setHorizontalHeaderLabels(columns)
@@ -74,9 +75,43 @@ class Ui_EditorWindow(object):
          self.tableWidget.setRowHeight(0, 40)
          self.tableWidget.setRowHeight(1, 40)
 
+
+
+         # add row for state table
          self.pushButton_3 = QtWidgets.QPushButton(self.page_2)
          self.pushButton_3.setGeometry(QtCore.QRect(10, 10, 113, 32))
          self.pushButton_3.setObjectName("pushButton_3")
+
+         self.page_3 = QtWidgets.QWidget()
+         self.page_3.setGeometry(QtCore.QRect(0, 0, 765, 340))
+         self.page_3.setObjectName("page_3")
+         # self.toolBox.addItem(self.page_3, "")
+
+         # table for affinity rules; this is not showing up why the heck!!! :( 
+         # okay now its showing up at first start up and then disappearing when clicking
+         # to another page like add state page...
+         # OMFG theres a hidden page under the system temp page!!! thats where its showing up 
+         self.tableWidget_2 = QtWidgets.QTableWidget(self.page_3)
+         self.tableWidget_2.setGeometry(QtCore.QRect(0, 50, 771, 261))
+         self.tableWidget_2.setObjectName("tableWidget_2")
+         self.toolBox.addItem(self.page_3, "")
+
+         self.tableWidget_2.setColumnCount(3)
+         columns = ['State 1', 'State 2', 'Direction']
+         self.tableWidget_2.setColumnWidth(0, 250)
+         self.tableWidget_2.setColumnWidth(1, 250)
+         self.tableWidget_2.setColumnWidth(2, 150)
+         self.tableWidget_2.setHorizontalHeaderLabels(columns)
+         self.tableWidget_2.setRowCount(2)
+         self.tableWidget_2.setRowHeight(0, 40)
+         self.tableWidget_2.setRowHeight(1, 40)
+
+         # this isnt workinig either 
+         self.pushButton_4 = QtWidgets.QPushButton(self.page_3)
+         self.pushButton_4.setGeometry(QtCore.QRect(20, 0, 113, 32))
+         self.pushButton_4.setObjectName("pushButton_4")
+
+         
 
           # 09/10 now need to bring in data from loaded xml stuff into tablewidget
 
