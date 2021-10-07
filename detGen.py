@@ -318,6 +318,13 @@ def genSqrtBinCount(value):
     nc0 = uc.AffinityRule("nc", "0", "v")
     genSys.add_affinity(nc0)
 
+    #        <Rule Label1="nc" Label2="1" Dir="v" Strength="1"></Rule>
+    nc1 = uc.AffinityRule("N", "1i", "v")
+    genSys.add_affinity(nc1)
+    #        <Rule Label1="nc" Label2="0" Dir="v" Strength="1"></Rule>
+    nc0 = uc.AffinityRule("N", "0i", "v")
+    genSys.add_affinity(nc0)
+
     # <Rule Label1="0" Label2="c" Label1Final="0" Label2Final="1" Dir="h"></Rule>
     carry0TRi = uc.TransitionRule("0i", "c", "0i", "1", "h")
     genSys.add_transition_rule(carry0TRi)
@@ -354,6 +361,10 @@ def genSqrtBinCount(value):
     # <Rule Label1="0" Label2="0c" Label1Final="0" Label2Final="0" Dir="v"></Rule>
     down0TR = uc.TransitionRule("0", "0c", "0", "0", "v")
     genSys.add_transition_rule(down0TR)
+
+    # <Rule Label1="1" Label2="nc" Label1Final="1" Label2Final="1" Dir="h"></Rule>
+    northProp = uc.TransitionRule("N", "nc", "N", "N", "h")
+    genSys.add_transition_rule(northProp)
 
     return genSys
 
