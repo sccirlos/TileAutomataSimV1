@@ -728,30 +728,14 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.ui.Play_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-pause.png'))
             self.ui.play = True
 
-            # main issue with doing multithreading like this
-            #
-            # the draw_tiles call takes way to long while the actual computation is extremely fast in comparison
-            # the draw_tiles calls begin to overlap with eachother and you can see glitching in the GUI
-            # could do a lot of smart things here
-            #
-            # 1. don't draw at all while playing, only update when stop is pressed
-            # lazy, but fastest to implement. could have a spinning icon, and still different from the last step button
-            # 
-            # 2. draw periodaclly
-            # better, but harder as well. for smaller systems, drawing would be faster and we could update more often
-            # but as they get larger, they take longer to draw, so we would have to variably update the GUI, seems gross
-            #
-            # 3. create new draw_tiles / overhaul draw_tiles to only draw new things
-            # pretty sure Micheal is doing this / is already finished with it
-            # this is perfect, as each draw_tile (or whatever its named) would only draw a max of 2 new things (in a transition case)
-            # can be blazing fast
             while((self.ui.Engine.step() != -1) and self.ui.play == True):
-                print(self.ui.Engine.currentIndex)
                 self.ui.time = self.ui.time + (self.ui.Engine.timeTaken())
-                # self.ui.draw_tiles(self.ui.Engine.getCurrentAssembly())
+                self.ui.draw_move(self.ui.Engine.getCurrentMove(), 1)
 
             # stop playing
             self.ui.stop_sequence()
+            self.ui.draw_assembly(self.ui.Engine.getCurrentAssembly())
+            #self.ui.Update_available_moves()
             self.ui.Play_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-play.png'))
 
             # tell whoever cares about the work being completed
@@ -760,30 +744,19 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def play_sequence(self):
         if self.SysLoaded == True:
             if self.play == False:
-                self.Play_button.setIcon(QtGui.QIcon(
-                    'Icons/tabler-icon-player-pause.png'))
-                self.play = True
-                while((self.Engine.step() != -1) and self.play == True):
-                    #print(self.Engine.currentIndex)
-                    self.time = self.time + (self.Engine.timeTaken())
+                self.thread = QThread()
+                self.worker = self.Worker()
 
-                    loop = QtCore.QEventLoop()
-                    if self.Engine.currentIndex != 0:
-                        QtCore.QTimer.singleShot(
-                            int(self.delay * self.Engine.timeTaken()), loop.quit)
-                    else:
-                        QtCore.QTimer.singleShot(self.delay, loop.quit)
-                    loop.exec_()
+                self.worker.give_ui(self)
+                self.worker.moveToThread(self.thread)
 
-                    self.draw_move(self.Engine.getCurrentMove(), 1)
-                    # if self.Engine.currentIndex != 0: #and self.Engine.currentIndex < self.Engine.lastIndex:
+                self.thread.started.connect(self.worker.run)
+                self.worker.finished.connect(self.thread.quit)
+                self.worker.finished.connect(self.worker.deleteLater)
+                self.thread.finished.connect(self.thread.deleteLater)
+                self.thread.finished.connect(self.Update_available_moves)
 
-                # self.step = len(self.Engine.assemblyList) - 1 #this line is here to prevent a crash that happens if you click last after play finishes
-                self.stop_sequence()
-                self.draw_assembly(self.Engine.getCurrentAssembly())
-                self.Update_available_moves()
-                self.Play_button.setIcon(QtGui.QIcon(
-                    'Icons/tabler-icon-player-play.png'))
+                self.thread.start()
 
             if self.play == True:
                 self.Play_button.setIcon(QtGui.QIcon(
