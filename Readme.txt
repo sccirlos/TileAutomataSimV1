@@ -2,7 +2,7 @@
 # Unnamed TA Simulator
 # Version 1.0
 # Author: ASARG
-# Description: Implements the tile automata model as designed by Angel Cantu, Austin Luchsinger, Robert Schweller, and Tim Wylie.
+# Description: Implements the tile automata model as designed by Chalk et al.
 #################################################################################################################################
 # Unnamed TASimulator Manual
 
@@ -86,9 +86,12 @@ Main Menu
 1.4.4.1
   
 ## 1.5 Simulator Screen
+Windows users, we are aware of a bug that does not let you interact with the simulator when you press play on some systems and are looking into it.
+
 1.5.1 Simulator Area
   This is where the simulation occurs. When a system with a seed is loaded, the chosen seed tile will appear here. 
   Tiles are displayed here with their respective label and color. It should be noted that only up to 4 characters of the label will be displayed, so it is recommended to color code should you have labels with similar beginnings.
+
 
 1.5.2 Toolbar
   The toolbar has five buttons which include:
@@ -158,9 +161,6 @@ EXAMPLE:
     
 #############################
 Section 4 - Feature Map
-  -Add companion papers to section
-  -Adding list of available moves
-    
 
 
 

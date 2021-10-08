@@ -212,7 +212,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             # self.open_close_side_bar_btn.setIcon(QtGui.QIcon(u":/icons/icons/align-left.svg"))
 
         if self.Engine != None:
-            self.draw_tiles(self.Engine.getCurrentAssembly())
+            self.draw_assembly(self.Engine.getCurrentAssembly())
 
     def menu_animation(self, width, newWidth):
         # Animate the transition
@@ -252,7 +252,11 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         canvas.fill(Qt.white)
         self.label.setPixmap(canvas)
         if self.Engine != None:
-            self.draw_tiles(self.Engine.getCurrentAssembly())
+            self.seedX = self.geometry().width() / 2
+            self.seedY = self.geometry().height() / 2
+            self.textX = self.seedX + 10
+            self.textY = self.seedY + 25
+            self.draw_assembly(self.Engine.getCurrentAssembly())
 
     def keyPressEvent(self, event):
         #### Moving tiles across screen functions #####
@@ -260,21 +264,29 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         if event.key() == Qt.Key_W:
             self.seedY = self.seedY - 10
             self.textY = self.textY - 10
+            if self.Engine != None:
+                self.draw_assembly(self.Engine.getCurrentAssembly())
 
         # down arrow key is pressed
         elif event.key() == Qt.Key_S:
             self.seedY = self.seedY + 10
             self.textY = self.textY + 10
+            if self.Engine != None:
+                self.draw_assembly(self.Engine.getCurrentAssembly())
 
         # left arrow key is pressed
         elif event.key() == Qt.Key_A:
             self.seedX = self.seedX - 10
             self.textX = self.textX - 10
+            if self.Engine != None:
+                self.draw_assembly(self.Engine.getCurrentAssembly())
 
         # down arrow key is pressed
         elif event.key() == Qt.Key_D:
             self.seedX = self.seedX + 10
             self.textX = self.textX + 10
+            if self.Engine != None:
+                self.draw_assembly(self.Engine.getCurrentAssembly())
 
         # Hotkeys for the toolbar
         elif event.key() == Qt.Key_H:
@@ -292,26 +304,98 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         elif event.key() == Qt.Key_Semicolon:
             self.last_step()
 
-        if self.Engine != None:
-            self.draw_tiles(self.Engine.getCurrentAssembly())
-
     def wheelEvent(self, event):
         #### Zoom in functions for the scroll wheel ####
         if event.angleDelta().y() == 120:
             self.tileSize = self.tileSize + 10
-            self.textX = self.textX + 3
-            self.textY = self.textY + 5
+            self.textX = self.textX + 2
+            self.textY = self.textY + 6
         else:
             if self.tileSize > 10:
                 self.tileSize = self.tileSize - 10
-                self.textX = self.textX - 3
-                self.textY = self.textY - 5
+                self.textX = self.textX - 2
+                self.textY = self.textY - 6
         self.textSize = int(self.tileSize / 3)
 
         if self.Engine != None:
-            self.draw_tiles(self.Engine.getCurrentAssembly())
+            self.draw_assembly(self.Engine.getCurrentAssembly())
 
-    def draw_tiles(self, assembly):
+    def draw_move(self, move, forward):    
+        painter = QPainter(self.label.pixmap())
+        pen = QtGui.QPen()
+        brush = QtGui.QBrush()
+        font = QtGui.QFont()
+
+        pen.setWidth(3)
+
+        brush.setStyle(Qt.SolidPattern)
+
+        font.setFamily("Times")
+        font.setBold(True)
+        font.setPixelSize(self.textSize)
+        painter.setFont(font)
+
+        pen.setColor(QtGui.QColor("black"))
+        painter.setPen(pen)
+
+        #adding attachment on screen
+        if move['type'] == 'a' and forward == 1: #(type, x, y, state1)
+            if self.onScreen_check(move['x'], move['y']) != 1:
+                brush.setColor(QtGui.QColor("#" + move['state1'].returnColor()))
+                self.draw_to_screen(move['x'], move['y'], move['state1'].get_label(), painter, brush)
+        
+        #showing transition on screen
+        elif move['type'] == 't' and forward == 1: #(type, x, y, dir, state1, state2, state1Final, state2Final)
+            self.transition_draw_function(move, move['state1Final'], move['state2Final'], painter, brush)
+
+        #getting rid of attachment on screen
+        elif move['type'] == 'a' and forward == 0: #(type, x, y, state1)
+            brush.setColor(QtGui.QColor("white"))
+            pen.setColor(QtGui.QColor("white"))
+            painter.setPen(pen)
+
+            if self.onScreen_check(move['x'], move['y']) != 1:
+                self.draw_to_screen(move['x'], move['y'], "", painter, brush)
+
+            assembly = self.Engine.getCurrentAssembly()
+            pen.setColor(QtGui.QColor("black"))
+            painter.setPen(pen)
+   
+            neighborN = assembly.coords.get("(" + str(move['x']) + "," + str(move['y'] + 1) + ")")
+            neighborS = assembly.coords.get("(" + str(move['x']) + "," + str(move['y'] - 1) + ")")
+            neighborE = assembly.coords.get("(" + str(move['x'] + 1) + "," + str(move['y']) + ")")
+            neighborW = assembly.coords.get("(" + str(move['x'] - 1) + "," + str(move['y']) + ")")
+            
+            if neighborN != None:
+                if self.onScreen_check(move['x'], move['y'] + 1) != 1:
+                    brush.setColor(QtGui.QColor("#" + neighborN.get_color()))
+                    self.draw_to_screen(move['x'], move['y'] + 1, neighborN.get_label(), painter, brush)
+            if neighborS != None:
+                if self.onScreen_check(move['x'], move['y'] - 1) != 1:
+                    brush.setColor(QtGui.QColor("#" + neighborS.get_color()))
+                    self.draw_to_screen(move['x'], move['y'] - 1, neighborS.get_label(), painter, brush)
+            if neighborE != None:
+                if self.onScreen_check(move['x'] + 1, move['y']) != 1:
+                    brush.setColor(QtGui.QColor("#" + neighborE.get_color()))
+                    self.draw_to_screen(move['x'] + 1, move['y'], neighborE.get_label(), painter, brush)
+            if neighborW != None:
+                if self.onScreen_check(move['x'] - 1, move['y']) != 1:
+                    brush.setColor(QtGui.QColor("#" + neighborW.get_color()))
+                    self.draw_to_screen(move['x'] - 1, move['y'], neighborW.get_label(), painter, brush)
+        
+        #reversing transition on screen
+        elif move['type'] == 't' and forward == 0: #(type, x, y, dir, state1, state2, state1Final, state2Final)
+            self.transition_draw_function(move, move['state1'], move['state2'], painter, brush)
+
+        painter.end()
+
+        self.Update_time_onScreen()
+        if self.play == False:
+            self.Update_available_moves()
+
+        self.update()
+
+    def draw_assembly(self, assembly):
         painter = QPainter(self.label.pixmap())
         pen = QtGui.QPen()
         brush = QtGui.QBrush()
@@ -333,24 +417,24 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         font.setBold(True)
         font.setPixelSize(self.textSize)
         painter.setFont(font)
+
+        pen.setColor(QtGui.QColor("black"))
+        painter.setPen(pen)
         for tile in assembly.tiles:
-            # print(tile[0].color)
-            pen.setColor(QtGui.QColor("black"))
+            if self.onScreen_check(tile.x, tile.y) == 1:
+                continue
+
             brush.setColor(QtGui.QColor("#" + tile.get_color()))
 
-            painter.setPen(pen)
-            painter.setBrush(brush)
-            painter.drawRect((tile.x * self.tileSize) + self.seedX, (tile.y * -
-                             self.tileSize) + self.seedY, self.tileSize, self.tileSize)
-            if len(tile.state.label) > 4:
-                painter.drawText((tile.x * self.tileSize) + self.textX,
-                                 (tile.y * -self.tileSize) + self.textY, tile.state.label[0:3])
-            else:
-                painter.drawText((tile.x * self.tileSize) + self.textX,
-                                 (tile.y * -self.tileSize) + self.textY, tile.state.label)
+            self.draw_to_screen(tile.x, tile.y, tile.state.label, painter, brush)
 
         painter.end()
 
+        #self.Update_time_onScreen()
+        #self.Update_available_moves()
+        self.update()
+
+    def Update_time_onScreen(self):
         if self.Engine.currentIndex != 0:
             self.label_2.setText("Time elapsed: \n" +
                                  str(round(self.time, 2)) + " time steps")
@@ -360,30 +444,64 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.label_2.setText("Time elapsed: \n 0 time steps")
             self.label_3.setText("Current step time: \n 0 time steps")
 
-        if not self.play:
-            # Remove old widgets from the layout
-            for m in self.moveWidgets:
-                self.movesLayout.removeWidget(m)
-                m.deleteLater()
-            self.moveWidgets = []
+    def Update_available_moves(self):
+        # Remove old widgets from the layout
+        for m in self.moveWidgets:
+            self.movesLayout.removeWidget(m)
+            m.deleteLater()
+        self.moveWidgets = []
 
-            # If no more moves, show it
-            if len(self.Engine.validMoves) == 0:
-                status = QLabel("No Available Moves")
-                self.moveWidgets.append(status)
-                self.movesLayout.addWidget(status)
+        # If no more moves, show it
+        if len(self.Engine.validMoves) == 0:
+            status = QLabel("No Available Moves")
+            self.moveWidgets.append(status)
+            self.movesLayout.addWidget(status)
+        
+        # If there are moves to pick, show them
+        elif not len(self.Engine.validMoves) == 0:
+            # Create moves and add to layout
+            for m in self.Engine.validMoves:
+                mGUI = Move(m, self, self.centralwidget)
+                mGUI.setFixedHeight(34)
+                self.moveWidgets.append(mGUI)
+                self.movesLayout.addWidget(mGUI)
+
+    def draw_to_screen(self, x, y, label, painter, brush):
+        painter.setBrush(brush)
+
+        painter.drawRect(int((x * self.tileSize) + self.seedX), int((y * -self.tileSize) + self.seedY), self.tileSize, self.tileSize)
+        if len(label) > 4:
+            painter.drawText(int(x * self.tileSize) + self.textX, int(y * -self.tileSize) + self.textY, label[0:3])
+        else:
+            painter.drawText(int((x * self.tileSize) + self.textX), int((y * -self.tileSize) + self.textY), label)
+
+    def transition_draw_function(self, move, state1, state2, painter, brush):
+        horizontal = 0
+        vertical = 0
+        brush.setColor(QtGui.QColor("white"))
+        if move['dir'] == 'h':
+            horizontal = 1
+        elif move['dir'] == 'v':
+            vertical = -1
             
-            # If there are moves to pick, show them
-            elif not len(self.Engine.validMoves) == 0:
-                # Create moves and add to layout
-                for m in self.Engine.validMoves:
-                    mGUI = Move(m, self, self.centralwidget)
-                    mGUI.setFixedHeight(34)
-                    self.moveWidgets.append(mGUI)
-                    self.movesLayout.addWidget(mGUI)
+        if self.onScreen_check(move['x'], move['y']) != 1:
+            self.draw_to_screen(move['x'], move['y'], "", painter, brush)
+            brush.setColor(QtGui.QColor("#" + state1.returnColor()))
+            self.draw_to_screen(move['x'], move['y'], state1.get_label(), painter, brush)
 
-        # print(self.Engine.currentIndex)
-        self.update()
+        if self.onScreen_check(move['x'] + horizontal, move['y'] + vertical) != 1:
+            brush.setColor(QtGui.QColor("white"))
+            self.draw_to_screen(move['x'] + horizontal, move['y'] + vertical, "", painter, brush)
+            brush.setColor(QtGui.QColor("#" + state2.returnColor()))
+            self.draw_to_screen(move['x'] + horizontal, move['y'] + vertical, state2.get_label(), painter, brush)
+      
+    #checks if a given tile is on screen by checking its coordinate, if not returns 1
+    def onScreen_check(self, x, y):
+        if((x * self.tileSize) + self.seedX > self.geometry().width() or (x * self.tileSize) + self.seedX < -self.tileSize):
+            return 1
+        if((y * -self.tileSize) + self.seedY > self.geometry().height() or (y * -self.tileSize) + self.seedY < -self.tileSize):
+            return 1
+        return 0
 
     def Click_Run_Simulation(self):  # Run application if everythings good
         err_flag = False
@@ -392,7 +510,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.step = 0
             self.time = 0
             # Assembler_Proto.Main()
-            self.draw_tiles(Assembler_Proto.CompleteAssemblyHistory[self.step])
+            self.draw_assembly(Assembler_Proto.CompleteAssemblyHistory[self.step])
 
     def Click_FileSearch(self, id):
         self.stop_sequence()
@@ -464,7 +582,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             # a.tiles.append(t)
             # currentAssemblyHistory.append(a)
             # Assembler_Proto.Main()
-            self.draw_tiles(self.Engine.getCurrentAssembly())
+            self.draw_assembly(self.Engine.getCurrentAssembly())
+            self.Update_available_moves()
 
     def Click_SaveFile(self):
         # Creating a System object from data read.
@@ -483,7 +602,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             currentSystem = QuickRotate.tempSystem
             self.time = 0
             self.Engine = Engine(currentSystem)
-            self.draw_tiles(self.Engine.getCurrentAssembly())
+            self.draw_assembly(self.Engine.getCurrentAssembly())
+            self.Update_available_moves()
 
     def Click_QuickCombine(self):
         if(self.SysLoaded == True):
@@ -499,7 +619,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             currentSystem.translateListsToDicts()
             self.time = 0
             self.Engine = Engine(currentSystem)
-            self.draw_tiles(self.Engine.getCurrentAssembly())
+            self.draw_assembly(self.Engine.getCurrentAssembly())
+            self.Update_available_moves()
 
     def Click_XReflect(self):
         # Make a rotated system based off the current system, and instantly load the new system.
@@ -509,7 +630,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             currentSystem = QuickReflect.tempSystem
             self.time = 0
             self.Engine = Engine(currentSystem)
-            self.draw_tiles(self.Engine.getCurrentAssembly())
+            self.draw_assembly(self.Engine.getCurrentAssembly())
+            self.Update_available_moves()
 
     def Click_YReflect(self):
         # Make a rotated system based off the current system, and instantly load the new system.
@@ -519,11 +641,12 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             currentSystem = QuickReflect.tempSystem
             self.time = 0
             self.Engine = Engine(currentSystem)
-            self.draw_tiles(self.Engine.getCurrentAssembly())
+            self.draw_assembly(self.Engine.getCurrentAssembly())
+            self.Update_available_moves()
 
-    # self.draw_tiles(LoadFile.) #starting assembly goes here
+    # self.draw_assembly(LoadFile.) #starting assembly goes here
     def slowMode_toggle(self):
-        if self.slowMode_Button.isChecked():
+        if self.SlowMode_button.isChecked():
             self.delay = 1000
         else:
             self.delay = 0
@@ -536,40 +659,43 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 if self.Engine.step(move) != -1:
                     # Might need to go above
                     self.time = self.time + (self.Engine.timeTaken())
-                    self.draw_tiles(self.Engine.getCurrentAssembly())
+                    self.draw_move(move, 1)
 
     def first_step(self):
-        if not self.play:
-            if self.SysLoaded == True:
-                self.stop_sequence()
-                self.Engine.first()
-                self.time = 0
-                self.draw_tiles(self.Engine.getCurrentAssembly())
+        if self.SysLoaded == True:
+            self.stop_sequence()
+            self.Engine.first()
+            self.time = 0
+            self.draw_assembly(self.Engine.getCurrentAssembly())
+            self.Update_available_moves()
 
     def prev_step(self):
-        if not self.play:
-            if self.SysLoaded == True:
-                if self.Engine.currentIndex > 0:
-                    self.Engine.back()
-                    # Might need to go below
-                    self.time = self.time - (self.Engine.timeTaken())
-                    self.draw_tiles(self.Engine.getCurrentAssembly())
+        self.stop_sequence()
+        if self.SysLoaded == True:
+            if self.Engine.currentIndex > 0:
+                self.Engine.back()
+                self.draw_move(self.Engine.getLastMove(), 0)
+                
+                # Might need to go below
+                self.time = self.time - (self.Engine.timeTaken())
+                
 
     def next_step(self):
-        if not self.play:
-            if self.SysLoaded == True:
-                if self.Engine.step() != -1:
-                    # Might need to go above
-                    self.time = self.time + (self.Engine.timeTaken())
-                    self.draw_tiles(self.Engine.getCurrentAssembly())
+        self.stop_sequence()
+        if self.SysLoaded == True:
+            if self.Engine.step() != -1:
+                # Might need to go above
+                self.time = self.time + (self.Engine.timeTaken())
+                self.draw_move(self.Engine.getCurrentMove(), 1)
 
     def last_step(self):
-        if not self.play:
-            if self.SysLoaded == True:
-                while (self.Engine.step() != -1):
-                    self.time = self.time + (self.Engine.timeTaken())
+        self.stop_sequence()
+        if self.SysLoaded == True:
+            while (self.Engine.step() != -1):
+                self.time = self.time + (self.Engine.timeTaken())
 
-                self.draw_tiles(self.Engine.getCurrentAssembly())
+            self.draw_assembly(self.Engine.getCurrentAssembly())
+            self.Update_available_moves()
 
     # Multithreading experimentation
     #
@@ -634,25 +760,36 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def play_sequence(self):
         if self.SysLoaded == True:
             if self.play == False:
-                # Create a thread and worker
-                self.thread = QThread()
-                self.worker = self.Worker()
-                self.worker.give_ui(self)
-                self.worker.moveToThread(self.thread)
+                self.Play_button.setIcon(QtGui.QIcon(
+                    'Icons/tabler-icon-player-pause.png'))
+                self.play = True
+                while((self.Engine.step() != -1) and self.play == True):
+                    #print(self.Engine.currentIndex)
+                    self.time = self.time + (self.Engine.timeTaken())
 
-                # Set up all the signals, what functions we want called when certain things happen
-                self.thread.started.connect(self.worker.run)
-                self.worker.finished.connect(self.thread.quit)
-                self.worker.finished.connect(self.worker.deleteLater)
-                self.worker.finished.connect(self.draw_current)
-                self.thread.finished.connect(self.thread.deleteLater)
+                    loop = QtCore.QEventLoop()
+                    if self.Engine.currentIndex != 0:
+                        QtCore.QTimer.singleShot(
+                            int(self.delay * self.Engine.timeTaken()), loop.quit)
+                    else:
+                        QtCore.QTimer.singleShot(self.delay, loop.quit)
+                    loop.exec_()
 
-                # start drawing
-                self.thread.start()
+                    self.draw_move(self.Engine.getCurrentMove(), 1)
+                    # if self.Engine.currentIndex != 0: #and self.Engine.currentIndex < self.Engine.lastIndex:
+
+                # self.step = len(self.Engine.assemblyList) - 1 #this line is here to prevent a crash that happens if you click last after play finishes
+                self.stop_sequence()
+                self.draw_assembly(self.Engine.getCurrentAssembly())
+                self.Update_available_moves()
+                self.Play_button.setIcon(QtGui.QIcon(
+                    'Icons/tabler-icon-player-play.png'))
+
             if self.play == True:
                 self.Play_button.setIcon(QtGui.QIcon(
                     'Icons/tabler-icon-player-play.png'))
                 self.stop_sequence()
+                self.Update_available_moves()
 
     def stop_sequence(self):
         self.play = False

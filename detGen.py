@@ -127,8 +127,8 @@ def genSqrtBinString(value):
     sqrtLen = math.ceil(math.sqrt(len(value)))
 
     # Add Binary Symbol states
-    state0 = uc.State("0", orange)
-    state1 = uc.State("1", green)
+    state0 = uc.State("0i", orange)
+    state1 = uc.State("1i", green)
     genSys.add_State(state0)
     genSys.add_State(state1)
 
@@ -137,11 +137,11 @@ def genSqrtBinString(value):
     genSys.add_transition_rule(trBPrime)
 
     trBPrime1 = uc.TransitionRule(
-        "1", str(sqrtLen - 1) + "B'", "1", str(sqrtLen - 1) + "B''", "v")
+        "1i", str(sqrtLen - 1) + "B'", "1i", str(sqrtLen - 1) + "B''", "v")
     genSys.add_transition_rule(trBPrime1)
 
     trBPrime0 = uc.TransitionRule(
-        "0", str(sqrtLen - 1) + "B'", "0", str(sqrtLen - 1) + "B''", "v")
+        "0i", str(sqrtLen - 1) + "B'", "0i", str(sqrtLen - 1) + "B''", "v")
     genSys.add_transition_rule(trBPrime0)
 
     for i in range(sqrtLen):
@@ -160,9 +160,9 @@ def genSqrtBinString(value):
 
             index = (i * sqrtLen) + j
             if index < len(value):
-                symbol = str(revValue[index])
+                symbol = str(revValue[index]) + "i"
             else:
-                symbol = "1"
+                symbol = "1i"
 
             tr = uc.TransitionRule(labelA, labelB, labelA, symbol, "h")
             genSys.add_transition_rule(tr)
@@ -262,6 +262,11 @@ def genSqrtBinCount(value):
     genSys = genSqrtBinString(value)
 
     # Add states for binary counter
+    state0 = uc.State("0", orange)
+    state1 = uc.State("1", green)
+    genSys.add_State(state0)
+    genSys.add_State(state1)
+
 
     # New Initial States
     # State for indicating carry
@@ -313,6 +318,25 @@ def genSqrtBinCount(value):
     nc0 = uc.AffinityRule("nc", "0", "v")
     genSys.add_affinity(nc0)
 
+    #        <Rule Label1="nc" Label2="1" Dir="v" Strength="1"></Rule>
+    nc1 = uc.AffinityRule("N", "1i", "v")
+    genSys.add_affinity(nc1)
+    #        <Rule Label1="nc" Label2="0" Dir="v" Strength="1"></Rule>
+    nc0 = uc.AffinityRule("N", "0i", "v")
+    genSys.add_affinity(nc0)
+
+    # <Rule Label1="0" Label2="c" Label1Final="0" Label2Final="1" Dir="h"></Rule>
+    carry0TRi = uc.TransitionRule("0i", "c", "0i", "1", "h")
+    genSys.add_transition_rule(carry0TRi)
+    # <Rule Label1="0" Label2="nc" Label1Final="0" Label2Final="0" Dir="h"></Rule>
+    noCarry0TRi = uc.TransitionRule("0i", "nc", "0i", "0", "h")
+    genSys.add_transition_rule(noCarry0TRi)
+    # <Rule Label1="1" Label2="c" Label1Final="1" Label2Final="0c" Dir="h"></Rule>
+    zeroCarryTRi = uc.TransitionRule("1i", "c", "1i", "0c", "h")
+    genSys.add_transition_rule(zeroCarryTRi)
+    # <Rule Label1="1" Label2="nc" Label1Final="1" Label2Final="1" Dir="h"></Rule>
+    noCarry1TRi = uc.TransitionRule("1i", "nc", "1i", "1", "h")
+    genSys.add_transition_rule(noCarry1TRi)
     # <Rule Label1="0" Label2="c" Label1Final="0" Label2Final="1" Dir="h"></Rule>
     carry0TR = uc.TransitionRule("0", "c", "0", "1", "h")
     genSys.add_transition_rule(carry0TR)
@@ -337,6 +361,10 @@ def genSqrtBinCount(value):
     # <Rule Label1="0" Label2="0c" Label1Final="0" Label2Final="0" Dir="v"></Rule>
     down0TR = uc.TransitionRule("0", "0c", "0", "0", "v")
     genSys.add_transition_rule(down0TR)
+
+    # <Rule Label1="1" Label2="nc" Label1Final="1" Label2Final="1" Dir="h"></Rule>
+    northProp = uc.TransitionRule("N", "nc", "N", "N", "h")
+    genSys.add_transition_rule(northProp)
 
     return genSys
 

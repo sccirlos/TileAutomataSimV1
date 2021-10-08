@@ -255,8 +255,8 @@ def genQuadBinString(value):
     rt4Len = math.ceil(vLen**(1.0/4.0))
 
     # Add Binary Symbol states
-    state0 = uc.State("0", black)
-    state1 = uc.State("1", white)
+    state0 = uc.State("0i", black)
+    state1 = uc.State("1i", white)
     genSys.add_State(state0)
     genSys.add_State(state1)
 
@@ -368,9 +368,9 @@ def genQuadBinString(value):
                 genSys.add_transition_rule(trDfail1)
 
     # Transition rule for when both transitions pass
-    trADpass0 = uc.TransitionRule("PA0", "PD0", "PA0", "0", "h")
+    trADpass0 = uc.TransitionRule("PA0", "PD0", "PA0", "0i", "h")
     genSys.add_transition_rule(trADpass0)
-    trADpass1 = uc.TransitionRule("PA1", "PD1", "PA1", "1", "h")
+    trADpass1 = uc.TransitionRule("PA1", "PD1", "PA1", "1i", "h")
     genSys.add_transition_rule(trADpass1)
 
     trAfail0 = uc.TransitionRule("PA0", "FD", "Bx", "Cx", "h")
@@ -414,9 +414,9 @@ def genQuadBinString(value):
         genSys.add_transition_rule(resetCtrPrime2)
 
         labelDs = str(i) + "Ds"
-        tr0Ds = uc.TransitionRule("0", labelDs, "0", "0", "h")
+        tr0Ds = uc.TransitionRule("0i", labelDs, "0i", "0i", "h")
         genSys.add_transition_rule(tr0Ds)
-        tr1Ds = uc.TransitionRule("1", labelDs, "1", "1", "h")
+        tr1Ds = uc.TransitionRule("1i", labelDs, "1i", "1i", "h")
         genSys.add_transition_rule(tr1Ds)
 
 
@@ -449,7 +449,7 @@ def quadBinCount(value):
 
         value = lead0 + startBin
 
-    cbrtLen = math.ceil(len(value)**(1.0/3.0))
+    rt4Len = math.ceil(len(value)**(1.0/4.0))
 
     genSys = genQuadBinString(value)
 
@@ -467,6 +467,11 @@ def quadBinCount(value):
     genSys.add_State(noCarry)
     genSys.add_Initial_State(noCarry)
 
+    # Add Binary Symbol states
+    state0 = uc.State("0", black)
+    state1 = uc.State("1", white)
+    genSys.add_State(state0)
+    genSys.add_State(state1)
 
     # North Bit states
     n1 = uc.State("1n", white)
@@ -485,6 +490,16 @@ def quadBinCount(value):
     genSys.add_State(northWall)
     genSys.add_Initial_State(northWall)
 
+    northWall = uc.State("N1", black)
+    genSys.add_State(northWall)
+    genSys.add_Initial_State(northWall)
+    northWall = uc.State("N2", black)
+    genSys.add_State(northWall)
+    genSys.add_Initial_State(northWall)
+    northWall = uc.State("N3", black)
+    genSys.add_State(northWall)
+    genSys.add_Initial_State(northWall)
+
     # Other States
 
     southWall = uc.State("S", black)
@@ -495,6 +510,8 @@ def quadBinCount(value):
     zeroCarryN = uc.State("0cn", black)
     genSys.add_State(zeroCarryN)
     genSys.add_Initial_State(zeroCarryN)
+
+
 
     ##### Affinities
 
@@ -522,6 +539,15 @@ def quadBinCount(value):
     north0carry = uc.AffinityRule("0cn", "0c", "v")
     genSys.add_affinity(north0carry)
 
+    # Affinity to attach north bit state
+    nWall1 = uc.AffinityRule("N1", str(rt4Len - 1) + "A'", "v")
+    genSys.add_affinity(nWall1)
+    nWall2 = uc.AffinityRule("N1", "N2", "h")
+    genSys.add_affinity(nWall2)
+    nWall3 = uc.AffinityRule("N2", "N3", "h")
+    genSys.add_affinity(nWall3)
+    nWall4 = uc.AffinityRule("N3", "N", "h")
+    genSys.add_affinity(nWall4)
 
     ###### Transitions
     ### Carry state transitions
@@ -529,12 +555,20 @@ def quadBinCount(value):
     genSys.add_transition_rule(carry0)
     carry1 = uc.TransitionRule("1", "c", "1", "0c", "h")
     genSys.add_transition_rule(carry1)
+    carry0i = uc.TransitionRule("0i", "c", "0i", "1", "h")
+    genSys.add_transition_rule(carry0i)
+    carry1i = uc.TransitionRule("1i", "c", "1i", "0c", "h")
+    genSys.add_transition_rule(carry1i)
 
     ### No Carry transitions
     noCarry0 = uc.TransitionRule("0", "nc", "0", "0", "h")
     genSys.add_transition_rule(noCarry0)
     noCarry1 = uc.TransitionRule("1", "nc", "1", "1", "h")
     genSys.add_transition_rule(noCarry1)
+    noCarry0i = uc.TransitionRule("0i", "nc", "0i", "0", "h")
+    genSys.add_transition_rule(noCarry0i)
+    noCarry1i = uc.TransitionRule("1i", "nc", "1i", "1", "h")
+    genSys.add_transition_rule(noCarry1i)
 
     ### Once a number is set in the Least Significant Bit transtions the '+' state to the south wall state "S"
     resetInc1 = uc.TransitionRule("1", "+", "1", "S", "v")
@@ -549,6 +583,9 @@ def quadBinCount(value):
     genSys.add_transition_rule(northCarryReset0)   
     CarryReset = uc.TransitionRule("0n", "0c", "0n", "0", "v")
     genSys.add_transition_rule(CarryReset)  
+
+    nProp1 = uc.TransitionRule("N", "nc", "N", "N", "h")
+    genSys.add_transition_rule(nProp1)  
 
     return genSys          
 
