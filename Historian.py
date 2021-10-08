@@ -43,14 +43,98 @@ class Historian:
             fp = open(filename[0], 'r')
 
             assemblies = json.load(fp)
-        
-        print(assemblies)
 
-        # Break down the history
-        movelist = assemblies["history"]
+            # Break down the history
+            history = assemblies["history"]
+            movelist = []
 
-        # Break down the assembly
-        assembly = assemblies["assembly"]
+            for m in history:
+                if m["type"] == "a":
+                    # converting json into objects
+                    x = int(m["x"])
+                    y = int(m["y"])
+                    s = self.get_state(m["state1"])
+
+                    # add move to movelist
+                    newM = {}
+                    newM["type"] = "a"
+                    newM["x"] = x
+                    newM["y"] = y
+                    newM["state1"] = s
+                    movelist.append(newM)
+                else:
+                    # converting json into objects
+                    x = int(m["x"])
+                    y = int(m["y"])
+                    s1 = self.get_state(m["state1"])
+                    s2 = self.get_state(m["state2"])
+                    s3 = self.get_state(m["state1Final"])
+                    s4 = self.get_state(m["state2Final"])
+
+                    # add move to movelist
+                    newM = {}
+                    newM["type"] = "t"
+                    newM["x"] = x
+                    newM["y"] = y
+                    newM["dir"] = m["dir"]
+                    newM["state1"] = s1
+                    newM["state2"] = s2
+                    newM["state1Final"] = s3
+                    newM["state2Final"] = s4
+
+                    movelist.append(newM)
+            
+            # update moveList in engine
+            self.engine.moveList = movelist
+            self.engine.lastIndex = len(movelist)
+            self.engine.currentIndex = len(movelist)
+
+            # Break down the assembly
+            assembly = assemblies["assembly"]
+
+            tiles = []
+            for t in assembly["tiles"]:
+                tile = self.get_tile(t)
+
+                tiles.append(tile)
+            
+            coords = {}
+            for c in assembly["coords"]:
+                tile = self.get_tile(assembly["coords"][c])
+                coords[c] = tile
+                
+            # create the Assembly
+            currentAssembly = Assembly()
+            currentAssembly.label = assembly["label"]
+            currentAssembly.leftMost = int(assembly["leftMost"])
+            currentAssembly.rightMost = int(assembly["rightMost"])
+            currentAssembly.upMost = int(assembly["upMost"])
+            currentAssembly.downMost = int(assembly["downMost"])
+            currentAssembly.tiles = tiles
+            currentAssembly.coords = coords
+
+            # update assembly in engine
+            self.engine.currentAssembly = currentAssembly
+            self.engine.validMoves = currentAssembly.getMoves(self.engine.system)
+
+            # draw to screen
+            self.ui.draw_assembly(self.engine.getCurrentAssembly())
+            self.ui.Update_available_moves()
+    
+    def get_state(self, stateJSON):
+        label = stateJSON["label"]
+        color = stateJSON["color"]
+        s = State(label, color)
+
+        return s
+    
+    def get_tile(self, t):
+        s = self.get_state(t["state"])
+        x = int(t["x"])
+        y = int(t["y"])
+        tile = Tile(s, x, y)
+
+        return tile
 
     def loads(self):
         print("Loading Assembiles")
@@ -87,7 +171,10 @@ class Historian:
     def encoder(self, obj):
         # what state should look like in json
         if isinstance(obj, State):
-            return obj.get_label()
+            statedict = {}
+            statedict["label"] = obj.get_label()
+            statedict["color"] = obj.returnColor()
+            return statedict
         elif isinstance(obj, self.Assemblies):
             dict = {}
             dict["history"] = obj.movelist
