@@ -23,7 +23,7 @@ class Historian:
     def dump(self):
         filename = QFileDialog.getSaveFileName(self.ui, "Assembly JSON File", "", "JSON Files (*.json)")
 
-        if(filename[0] != ''):
+        if filename[0] != '':
             fp = open(filename[0], 'w')
             assemblies = self.Assemblies(self.engine.moveList, self.engine.currentAssembly)
             # Dumping into one line saves a ton of space, but becomes completly unreadable, worse than it already is
@@ -36,6 +36,22 @@ class Historian:
         assemblies = self.Assemblies(self.engine.moveList, self.engine.currentAssembly)
         print(json.dumps(assemblies, sort_keys=False, default=self.encoder, indent=2))
     
+    def load(self):
+        filename = QFileDialog.getOpenFileName(self.ui, "Select JSON History", "", "JSON Files (*.json)")
+
+        if filename[0] != "":
+            fp = open(filename[0], 'r')
+
+            assemblies = json.load(fp)
+        
+        print(assemblies)
+
+        # Break down the history
+        movelist = assemblies["history"]
+
+        # Break down the assembly
+        assembly = assemblies["assembly"]
+
     def loads(self):
         print("Loading Assembiles")
         moveHistoryEncoded = json.dumps(self.engine.moveList, sort_keys=False, default=self.encoder, indent=3)

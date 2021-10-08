@@ -591,7 +591,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.Engine = Engine(currentSystem)
             self.historian.set_engine(self.Engine)
             self.SaveHistory_button.clicked.connect(self.historian.dump)
-            self.LoadHistory_button.clicked.connect(self.historian.loads)
+            self.LoadHistory_button.clicked.connect(self.historian.load)
             #a = Assembly()
             #t = Tile(currentSystem.returnSeedStates(), 0, 0)
             # a.tiles.append(t)
