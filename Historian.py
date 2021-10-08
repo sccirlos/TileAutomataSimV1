@@ -2,7 +2,7 @@ import json
 
 from UniversalClasses import Assembly, State, Tile
 
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QFileDialog, QInputDialog
 
 class Historian:
 
@@ -24,7 +24,42 @@ class Historian:
     def dump(self):
         filename = QFileDialog.getSaveFileName(self.ui, "Assembly JSON File", "", "JSON Files (*.json)")
 
-        if filename[0] != '':
+        if filename[0] == '':
+            return
+
+        steps, ok = QInputDialog().getInt(self.ui, "Assembly Steps", "Enter how steps before each snapshot (0 for final)", 0, 0, len(self.engine.moveList))
+
+        if ok:
+            step = 0
+            stepassembly = self.engine.currentAssembly
+
+            moves = len(self.engine.moveList)
+            extra = moves % steps
+            step = moves
+            if extra == 0:
+                step -= steps
+            else:
+                step -= extra
+
+            # Bring assembly to starting position
+            while moves != step:
+                stepassembly = stepassembly.undoMove(self.engine.moveList[moves - 1])
+                moves -= 1
+
+            while step != 0:
+                # dump to file
+                current_file = filename[0][:filename[0].find(".json")] + "_step" + str(step) + ".json"
+                fp = open(current_file, 'w')
+                assemblies = self.Assemblies(self.engine.moveList[:step], stepassembly, self.engine.TimeTaken[:step])
+                json.dump(assemblies, fp, sort_keys=False, default=self.encoder, indent=2)
+
+                # go to next assembly
+                nextstep = step - steps
+                while step != nextstep:
+                    stepassembly = stepassembly.undoMove(self.engine.moveList[step - 1])
+                    step -= 1
+
+            # dump final assembly
             fp = open(filename[0], 'w')
             assemblies = self.Assemblies(self.engine.moveList, self.engine.currentAssembly, self.engine.TimeTaken)
             # Dumping into one line saves a ton of space, but becomes completly unreadable, worse than it already is
