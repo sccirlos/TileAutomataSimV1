@@ -151,6 +151,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.verticalLayout_6.addWidget(self.LoadHistory_button)
         self.LoadHistory_button.setText("Load History")
 
+        self.SaveHistory_button.clicked.connect(self.historian.dump)
+        self.LoadHistory_button.clicked.connect(self.historian.load)
+
         # Function to Move window on mouse drag event on the title bar
         def moveWindow(e):
             # Detect if the window is  normal size
@@ -590,8 +593,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.time = 0
             self.Engine = Engine(currentSystem)
             self.historian.set_engine(self.Engine)
-            self.SaveHistory_button.clicked.connect(self.historian.dump)
-            self.LoadHistory_button.clicked.connect(self.historian.load)
             #a = Assembly()
             #t = Tile(currentSystem.returnSeedStates(), 0, 0)
             # a.tiles.append(t)

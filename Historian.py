@@ -7,12 +7,14 @@ from PyQt5.QtWidgets import QFileDialog, QInputDialog
 class Historian:
 
     class Assemblies:
-        def __init__(self, movelist, assembly, timetaken):
+        def __init__(self, movelist, assembly, timetaken, currentIndex):
             self.movelist = movelist
             self.assembly = assembly
             self.timetaken = timetaken
+            self.currentIndex = currentIndex
 
     def __init__(self):
+        self.engine = None
         pass
 
     def set_ui_parent(self, ui):
@@ -22,52 +24,59 @@ class Historian:
         self.engine = engine
     
     def dump(self):
+        if self.engine == None:
+            pass
+
         filename = QFileDialog.getSaveFileName(self.ui, "Assembly JSON File", "", "JSON Files (*.json)")
 
         if filename[0] == '':
             return
 
-        steps, ok = QInputDialog().getInt(self.ui, "Assembly Steps", "Enter how steps before each snapshot (0 for final)", 0, 0, len(self.engine.moveList))
+        steps, ok = QInputDialog().getInt(self.ui, "Assembly Steps", "Enter how steps before each snapshot (0 for final)", 0, 0, self.engine.currentIndex)
 
         if ok:
-            step = 0
-            stepassembly = self.engine.currentAssembly
+            if steps != 0:
+                step = 0
+                stepassembly = self.engine.currentAssembly
 
-            moves = len(self.engine.moveList)
-            extra = moves % steps
-            step = moves
-            if extra == 0:
-                step -= steps
-            else:
-                step -= extra
+                moves = self.engine.currentIndex
+                extra = moves % steps
+                step = moves
+                if extra == 0:
+                    step -= steps
+                else:
+                    step -= extra
 
-            # Bring assembly to starting position
-            while moves != step:
-                stepassembly = stepassembly.undoMove(self.engine.moveList[moves - 1])
-                moves -= 1
+                # Bring assembly to starting position
+                while moves != step:
+                    stepassembly = stepassembly.undoMove(self.engine.moveList[moves - 1])
+                    moves -= 1
 
-            while step != 0:
-                # dump to file
-                current_file = filename[0][:filename[0].find(".json")] + "_step" + str(step) + ".json"
-                fp = open(current_file, 'w')
-                assemblies = self.Assemblies(self.engine.moveList[:step], stepassembly, self.engine.TimeTaken[:step])
-                json.dump(assemblies, fp, sort_keys=False, default=self.encoder, indent=2)
+                while step != 0:
+                    # dump to file
+                    current_file = filename[0][:filename[0].find(".json")] + "_step" + str(step) + ".json"
+                    fp = open(current_file, 'w')
+                    assemblies = self.Assemblies(self.engine.moveList, stepassembly, self.engine.TimeTaken, step)
+                    json.dump(assemblies, fp, sort_keys=False, default=self.encoder, indent=2)
 
-                # go to next assembly
-                nextstep = step - steps
-                while step != nextstep:
-                    stepassembly = stepassembly.undoMove(self.engine.moveList[step - 1])
-                    step -= 1
+                    # go to next assembly
+                    nextstep = step - steps
+                    while step != nextstep:
+                        stepassembly = stepassembly.undoMove(self.engine.moveList[step - 1])
+                        step -= 1
 
             # dump final assembly
             fp = open(filename[0], 'w')
-            assemblies = self.Assemblies(self.engine.moveList, self.engine.currentAssembly, self.engine.TimeTaken)
+            assemblies = self.Assemblies(self.engine.moveList, self.engine.currentAssembly, self.engine.TimeTaken, self.engine.currentIndex)
             # Dumping into one line saves a ton of space, but becomes completly unreadable, worse than it already is
             # json.dump(assemblies, fp, sort_keys=False, default=self.encoder)
             # Dumping with some indentation makes it nice-ish, but takes a large amount of space for \n and \t and ' '
             json.dump(assemblies, fp, sort_keys=False, default=self.encoder, indent=2)
 
     def load(self):
+        if self.engine == None:
+            pass
+
         filename = QFileDialog.getOpenFileName(self.ui, "Select JSON History", "", "JSON Files (*.json)")
 
         if filename[0] != "":
@@ -118,7 +127,7 @@ class Historian:
             # update moveList in engine
             self.engine.moveList = movelist
             self.engine.lastIndex = len(movelist)
-            self.engine.currentIndex = len(movelist)
+            self.engine.currentIndex = int(assemblies["currentIndex"])
 
             # Break down the assembly
             assembly = assemblies["assembly"]
@@ -186,6 +195,7 @@ class Historian:
             return statedict
         elif isinstance(obj, self.Assemblies):
             dict = {}
+            dict["currentIndex"] = obj.currentIndex
             dict["history"] = obj.movelist
             dict["assembly"] = obj.assembly
             dict["timetaken"] = obj.timetaken
