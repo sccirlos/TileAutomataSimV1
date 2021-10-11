@@ -1,4 +1,3 @@
-from os import stat
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QFileDialog, QWidget, QVBoxLayout
 from PyQt5.QtGui import QPainter
@@ -180,6 +179,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         self.label_2.setText("")
 
+        self.thread = QThread()
+
     # Slide left menu function
     def slideLeftMenu(self):  # ANIMATION NEEDS TO BE WORKED ON SO ITS BEEN TURNED OFF
         # Get current left menu width
@@ -262,28 +263,28 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def keyPressEvent(self, event):
         #### Moving tiles across screen functions #####
         # up arrow key is pressed
-        if event.key() == Qt.Key_W:
+        if event.key() == Qt.Key_W and not self.play:
             self.seedY = self.seedY - 10
             self.textY = self.textY - 10
             if self.Engine != None:
                 self.draw_assembly(self.Engine.getCurrentAssembly())
 
         # down arrow key is pressed
-        elif event.key() == Qt.Key_S:
+        elif event.key() == Qt.Key_S and not self.play:
             self.seedY = self.seedY + 10
             self.textY = self.textY + 10
             if self.Engine != None:
                 self.draw_assembly(self.Engine.getCurrentAssembly())
 
         # left arrow key is pressed
-        elif event.key() == Qt.Key_A:
+        elif event.key() == Qt.Key_A and not self.play:
             self.seedX = self.seedX - 10
             self.textX = self.textX - 10
             if self.Engine != None:
                 self.draw_assembly(self.Engine.getCurrentAssembly())
 
         # down arrow key is pressed
-        elif event.key() == Qt.Key_D:
+        elif event.key() == Qt.Key_D and not self.play:
             self.seedX = self.seedX + 10
             self.textX = self.textX + 10
             if self.Engine != None:
@@ -306,6 +307,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.last_step()
 
     def wheelEvent(self, event):
+        if self.play:
+            return
+        
         #### Zoom in functions for the scroll wheel ####
         if event.angleDelta().y() == 120:
             self.tileSize = self.tileSize + 10
@@ -664,14 +668,19 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
     def first_step(self):
         if self.SysLoaded == True:
-            self.stop_sequence()
-            self.Engine.first()
-            self.time = 0
-            self.draw_assembly(self.Engine.getCurrentAssembly())
-            self.Update_available_moves()
+            if self.play:
+                self.stop_sequence()
+                self.thread.finished.connect(self.first_step)
+            else:
+                self.Engine.first()
+                self.time = 0
+                self.draw_assembly(self.Engine.getCurrentAssembly())
+                self.Update_available_moves()
 
     def prev_step(self):
-        self.stop_sequence()
+        if self.play:
+            return
+
         if self.SysLoaded == True:
             if self.Engine.currentIndex > 0:
                 self.Engine.back()
@@ -682,7 +691,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 
 
     def next_step(self):
-        self.stop_sequence()
+        if self.play:
+            return
+        
         if self.SysLoaded == True:
             if self.Engine.step() != -1:
                 # Might need to go above
@@ -690,47 +701,46 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 self.draw_move(self.Engine.getCurrentMove(), 1)
 
     def last_step(self):
-        self.stop_sequence()
         if self.SysLoaded == True:
-            while (self.Engine.step() != -1):
-                self.time = self.time + (self.Engine.timeTaken())
+            if self.play:
+                self.stop_sequence()
+                self.thread.finished.connect(self.last_step)
+            else:
+                while (self.Engine.step() != -1):
+                    self.time = self.time + (self.Engine.timeTaken())
 
-            self.draw_assembly(self.Engine.getCurrentAssembly())
-            self.Update_available_moves()
+                self.draw_assembly(self.Engine.getCurrentAssembly())
+                self.Update_available_moves()
 
     def play_sequence(self):
         if self.SysLoaded == True:
             if self.play == False:
-                self.Play_button.setIcon(QtGui.QIcon(
-                    'Icons/tabler-icon-player-pause.png'))
                 self.play = True
-                while((self.Engine.step() != -1) and self.play == True):
-                    #print(self.Engine.currentIndex)
-                    self.time = self.time + (self.Engine.timeTaken())
+                self.Play_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-pause.png'))
+                
+                self.thread.deleteLater()
+                self.thread = QThread()
+                self.worker = Player()
+                self.worker.give_ui(self)
 
-                    loop = QtCore.QEventLoop()
-                    if self.Engine.currentIndex != 0:
-                        QtCore.QTimer.singleShot(
-                            int(self.delay * self.Engine.timeTaken()), loop.quit)
-                    else:
-                        QtCore.QTimer.singleShot(self.delay, loop.quit)
-                    loop.exec_()
+                self.worker.moveToThread(self.thread)
 
-                    self.draw_move(self.Engine.getCurrentMove(), 1)
-                    # if self.Engine.currentIndex != 0: #and self.Engine.currentIndex < self.Engine.lastIndex:
+                self.thread.started.connect(self.worker.run)
 
-                # self.step = len(self.Engine.assemblyList) - 1 #this line is here to prevent a crash that happens if you click last after play finishes
+                self.worker.finished.connect(self.thread.quit)
+                self.worker.finished.connect(self.worker.deleteLater)
+
+                self.thread.finished.connect(lambda: self.draw_assembly(self.Engine.getCurrentAssembly()))
+                self.thread.finished.connect(lambda: self.Update_available_moves())
+
+                # self.thread.finished.connect(self.thread.deleteLater)
+
+                self.thread.start()
+
+            elif self.play == True:
+                self.Play_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-play.png'))
                 self.stop_sequence()
-                self.draw_assembly(self.Engine.getCurrentAssembly())
-                self.Update_available_moves()
-                self.Play_button.setIcon(QtGui.QIcon(
-                    'Icons/tabler-icon-player-play.png'))
-
-            if self.play == True:
-                self.Play_button.setIcon(QtGui.QIcon(
-                    'Icons/tabler-icon-player-play.png'))
-                self.stop_sequence()
-                self.Update_available_moves()
+                #self.Update_available_moves()
 
     def stop_sequence(self):
         self.play = False
