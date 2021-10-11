@@ -6,6 +6,7 @@ from PyQt5.QtCore import QObject, QThread, pyqtSignal
 
 from PyQt5.QtCore import Qt
 from random import randrange
+from Player import Player
 
 from assemblyEngine import Engine
 from UniversalClasses import System, Assembly, Tile
@@ -697,66 +698,33 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.draw_assembly(self.Engine.getCurrentAssembly())
             self.Update_available_moves()
 
-    # Multithreading experimentation
-    #
-    # https://realpython.com/python-pyqt-qthread/
-    # copied from here
-    
-    # Allows for easier signal connection, no parameters required here
-    def draw_current(self):
-        self.draw_tiles(self.Engine.getCurrentAssembly())
-
-    # Worker
-    # Just a class that a thread can call functions from, apparently needs to inherit from Object
-    class Worker(QObject):
-        # Signals
-
-        # A signal that will 'emit' once the work is done (or whenever you call the emit() function)
-        finished = pyqtSignal()
-
-        # A signal to update something, in the example they update ONE number, while we have to update a lot of tiles
-        # Could possibly do something smart with this
-        progress = pyqtSignal(int)
-
-        # default __init__ requires some fancy parameters that I didn't feel like learning about
-        # must call this and give it the UiWindow
-        def give_ui(self, ui):
-            self.ui = ui
-
-        # the main function that gets ran, does not really have to be called run, could be any function really
-        def run(self):
-            self.ui.Play_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-pause.png'))
-            self.ui.play = True
-
-            while((self.ui.Engine.step() != -1) and self.ui.play == True):
-                self.ui.time = self.ui.time + (self.ui.Engine.timeTaken())
-                self.ui.draw_move(self.ui.Engine.getCurrentMove(), 1)
-
-            # stop playing
-            self.ui.stop_sequence()
-            self.ui.draw_assembly(self.ui.Engine.getCurrentAssembly())
-            #self.ui.Update_available_moves()
-            self.ui.Play_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-play.png'))
-
-            # tell whoever cares about the work being completed
-            self.finished.emit()
-
     def play_sequence(self):
         if self.SysLoaded == True:
             if self.play == False:
-                self.thread = QThread()
-                self.worker = self.Worker()
+                self.Play_button.setIcon(QtGui.QIcon(
+                    'Icons/tabler-icon-player-pause.png'))
+                self.play = True
+                while((self.Engine.step() != -1) and self.play == True):
+                    #print(self.Engine.currentIndex)
+                    self.time = self.time + (self.Engine.timeTaken())
 
-                self.worker.give_ui(self)
-                self.worker.moveToThread(self.thread)
+                    loop = QtCore.QEventLoop()
+                    if self.Engine.currentIndex != 0:
+                        QtCore.QTimer.singleShot(
+                            int(self.delay * self.Engine.timeTaken()), loop.quit)
+                    else:
+                        QtCore.QTimer.singleShot(self.delay, loop.quit)
+                    loop.exec_()
 
-                self.thread.started.connect(self.worker.run)
-                self.worker.finished.connect(self.thread.quit)
-                self.worker.finished.connect(self.worker.deleteLater)
-                self.thread.finished.connect(self.thread.deleteLater)
-                self.thread.finished.connect(self.Update_available_moves)
+                    self.draw_move(self.Engine.getCurrentMove(), 1)
+                    # if self.Engine.currentIndex != 0: #and self.Engine.currentIndex < self.Engine.lastIndex:
 
-                self.thread.start()
+                # self.step = len(self.Engine.assemblyList) - 1 #this line is here to prevent a crash that happens if you click last after play finishes
+                self.stop_sequence()
+                self.draw_assembly(self.Engine.getCurrentAssembly())
+                self.Update_available_moves()
+                self.Play_button.setIcon(QtGui.QIcon(
+                    'Icons/tabler-icon-player-play.png'))
 
             if self.play == True:
                 self.Play_button.setIcon(QtGui.QIcon(
