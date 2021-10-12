@@ -236,13 +236,13 @@ class Engine:
 
         # perform move
         if forwards:
-            self.currentAssembly = self.currentAssembly.performMove(move)
+            self.currentAssembly.performMove(move)
             self.moveList.append(move)
         else:
             self.currentAssembly = self.currentAssembly.undoMove(move)
 
         # add all moves that need to be added
-        
+
         # If Attachment 
         if move["type"] == "a":
 
