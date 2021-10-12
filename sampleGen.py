@@ -60,7 +60,7 @@ if __name__ == "__main__":
 
     # Sample General systems
     sys15 = nonDetGen.genQuadIndexStates(81)
-    SaveFile.main(sys11, ["XML Files/samples/IndexStatesND.xml"])
+    SaveFile.main(sys15, ["XML Files/samples/IndexStatesND.xml"])
 
     num = ""
 
