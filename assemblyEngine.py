@@ -42,18 +42,7 @@ class Engine:
 
         self.validMoves = self.currentAssembly.getMoves(self.system)
 
-    # want to get all states added to the editor window 'add state' section
-    # maybe should break it up: color on col 1 , label on col 2
-    # get label first 
-    def getSys4Editor(self):
-        for state in CompleteStateSet:
-            label = UniversalClasses.State(self.get_label)
-            color = UniversalClasses.State(self.get_color)
-
-        #for state in states
-         #   stateLabel = 
-         #   get_states = UniversalClasses.State()
-
+   
 
 
 
