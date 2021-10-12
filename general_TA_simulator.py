@@ -732,13 +732,13 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
                 self.thread.finished.connect(lambda: self.draw_assembly(self.Engine.getCurrentAssembly()))
                 self.thread.finished.connect(lambda: self.Update_available_moves())
+                self.thread.finished.connect(lambda: self.Play_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-play.png')))
 
                 # self.thread.finished.connect(self.thread.deleteLater)
 
                 self.thread.start()
 
             elif self.play == True:
-                self.Play_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-play.png'))
                 self.stop_sequence()
                 #self.Update_available_moves()
 
