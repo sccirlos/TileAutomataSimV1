@@ -5,7 +5,7 @@ from PyQt5.QtCore import QObject, QThread, pyqtSignal
 
 from PyQt5.QtCore import Qt
 from random import randrange
-from Player import Player
+from Player import ComputeLast, Player
 
 from assemblyEngine import Engine
 from UniversalClasses import System, Assembly, Tile
@@ -180,6 +180,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.label_2.setText("")
 
         self.thread = QThread()
+        self.threadlast = QThread()
 
     # Slide left menu function
     def slideLeftMenu(self):  # ANIMATION NEEDS TO BE WORKED ON SO ITS BEEN TURNED OFF
@@ -705,12 +706,24 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             if self.play:
                 self.stop_sequence()
                 self.thread.finished.connect(self.last_step)
-            else:
-                while (self.Engine.step() != -1):
-                    self.time = self.time + (self.Engine.timeTaken())
+            elif not self.threadlast.isRunning():
 
-                self.draw_assembly(self.Engine.getCurrentAssembly())
-                self.Update_available_moves()
+                self.threadlast.deleteLater()
+                self.threadlast = QThread()
+                self.workerlast = ComputeLast()
+                self.workerlast.give_ui(self)
+
+                self.workerlast.moveToThread(self.threadlast)
+
+                self.threadlast.started.connect(self.workerlast.run)
+
+                self.workerlast.finished.connect(self.threadlast.quit)
+                self.workerlast.finished.connect(self.workerlast.deleteLater)
+
+                self.threadlast.finished.connect(lambda: self.draw_assembly(self.Engine.getCurrentAssembly()))
+                self.threadlast.finished.connect(lambda: self.Update_available_moves())
+
+                self.threadlast.start()
 
     def play_sequence(self):
         if self.SysLoaded == True:
@@ -734,13 +747,10 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 self.thread.finished.connect(lambda: self.Update_available_moves())
                 self.thread.finished.connect(lambda: self.Play_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-play.png')))
 
-                # self.thread.finished.connect(self.thread.deleteLater)
-
                 self.thread.start()
 
             elif self.play == True:
                 self.stop_sequence()
-                #self.Update_available_moves()
 
     def stop_sequence(self):
         self.play = False
