@@ -53,7 +53,6 @@ class ComputeLast(QObject):
 
     # A signal that will 'emit' once the work is done (or whenever you call the emit() function)
     finished = pyqtSignal()
-    counter = 0
 
     # default __init__ requires some fancy parameters that I didn't feel like learning about
     # must call this and give it the UiWindow
@@ -61,15 +60,9 @@ class ComputeLast(QObject):
         self.ui = ui
 
     def run(self):
-        print("STARTING WORK!")
         while((self.ui.Engine.step() != -1)):
             self.ui.time = self.ui.time + (self.ui.Engine.timeTaken())
-            self.counter += 1
-            if self.counter == 1000:
-                print("working...", len(self.ui.Engine.validMoves))
-                self.counter = 0
         
         self.finished.emit()
 
         self.ui.stop_sequence()
-        print("done")
