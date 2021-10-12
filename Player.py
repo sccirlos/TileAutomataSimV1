@@ -1,6 +1,8 @@
 from PyQt5.QtCore import QObject, pyqtSignal
 from PyQt5 import QtGui
 
+import time
+
 # Multithreading
 # 
 # https://realpython.com/python-pyqt-qthread/
@@ -32,6 +34,11 @@ class Player(QObject):
         while((self.ui.Engine.step() != -1) and self.ui.play == True):
             self.ui.time = self.ui.time + (self.ui.Engine.timeTaken())
             self.ui.draw_move(self.ui.Engine.getCurrentMove(), 1)
+            if self.ui.SlowMode_button.isChecked():
+                if self.ui.Engine.currentIndex != 0:
+                    time.sleep(self.ui.delay * self.ui.Engine.timeTaken() / 1000)
+                else:
+                    time.sleep(self.ui.delay / 1000)
         
         self.finished.emit()
             
