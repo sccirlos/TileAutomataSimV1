@@ -5,6 +5,8 @@ import UniversalClasses
 
 import sys
 
+import copy
+
 
 ### Debugging Functions
 def printMove(move):
@@ -37,7 +39,8 @@ class Engine:
         self.seedAssembly.set_tiles([seed])
         # Changed from adding to list to setting it as the current assembly
         #self.assemblyList.append(seedAssembly)
-        self.currentAssembly = self.seedAssembly
+        # self.currentAssembly = self.seedAssembly
+        self.currentAssembly = copy.deepcopy(self.seedAssembly)
 
         self.validMoves = self.currentAssembly.getMoves(self.system)
 
