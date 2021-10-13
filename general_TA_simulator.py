@@ -451,6 +451,11 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.label_3.setText("Current step time: \n 0 time steps")
 
     def Update_available_moves(self):
+        return
+
+        if self.play:
+            return
+        
         # Remove old widgets from the layout
         for m in self.moveWidgets:
             self.movesLayout.removeWidget(m)
@@ -740,12 +745,11 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
                 self.thread.started.connect(self.worker.run)
 
+                self.worker.finished.connect(lambda: self.draw_assembly(self.Engine.getCurrentAssembly()))
+                self.worker.finished.connect(lambda: self.Update_available_moves())
+                self.worker.finished.connect(lambda: self.Play_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-play.png')))
                 self.worker.finished.connect(self.thread.quit)
                 self.worker.finished.connect(self.worker.deleteLater)
-
-                self.thread.finished.connect(lambda: self.draw_assembly(self.Engine.getCurrentAssembly()))
-                self.thread.finished.connect(lambda: self.Update_available_moves())
-                self.thread.finished.connect(lambda: self.Play_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-play.png')))
 
                 self.thread.start()
 

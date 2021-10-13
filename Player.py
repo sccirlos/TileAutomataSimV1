@@ -32,7 +32,7 @@ class Player(QObject):
     #     self.finished.emit()
 
     def run(self):
-        while((self.ui.Engine.step() != -1) and self.ui.play == True):
+        while(self.ui.play == True and (self.ui.Engine.step() != -1)):
             self.ui.time = self.ui.time + (self.ui.Engine.timeTaken())
             self.ui.draw_move(self.ui.Engine.getCurrentMove(), 1)
             if self.ui.SlowMode_button.isChecked():
