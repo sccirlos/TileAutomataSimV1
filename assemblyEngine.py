@@ -85,7 +85,7 @@ class Engine:
 
     def first(self):
         self.currentIndex = 0
-        self.currentAssembly = self.seedAssembly
+        self.currentAssembly = copy.deepcopy(self.seedAssembly)
         self.validMoves = self.currentAssembly.getMoves(self.system)
 
     def last(self):
