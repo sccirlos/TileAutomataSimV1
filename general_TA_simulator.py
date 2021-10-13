@@ -139,6 +139,13 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         # List of Move Widgets
         self.moveWidgets = []
 
+        # Add 10 Move widgets that we overwrite
+        for i in range(10):
+            mGUI = Move(None, self, self.centralwidget)
+            mGUI.setFixedHeight(40)
+            self.moveWidgets.append(mGUI)
+            self.movesLayout.addWidget(mGUI)
+
         # Function to Move window on mouse drag event on the title bar
         def moveWindow(e):
             # Detect if the window is  normal size
@@ -451,11 +458,10 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.label_3.setText("Current step time: \n 0 time steps")
 
     def Update_available_moves(self):
-        # Remove old widgets from the layout
+        # Set all moves to None
         for m in self.moveWidgets:
-            self.movesLayout.removeWidget(m)
-            m.deleteLater()
-        self.moveWidgets = []
+            m.move = None
+            m.hide()
 
         # If no more moves, show it
         if len(self.Engine.validMoves) == 0:
@@ -466,11 +472,13 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         # If there are moves to pick, show them
         elif not len(self.Engine.validMoves) == 0:
             # Create moves and add to layout
+            i = 0
             for m in self.Engine.validMoves:
-                mGUI = Move(m, self, self.centralwidget)
-                mGUI.setFixedHeight(34)
-                self.moveWidgets.append(mGUI)
-                self.movesLayout.addWidget(mGUI)
+                if i < 10:
+                    self.moveWidgets[i].move = m
+                    self.moveWidgets[i].show()
+                    i += 1
+                
 
     def draw_to_screen(self, x, y, label, painter, brush):
         painter.setBrush(brush)
@@ -740,11 +748,12 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
                 self.thread.started.connect(self.worker.run)
 
-                self.worker.finished.connect(lambda: self.draw_assembly(self.Engine.getCurrentAssembly()))
-                self.worker.finished.connect(lambda: self.Update_available_moves())
-                self.worker.finished.connect(lambda: self.Play_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-play.png')))
                 self.worker.finished.connect(self.thread.quit)
                 self.worker.finished.connect(self.worker.deleteLater)
+
+                self.thread.finished.connect(lambda: self.draw_assembly(self.Engine.getCurrentAssembly()))
+                self.thread.finished.connect(lambda: self.Update_available_moves())
+                self.thread.finished.connect(lambda: self.Play_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-play.png')))
 
                 self.thread.start()
 
@@ -772,6 +781,9 @@ class Move(QWidget):
     
     def draw(self, event, qp):
         moveText = ""
+        
+        if self.move == None:
+            return
 
         if self.move["type"] == "a":
             moveText = "Attach\n" +  self.move["state1"].get_label() + " at " + str(self.move["x"]) + " , " + str(self.move["y"])
@@ -789,6 +801,9 @@ class Move(QWidget):
         qp.drawRect(event.rect())
     
     def mousePressEvent(self, event):
+        if self.move == None:
+            return
+        
         self.mw.do_move(self.move)
 
 
