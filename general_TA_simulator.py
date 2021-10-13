@@ -7,7 +7,7 @@ from PyQt5.QtCore import Qt
 from random import randrange, seed
 
 from assemblyEngine import Engine
-from UniversalClasses import System, Assembly, Tile, State
+from UniversalClasses import AffinityRule, System, Assembly, Tile, State, TransitionRule
 import TAMainWindow
 import LoadFile
 import SaveFile
@@ -537,18 +537,99 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
         self.setupUi(self)
         self.Engine = engine
         self.system = engine.system
+         # set row count state table
         self.newStateIndex = len(self.system.states)
-
         self.tableWidget.setRowCount(len(self.system.states))
         print(len(self.system.states))
+         # set row count affinity table
+        self.newAffinityIndex = (len(self.system.vertical_affinities_list)) + (len(self.system.horizontal_affinities_list))
+        self.tableWidget_2.setRowCount(len(self.system.vertical_affinities_list) + len(self.system.horizontal_affinities_list))
+        print(len(self.system.vertical_affinities_list) + len(self.system.horizontal_affinities_list))
+         # set row count transition table
+        self.newTransitionIndex = (len(self.system.vertical_transitions_list)) + (len(self.system.horizontal_transitions_list))
+        self.tableWidget_3.setRowCount(len(self.system.vertical_transitions_list) + len(self.system.horizontal_transitions_list))
+        print(len(self.system.vertical_transitions_list) + len(self.system.horizontal_transitions_list))
 
-       #testing
-       # self.tableWidget_2.setRowCount(len(self.system.states))
-       # print(len(self.system.states))
 
-        # connect the color change
+         # connect the color change
         self.tableWidget.cellChanged.connect(self.cellchanged)
 
+         # filling in table 2 with vertical affinities
+        r = 0
+        for af in self.system.vertical_affinities_list:
+            label1 = QTableWidgetItem()
+            label1.setText(af.returnLabel1()) 
+            label2 = QTableWidgetItem()
+            label2.setText(af.returnLabel2())
+            self.tableWidget_2.setItem(r, 0, label1)
+            self.tableWidget_2.setItem(r, 1, label2)
+           
+            direc = QTableWidgetItem()
+            direc.setText(af.returnDir())
+            self.tableWidget_2.setItem(r, 2, direc)
+            glue = QTableWidgetItem()
+            glue.setText(af.returnStr())
+            self.tableWidget_2.setItem(r, 3, glue)
+            r += 1
+
+        # filling in table 2 with horizontal affinities
+        for afH in self.system.horizontal_affinities_list:
+            label1HR = QTableWidgetItem()
+            label1HR.setText(afH.returnLabel1())
+            self.tableWidget_2.setItem(r, 0, label1HR)
+            label2HR = QTableWidgetItem()
+            label2HR.setText(afH.returnLabel2())
+            self.tableWidget_2.setItem(r, 1, label2HR)
+            direcHR = QTableWidgetItem()
+            direcHR.setText(afH.returnDir())
+            self.tableWidget_2.setItem(r, 2, direcHR)
+            glueHR = QTableWidgetItem()
+            glueHR.setText(afH.returnStr())
+            self.tableWidget_2.setItem(r, 3, glueHR)
+            r += 1
+
+
+        # filling in table 3 with vertical transitions
+        r = 0
+        for trV in self.system.vertical_transitions_list:
+            stateVT1 = QTableWidgetItem()
+            stateVT1.setText(trV.returnLabel1())
+            self.tableWidget_3.setItem(r, 0, stateVT1)
+            stateVT2 = QTableWidgetItem()
+            stateVT2.setText(trV.returnLabel2())
+            self.tableWidget_3.setItem(r, 1, stateVT2)
+            finalVT1 = QTableWidgetItem()
+            finalVT1.setText(trV.returnLabel1Final())
+            self.tableWidget_3.setItem(r, 3, finalVT1)
+            finalVT2 = QTableWidgetItem()
+            finalVT2.setText(trV.returnLabel2Final())
+            self.tableWidget_3.setItem(r, 4, finalVT2)
+            direcVT = QTableWidgetItem()
+            direcVT.setText(trV.returnDir())
+            self.tableWidget_3.setItem(r, 5, direcVT)
+            r += 1
+
+        # filling in table 3 with horizontal transitions
+        for trH in self.system.horizontal_transitions_list:
+            stateHT1 = QTableWidgetItem()
+            stateHT1.setText(trH.returnLabel1())
+            self.tableWidget_3.setItem(r, 0, stateHT1)
+            stateHT2 = QTableWidgetItem()
+            stateHT2.setText(trH.returnLabel2())
+            self.tableWidget_3.setItem(r, 1, stateHT2)
+            finalHT1 = QTableWidgetItem()
+            finalHT1.setText(trH.returnLabel1Final())
+            self.tableWidget_3.setItem(r, 3, finalHT1)
+            finalHT2 = QTableWidgetItem()
+            finalHT2.setText(trH.returnLabel2Final())
+            self.tableWidget_3.setItem(r, 4, finalHT2)
+            direcHT = QTableWidgetItem()
+            direcHT.setText(trH.returnDir())
+            self.tableWidget_3.setItem(r, 5, direcHT)
+            r += 1
+
+
+        # filling in table 1 with states
         r = 0
         for s in self.system.states:
             color_cell = QTableWidgetItem()
@@ -558,6 +639,8 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
             self.tableWidget.setItem(r, 0, color_cell)
 
             label_cell = QTableWidgetItem()
+            #need to center the widgets 
+            #self.label_cell.setGeometry(QtCore.QRect(0, 0, 765, 340))
             label_cell.setText(s.get_label())
             self.tableWidget.setItem(r, 1, label_cell)
 
@@ -577,37 +660,17 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
 
             r += 1
 
-        # cell1 = QTableWidgetItem()
-        # cell1.setText("test")
-
-        # self.tableWidget.setItem(0,0, cell1)
     
      # action for 'apply' the changes made to the side edit window to the view states side 
         self.pushButton.clicked.connect(self.Click_EditApply)
          # action for 'save' the changes made to the side edit window to the XML file
         self.pushButton_2.clicked.connect(self.Click_EditSaveAs)
         self.pushButton_3.clicked.connect(self.Click_AddRowStates)
+        self.pushButton_4.clicked.connect(self.Click_AddRowAff)
+        self.pushButton_5.clicked.connect(self.Click_AddRowTrans)
 
 
-    # # get currentSystem and display states on editor by color and label
-    # # want to get states color in table first 
-    # # states are in a list, need the list to display down the column
-    # def getSys(self):
-    #     if self.SysLoaded == True:
-    #         global currentSystem
-    #       #  stateLabel = UniversalClasses.State()
-    #       # right now this gets states label only
-    #         self.Engine.getSys4Editor()
-    #         # fill label column in tablewidget
-    #         # set row count as long as the number of states
-    #         self.tableWidget.setRowCount(len(self.))
-
-
-
-
-    #         # print out on command line first to check!
-    #         print("states to be added to table:")
-
+    # for 'add state'
     def cellchanged(self, row, col):
         # only do anything is we are in the color column (0)
         if col == 0:
@@ -618,7 +681,8 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
             color_cell.setForeground(QtGui.QColor("#" + color))
             color_cell.setBackground(QtGui.QColor("#" + color))
 
-
+    # would have to change widget geometry here as well? 
+    # probably not since it can apply to the new ones
     def Click_AddRowStates(self):
         print("Add Row in States clicked")
         newrow = self.tableWidget.rowCount()
@@ -636,6 +700,45 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
         initial_cell = QCheckBox(self.tableWidget)        
         self.tableWidget.setCellWidget(newrow, 3, initial_cell)
         
+     # To add new row entered by user as a rule
+    def Click_AddRowAff(self):
+        print("Add Row in Affinities clicked")
+        newrow = self.tableWidget_2.rowCount()
+        self.tableWidget_2.setRowCount(newrow + 1)
+
+        label1 = QTableWidgetItem()
+        self.tableWidget_2.setItem(newrow, 0, label1)
+
+        label2 = QTableWidgetItem()
+        self.tableWidget_2.setItem(newrow, 1, label2)
+
+        direc = QTableWidgetItem()        
+        self.tableWidget_2.setItem(newrow, 2, direc)
+
+        glue = QTableWidgetItem()
+        self.tableWidget_2.setItem(newrow, 3, glue)
+
+
+    def Click_AddRowTrans(self):
+        print("Add Row in Transitions clicked")
+        newrow = self.tableWidget_3.rowCount()
+        self.tableWidget_3.setRowCount(newrow + 1)
+
+        tLabel1 = QTableWidgetItem()
+        self.tableWidget_3.setItem(newrow, 0, tLabel1)
+
+        tLabel2 = QTableWidgetItem()
+        self.tableWidget_3.setItem(newrow, 1, tLabel2)
+
+        tFinal1 = QTableWidgetItem()
+        self.tableWidget_3.setItem(newrow, 3, tFinal1)
+
+        tFinal2 = QTableWidgetItem()
+        self.tableWidget_3.setItem(newrow, 4, tFinal2)
+
+        tDirec = QTableWidgetItem()
+        self.tableWidget_3.setItem(newrow, 5, tDirec)
+
 
     def Click_EditApply(self):
         print("Apply button clicked")
@@ -657,11 +760,43 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
             if initial:
                 self.system.add_Initial_State(s)
 
+        for row in range(self.newAffinityIndex, self.tableWidget_2.rowCount()):
+            label1 = self.tableWidget_2.item(row, 0)
+            label2 = self.tableWidget_2.item(row, 1)
+            
+            direc = self.tableWidget_2.item(row, 2)
+            glue = self.tableWidget_2.item(row,3)
 
+            lab1 = label1.text()
+            lab2 = label2.text()
+            dire = direc.text()
+            glu = glue.text()
+
+            afRule = AffinityRule(lab1, lab2, dire, glu)
+
+            self.system.add_affinity(afRule)
+
+        for row in range(self.newTransitionIndex, self.tableWidget_3.rowCount()):
+            tLabel1 = self.tableWidget_3.item(row, 0)
+            tLabel2 = self.tableWidget_3.item(row, 1)
+            tFinal1 = self.tableWidget_3.item(row, 3)
+            tFinal2 = self.tableWidget_3.item(row, 4)
+            tDirec = self.tableWidget_3.item(row, 5)
+
+            tLab1 = tLabel1.text()
+            tLab2 = tLabel2.text()
+            tFin1 = tFinal1.text()
+            tFin2 = tFinal2.text()
+            tDir = tDirec.text()
+
+            trRule = TransitionRule(tLab1, tLab2, tFin1, tFin2, tDir)
+
+            self.system.add_transition(trRule)
+
+
+     # working on this currently
     def Click_EditSaveAs(self):
         print("Save As button clicked")
-
-     # functions - accessing dictionaries for states, rules
     
 
 if __name__ == "__main__":
