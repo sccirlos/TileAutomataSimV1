@@ -30,7 +30,7 @@ if __name__ == "__main__":
     sys5 = detGen.genSqrtBinCount(50)
     SaveFile.main(sys5, ["XML Files/samples/smallBinCountDet.xml"])
 
-    sys6 = detGen.genSqrtBinString(125)
+    sys6 = detGen.genSqrtBinCount(125)
     SaveFile.main(sys6, ["XML Files/samples/largeBinCountDet.xml"])
 
     sys7 = detGen.genSqrtBaseBString("123456789", 10)
@@ -42,21 +42,21 @@ if __name__ == "__main__":
     sys9 = detGen.genSqrtBaseBCount("9950", 10)
     SaveFile.main(sys9, ["XML Files/samples/smallDecimalCountDet.xml"])
 
-    sys10 = detGen.genSqrtBaseBString("999999000", 10)
+    sys10 = detGen.genSqrtBaseBCount("999999000", 10)
     SaveFile.main(sys10, ["XML Files/samples/largeDecimalCountDet.xml"])
 
     # Sample One Sided systems
     sys11 = oneSidedGen.genTripleIndexStates(27)
-    SaveFile.main(sys11, ["XML Files/samples/smallIndexStates1S.xml"])
+    SaveFile.main(sys11, ["XML Files/samples/smallIndexStatesSR.xml"])
 
     sys12 = oneSidedGen.genTripleIndexStates(125)
-    SaveFile.main(sys12, ["XML Files/samples/largeIndexStates1S.xml"])
+    SaveFile.main(sys12, ["XML Files/samples/largeIndexStatesSR.xml"])
 
     sys13 = oneSidedGen.cbrtBinString("110011010110011010110011010")
-    SaveFile.main(sys13, ["XML Files/samples/BinString1S.xml"])
+    SaveFile.main(sys13, ["XML Files/samples/BinStringSR.xml"])
 
     sys14 = oneSidedGen.cbrtBinCount(1000)
-    SaveFile.main(sys14, ["XML Files/samples/smallBinCount1S.xml"])
+    SaveFile.main(sys14, ["XML Files/samples/BinCountSR.xml"])
 
     # Sample General systems
     sys15 = nonDetGen.genQuadIndexStates(81)
