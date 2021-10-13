@@ -1,5 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QFileDialog, QWidget, QVBoxLayout
+from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QFileDialog, QPushButton, QWidget, QVBoxLayout
 from PyQt5.QtGui import QPainter
 from PyQt5.QtCore import QObject, QThread, pyqtSignal
 
@@ -16,6 +16,7 @@ import Assembler_Proto
 import QuickRotate
 import QuickCombine
 import QuickReflect
+import math
 
 import sys
 
@@ -139,8 +140,24 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         # List of Move Widgets
         self.moveWidgets = []
 
+        self.move_status = QLabel("No Available Moves")
+        self.movesLayout.addWidget(self.move_status)
+
+        self.next_moves_button = QPushButton()
+        self.next_moves_button.setText("Next")
+        self.next_moves_button.clicked.connect(self.next_set_of_moves)
+        self.prev_moves_button = QPushButton()
+        self.prev_moves_button.setText("Prev")
+        self.prev_moves_button.clicked.connect(self.prev_set_of_moves)
+
+        self.moves_page = 0
+        self.moves_per_page = 8
+
+        self.movesLayout.addWidget(self.next_moves_button)
+        self.movesLayout.addWidget(self.prev_moves_button)
+
         # Add 10 Move widgets that we overwrite
-        for i in range(10):
+        for i in range(self.moves_per_page):
             mGUI = Move(None, self, self.centralwidget)
             mGUI.setFixedHeight(40)
             self.moveWidgets.append(mGUI)
@@ -456,25 +473,69 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         else:
             self.label_2.setText("Time elapsed: \n 0 time steps")
             self.label_3.setText("Current step time: \n 0 time steps")
-
-    def Update_available_moves(self):
+        
+    def prev_set_of_moves(self):
+        if not self.play:
+            self.moves_page -= 1
+            self.show_other_page()
+    
+    def next_set_of_moves(self):
+        if not self.play:
+            self.moves_page += 1
+            self.show_other_page()
+    
+    def show_other_page(self):
         # Set all moves to None
         for m in self.moveWidgets:
             m.move = None
             m.hide()
+        self.move_status.hide()
+        
+        
+        # if page is negative, wrap around
+        # if page is over the limit, wrap around
+        if self.moves_page < 0:
+            newpage = 1.0 * len(self.Engine.validMoves) / self.moves_per_page
+            newpage = math.ceil(newpage)
+            self.moves_page = newpage - 1
+        elif self.moves_page * self.moves_per_page >= len(self.Engine.validMoves):
+            self.moves_page = 0
 
         # If no more moves, show it
         if len(self.Engine.validMoves) == 0:
-            status = QLabel("No Available Moves")
-            self.moveWidgets.append(status)
-            self.movesLayout.addWidget(status)
+            self.move_status.show()
+            
+        # If there are moves to pick, show them
+        elif not len(self.Engine.validMoves) == 0:
+            # Create moves and add to layout
+            i = 0
+            for m_i in range(self.moves_page * self.moves_per_page, len(self.Engine.validMoves)):
+                m = self.Engine.validMoves[m_i]
+
+                if i < self.moves_per_page:
+                    self.moveWidgets[i].move = m
+                    self.moveWidgets[i].show()
+                    i += 1
+
+    def Update_available_moves(self):
+        self.moves_page = 0
+
+        # Set all moves to None
+        for m in self.moveWidgets:
+            m.move = None
+            m.hide()
+        self.move_status.hide()
+
+        # If no more moves, show it
+        if len(self.Engine.validMoves) == 0:
+            self.move_status.show()
         
         # If there are moves to pick, show them
         elif not len(self.Engine.validMoves) == 0:
             # Create moves and add to layout
             i = 0
             for m in self.Engine.validMoves:
-                if i < 10:
+                if i < self.moves_per_page:
                     self.moveWidgets[i].move = m
                     self.moveWidgets[i].show()
                     i += 1
