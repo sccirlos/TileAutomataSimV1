@@ -451,11 +451,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.label_3.setText("Current step time: \n 0 time steps")
 
     def Update_available_moves(self):
-        return
-
-        if self.play:
-            return
-        
         # Remove old widgets from the layout
         for m in self.moveWidgets:
             self.movesLayout.removeWidget(m)
