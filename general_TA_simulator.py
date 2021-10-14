@@ -559,16 +559,20 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
         for af in self.system.vertical_affinities_list:
             label1 = QTableWidgetItem()
             label1.setText(af.returnLabel1()) 
+            label1.setTextAlignment(Qt.AlignCenter)
             label2 = QTableWidgetItem()
             label2.setText(af.returnLabel2())
+            label2.setTextAlignment(Qt.AlignCenter)
             self.tableWidget_2.setItem(r, 0, label1)
             self.tableWidget_2.setItem(r, 1, label2)
            
             direc = QTableWidgetItem()
             direc.setText(af.returnDir())
+            direc.setTextAlignment(Qt.AlignCenter)
             self.tableWidget_2.setItem(r, 2, direc)
             glue = QTableWidgetItem()
             glue.setText(af.returnStr())
+            glue.setTextAlignment(Qt.AlignCenter)
             self.tableWidget_2.setItem(r, 3, glue)
             r += 1
 
@@ -576,15 +580,19 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
         for afH in self.system.horizontal_affinities_list:
             label1HR = QTableWidgetItem()
             label1HR.setText(afH.returnLabel1())
+            label1HR.setTextAlignment(Qt.AlignCenter)
             self.tableWidget_2.setItem(r, 0, label1HR)
             label2HR = QTableWidgetItem()
             label2HR.setText(afH.returnLabel2())
+            label2HR.setTextAlignment(Qt.AlignCenter)
             self.tableWidget_2.setItem(r, 1, label2HR)
             direcHR = QTableWidgetItem()
             direcHR.setText(afH.returnDir())
+            direcHR.setTextAlignment(Qt.AlignCenter)
             self.tableWidget_2.setItem(r, 2, direcHR)
             glueHR = QTableWidgetItem()
             glueHR.setText(afH.returnStr())
+            glueHR.setTextAlignment(Qt.AlignCenter)
             self.tableWidget_2.setItem(r, 3, glueHR)
             r += 1
 
@@ -594,18 +602,23 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
         for trV in self.system.vertical_transitions_list:
             stateVT1 = QTableWidgetItem()
             stateVT1.setText(trV.returnLabel1())
+            stateVT1.setTextAlignment(Qt.AlignCenter)
             self.tableWidget_3.setItem(r, 0, stateVT1)
             stateVT2 = QTableWidgetItem()
             stateVT2.setText(trV.returnLabel2())
+            stateVT2.setTextAlignment(Qt.AlignCenter)
             self.tableWidget_3.setItem(r, 1, stateVT2)
             finalVT1 = QTableWidgetItem()
             finalVT1.setText(trV.returnLabel1Final())
+            finalVT1.setTextAlignment(Qt.AlignCenter)
             self.tableWidget_3.setItem(r, 3, finalVT1)
             finalVT2 = QTableWidgetItem()
             finalVT2.setText(trV.returnLabel2Final())
+            finalVT2.setTextAlignment(Qt.AlignCenter)
             self.tableWidget_3.setItem(r, 4, finalVT2)
             direcVT = QTableWidgetItem()
             direcVT.setText(trV.returnDir())
+            direcVT.setTextAlignment(Qt.AlignCenter)
             self.tableWidget_3.setItem(r, 5, direcVT)
             r += 1
 
@@ -613,18 +626,23 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
         for trH in self.system.horizontal_transitions_list:
             stateHT1 = QTableWidgetItem()
             stateHT1.setText(trH.returnLabel1())
+            stateHT1.setTextAlignment(Qt.AlignCenter)
             self.tableWidget_3.setItem(r, 0, stateHT1)
             stateHT2 = QTableWidgetItem()
             stateHT2.setText(trH.returnLabel2())
+            stateHT2.setTextAlignment(Qt.AlignCenter)
             self.tableWidget_3.setItem(r, 1, stateHT2)
             finalHT1 = QTableWidgetItem()
             finalHT1.setText(trH.returnLabel1Final())
+            finalHT1.setTextAlignment(Qt.AlignCenter)
             self.tableWidget_3.setItem(r, 3, finalHT1)
             finalHT2 = QTableWidgetItem()
             finalHT2.setText(trH.returnLabel2Final())
+            finalHT2.setTextAlignment(Qt.AlignCenter)
             self.tableWidget_3.setItem(r, 4, finalHT2)
             direcHT = QTableWidgetItem()
             direcHT.setText(trH.returnDir())
+            direcHT.setTextAlignment(Qt.AlignCenter)
             self.tableWidget_3.setItem(r, 5, direcHT)
             r += 1
 
@@ -634,30 +652,38 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
         for s in self.system.states:
             color_cell = QTableWidgetItem()
             color_cell.setText(s.get_color())
+            color_cell.setTextAlignment(Qt.AlignCenter)
             color_cell.setForeground(QtGui.QColor("#" + s.get_color()))
             color_cell.setBackground(QtGui.QColor("#" + s.get_color()))
             self.tableWidget.setItem(r, 0, color_cell)
 
             label_cell = QTableWidgetItem()
-            #need to center the widgets 
-            #self.label_cell.setGeometry(QtCore.QRect(0, 0, 765, 340))
             label_cell.setText(s.get_label())
+            label_cell.setTextAlignment(Qt.AlignCenter)
             self.tableWidget.setItem(r, 1, label_cell)
 
-            seed_cell = QCheckBox(self.tableWidget)
+            seedWidget = QtWidgets.QWidget()
+            seedCheckbox = QCheckBox()
+            seedChkLayout = QtWidgets.QHBoxLayout(seedWidget)
+            seedChkLayout.addWidget(seedCheckbox)
+            seedChkLayout.setAlignment(Qt.AlignCenter)
+            seedChkLayout.setContentsMargins(0,0,0,0)
+            self.tableWidget.setCellWidget(r, 2, seedWidget)
             for sstate in self.system.seed_states:
                 if sstate.get_label() == s.get_label():
-                    seed_cell.setChecked(True)
+                    seedCheckbox.setChecked(True)
             
-            self.tableWidget.setCellWidget(r, 2, seed_cell)
-
-            initial_cell = QCheckBox(self.tableWidget)
+            initialWidget = QtWidgets.QWidget()
+            initialCheckbox = QCheckBox()
+            initialChkLayout = QtWidgets.QHBoxLayout(initialWidget)
+            initialChkLayout.addWidget(initialCheckbox)
+            initialChkLayout.setAlignment(Qt.AlignCenter)
+            initialChkLayout.setContentsMargins(0,0,0,0)
+            self.tableWidget.setCellWidget(r, 3, initialWidget)
             for istate in self.system.initial_states:
                 if istate.get_label() == s.get_label():
-                    initial_cell.setChecked(True)
+                    initialCheckbox.setChecked(True)
             
-            self.tableWidget.setCellWidget(r, 3, initial_cell)
-
             r += 1
 
     
@@ -682,23 +708,35 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
             color_cell.setBackground(QtGui.QColor("#" + color))
 
     # would have to change widget geometry here as well? 
-    # probably not since it can apply to the new ones
+    # Yes
     def Click_AddRowStates(self):
         print("Add Row in States clicked")
         newrow = self.tableWidget.rowCount()
         self.tableWidget.setRowCount(newrow + 1)
 
         color_cell = QTableWidgetItem()
+        color_cell.setTextAlignment(Qt.AlignCenter)
         self.tableWidget.setItem(newrow, 0, color_cell)
 
         label_cell = QTableWidgetItem()
+        label_cell.setTextAlignment(Qt.AlignCenter)
         self.tableWidget.setItem(newrow, 1, label_cell)
 
-        seed_cell = QCheckBox(self.tableWidget)
-        self.tableWidget.setCellWidget(newrow, 2, seed_cell)
+        seedWidget = QtWidgets.QWidget()
+        seedCheckbox = QCheckBox()
+        seedChkLayout = QtWidgets.QHBoxLayout(seedWidget)
+        seedChkLayout.addWidget(seedCheckbox)
+        seedChkLayout.setAlignment(Qt.AlignCenter)
+        seedChkLayout.setContentsMargins(0,0,0,0)
+        self.tableWidget.setCellWidget(newrow, 2, seedWidget)
 
-        initial_cell = QCheckBox(self.tableWidget)        
-        self.tableWidget.setCellWidget(newrow, 3, initial_cell)
+        initialWidget = QtWidgets.QWidget()
+        initialCheckbox = QCheckBox()
+        initialChkLayout = QtWidgets.QHBoxLayout(initialWidget)
+        initialChkLayout.addWidget(initialCheckbox)
+        initialChkLayout.setAlignment(Qt.AlignCenter)
+        initialChkLayout.setContentsMargins(0,0,0,0)       
+        self.tableWidget.setCellWidget(newrow, 3, initialWidget)
         
      # To add new row entered by user as a rule
     def Click_AddRowAff(self):
@@ -707,15 +745,19 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
         self.tableWidget_2.setRowCount(newrow + 1)
 
         label1 = QTableWidgetItem()
+        label1.setTextAlignment(Qt.AlignCenter)
         self.tableWidget_2.setItem(newrow, 0, label1)
 
         label2 = QTableWidgetItem()
+        label2.setTextAlignment(Qt.AlignCenter)
         self.tableWidget_2.setItem(newrow, 1, label2)
 
-        direc = QTableWidgetItem()        
+        direc = QTableWidgetItem()  
+        direc.setTextAlignment(Qt.AlignCenter)      
         self.tableWidget_2.setItem(newrow, 2, direc)
 
         glue = QTableWidgetItem()
+        glue.setTextAlignment(Qt.AlignCenter)
         self.tableWidget_2.setItem(newrow, 3, glue)
 
 
@@ -725,18 +767,23 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
         self.tableWidget_3.setRowCount(newrow + 1)
 
         tLabel1 = QTableWidgetItem()
+        tLabel1.setTextAlignment(Qt.AlignCenter)
         self.tableWidget_3.setItem(newrow, 0, tLabel1)
 
         tLabel2 = QTableWidgetItem()
+        tLabel2.setTextAlignment(Qt.AlignCenter)
         self.tableWidget_3.setItem(newrow, 1, tLabel2)
 
         tFinal1 = QTableWidgetItem()
+        tFinal1.setTextAlignment(Qt.AlignCenter)
         self.tableWidget_3.setItem(newrow, 3, tFinal1)
 
         tFinal2 = QTableWidgetItem()
+        tFinal2.setTextAlignment(Qt.AlignCenter)
         self.tableWidget_3.setItem(newrow, 4, tFinal2)
 
         tDirec = QTableWidgetItem()
+        tDirec.setTextAlignment(Qt.AlignCenter)
         self.tableWidget_3.setItem(newrow, 5, tDirec)
 
 
@@ -747,11 +794,13 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
         for row in range(self.newStateIndex, self.tableWidget.rowCount()):
             color_cell = self.tableWidget.item(row, 0)
             label_cell = self.tableWidget.item(row, 1)
-            inital_cell = self.tableWidget.cellWidget(row, 3)
+            initialCheckbox = self.tableWidget.cellWidget(row, 3)
 
             color = color_cell.text()
             label = label_cell.text()
-            initial = inital_cell.isChecked()
+            ## Qwidget object has no attribute isChecked!! 
+            # crash on "Apply as" click
+            initial = initialCheckbox.isChecked()
 
             s = State(label, color)
 
