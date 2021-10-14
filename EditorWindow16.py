@@ -40,7 +40,7 @@ class Ui_EditorWindow(object):
          self.toolBox = QtWidgets.QToolBox(self.editFrame)
          self.toolBox.setObjectName("toolBox")
 
-         ### Page 1 of editor; System Temperature
+         ### Page 1 of editor; General Settings
          self.page = QtWidgets.QWidget()
          self.page.setGeometry(QtCore.QRect(0, 0, 765, 340))
          self.page.setMinimumSize(QtCore.QSize(0, 340))
@@ -52,6 +52,8 @@ class Ui_EditorWindow(object):
          self.comboBox.setGeometry(QtCore.QRect(90, 20, 91, 32))
          self.comboBox.setObjectName("comboBox")
          self.toolBox.addItem(self.page, "")
+
+          # add freezing check button
 
          ### Page 2 of editor; Add State
          self.page_2 = QtWidgets.QWidget()
@@ -167,7 +169,7 @@ class Ui_EditorWindow(object):
          _translate = QtCore.QCoreApplication.translate
          EditorWindow.setWindowTitle(_translate("EditorWindow", "Editor "))
          self.label.setText(_translate("EditorWindow", "Temp:"))
-         self.toolBox.setItemText(self.toolBox.indexOf(self.page), _translate("EditorWindow", "System Temperature"))
+         self.toolBox.setItemText(self.toolBox.indexOf(self.page), _translate("EditorWindow", "General Settings"))
          self.toolBox.setItemText(self.toolBox.indexOf(self.page_2), _translate("EditorWindow", "Add State"))
          self.toolBox.setItemText(self.toolBox.indexOf(self.page_3), _translate("EditorWindow", "Add Affinity Rule"))
          self.toolBox.setItemText(self.toolBox.indexOf(self.page_4), _translate("EditorWindow", "Add Transition Rule"))
