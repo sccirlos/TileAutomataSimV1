@@ -16,6 +16,11 @@ class State:
 
     def returnColor(self):
         return self.color
+    
+    def __eq__(self, other):
+        if isinstance(other, State):
+            return self.label == other.label and self.color == other.color
+        
 
 
 def toCoords(x, y):

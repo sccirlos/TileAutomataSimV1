@@ -1,11 +1,12 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QFileDialog, QPushButton, QWidget, QVBoxLayout
-from PyQt5.QtGui import QPainter
+from PyQt5.QtGui import QPainter, QBrush, QPen, QColor, QFont
 from PyQt5.QtCore import QObject, QThread, pyqtSignal
 
 from PyQt5.QtCore import Qt
 from random import randrange
 from Player import ComputeLast, Player
+from Historian import Historian
 
 from assemblyEngine import Engine
 from UniversalClasses import System, Assembly, Tile
@@ -140,6 +141,20 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         # List of Move Widgets
         self.moveWidgets = []
 
+        # Assembly History
+        self.historian = Historian()
+        self.historian.set_ui_parent(self)
+        
+        self.SaveHistory_button = QPushButton(self.page)
+        self.verticalLayout_6.addWidget(self.SaveHistory_button)
+        self.SaveHistory_button.setText("Save History")
+
+        self.LoadHistory_button = QPushButton(self.page)
+        self.verticalLayout_6.addWidget(self.LoadHistory_button)
+        self.LoadHistory_button.setText("Load History")
+
+        self.SaveHistory_button.clicked.connect(self.historian.dump)
+        self.LoadHistory_button.clicked.connect(self.historian.load)
         self.move_status = QLabel("No Available Moves")
         self.movesLayout.addWidget(self.move_status)
 
@@ -652,6 +667,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
             self.time = 0
             self.Engine = Engine(currentSystem)
+            self.historian.set_engine(self.Engine)
             #a = Assembly()
             #t = Tile(currentSystem.returnSeedStates(), 0, 0)
             # a.tiles.append(t)
