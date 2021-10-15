@@ -1,10 +1,11 @@
-from os import stat
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QFileDialog, QPushButton, QWidget, QVBoxLayout
 from PyQt5.QtGui import QPainter, QBrush, QPen, QColor, QFont
+from PyQt5.QtCore import QObject, QThread, pyqtSignal
 
 from PyQt5.QtCore import Qt
 from random import randrange
+from Player import ComputeLast, Player
 from Historian import Historian
 
 from assemblyEngine import Engine
@@ -16,6 +17,7 @@ import Assembler_Proto
 import QuickRotate
 import QuickCombine
 import QuickReflect
+import math
 
 import sys
 
@@ -153,6 +155,28 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         self.SaveHistory_button.clicked.connect(self.historian.dump)
         self.LoadHistory_button.clicked.connect(self.historian.load)
+        self.move_status = QLabel("No Available Moves")
+        self.movesLayout.addWidget(self.move_status)
+
+        self.next_moves_button = QPushButton()
+        self.next_moves_button.setText("Next")
+        self.next_moves_button.clicked.connect(self.next_set_of_moves)
+        self.prev_moves_button = QPushButton()
+        self.prev_moves_button.setText("Prev")
+        self.prev_moves_button.clicked.connect(self.prev_set_of_moves)
+
+        self.moves_page = 0
+        self.moves_per_page = 8
+
+        self.movesLayout.addWidget(self.next_moves_button)
+        self.movesLayout.addWidget(self.prev_moves_button)
+
+        # Add 10 Move widgets that we overwrite
+        for i in range(self.moves_per_page):
+            mGUI = Move(None, self, self.centralwidget)
+            mGUI.setFixedHeight(40)
+            self.moveWidgets.append(mGUI)
+            self.movesLayout.addWidget(mGUI)
 
         # Function to Move window on mouse drag event on the title bar
         def moveWindow(e):
@@ -193,6 +217,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.label.setPixmap(canvas)
 
         self.label_2.setText("")
+
+        self.thread = QThread()
+        self.threadlast = QThread()
 
     # Slide left menu function
     def slideLeftMenu(self):  # ANIMATION NEEDS TO BE WORKED ON SO ITS BEEN TURNED OFF
@@ -276,28 +303,28 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def keyPressEvent(self, event):
         #### Moving tiles across screen functions #####
         # up arrow key is pressed
-        if event.key() == Qt.Key_W:
+        if event.key() == Qt.Key_W and not self.play:
             self.seedY = self.seedY - 10
             self.textY = self.textY - 10
             if self.Engine != None:
                 self.draw_assembly(self.Engine.getCurrentAssembly())
 
         # down arrow key is pressed
-        elif event.key() == Qt.Key_S:
+        elif event.key() == Qt.Key_S and not self.play:
             self.seedY = self.seedY + 10
             self.textY = self.textY + 10
             if self.Engine != None:
                 self.draw_assembly(self.Engine.getCurrentAssembly())
 
         # left arrow key is pressed
-        elif event.key() == Qt.Key_A:
+        elif event.key() == Qt.Key_A and not self.play:
             self.seedX = self.seedX - 10
             self.textX = self.textX - 10
             if self.Engine != None:
                 self.draw_assembly(self.Engine.getCurrentAssembly())
 
         # down arrow key is pressed
-        elif event.key() == Qt.Key_D:
+        elif event.key() == Qt.Key_D and not self.play:
             self.seedX = self.seedX + 10
             self.textX = self.textX + 10
             if self.Engine != None:
@@ -320,6 +347,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.last_step()
 
     def wheelEvent(self, event):
+        if self.play:
+            return
+        
         #### Zoom in functions for the scroll wheel ####
         if event.angleDelta().y() == 120:
             self.tileSize = self.tileSize + 10
@@ -458,28 +488,73 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         else:
             self.label_2.setText("Time elapsed: \n 0 time steps")
             self.label_3.setText("Current step time: \n 0 time steps")
-
-    def Update_available_moves(self):
-        # Remove old widgets from the layout
+        
+    def prev_set_of_moves(self):
+        if not self.play:
+            self.moves_page -= 1
+            self.show_other_page()
+    
+    def next_set_of_moves(self):
+        if not self.play:
+            self.moves_page += 1
+            self.show_other_page()
+    
+    def show_other_page(self):
+        # Set all moves to None
         for m in self.moveWidgets:
-            self.movesLayout.removeWidget(m)
-            m.deleteLater()
-        self.moveWidgets = []
+            m.move = None
+            m.hide()
+        self.move_status.hide()
+        
+        
+        # if page is negative, wrap around
+        # if page is over the limit, wrap around
+        if self.moves_page < 0:
+            newpage = 1.0 * len(self.Engine.validMoves) / self.moves_per_page
+            newpage = math.ceil(newpage)
+            self.moves_page = newpage - 1
+        elif self.moves_page * self.moves_per_page >= len(self.Engine.validMoves):
+            self.moves_page = 0
 
         # If no more moves, show it
         if len(self.Engine.validMoves) == 0:
-            status = QLabel("No Available Moves")
-            self.moveWidgets.append(status)
-            self.movesLayout.addWidget(status)
+            self.move_status.show()
+            
+        # If there are moves to pick, show them
+        elif not len(self.Engine.validMoves) == 0:
+            # Create moves and add to layout
+            i = 0
+            for m_i in range(self.moves_page * self.moves_per_page, len(self.Engine.validMoves)):
+                m = self.Engine.validMoves[m_i]
+
+                if i < self.moves_per_page:
+                    self.moveWidgets[i].move = m
+                    self.moveWidgets[i].show()
+                    i += 1
+
+    def Update_available_moves(self):
+        self.moves_page = 0
+
+        # Set all moves to None
+        for m in self.moveWidgets:
+            m.move = None
+            m.hide()
+        self.move_status.hide()
+
+        # If no more moves, show it
+        if len(self.Engine.validMoves) == 0:
+            self.move_status.show()
         
         # If there are moves to pick, show them
         elif not len(self.Engine.validMoves) == 0:
             # Create moves and add to layout
+            i = 0
             for m in self.Engine.validMoves:
-                mGUI = Move(m, self, self.centralwidget)
-                mGUI.setFixedHeight(34)
-                self.moveWidgets.append(mGUI)
-                self.movesLayout.addWidget(mGUI)
+                if i < self.moves_per_page:
+                    self.moveWidgets[i].move = m
+                    self.moveWidgets[i].show()
+                    i += 1
+                
 
     def draw_to_screen(self, x, y, label, painter, brush):
         painter.setBrush(brush)
@@ -679,14 +754,19 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
     def first_step(self):
         if self.SysLoaded == True:
-            self.stop_sequence()
-            self.Engine.first()
-            self.time = 0
-            self.draw_assembly(self.Engine.getCurrentAssembly())
-            self.Update_available_moves()
+            if self.play:
+                self.stop_sequence()
+                self.thread.finished.connect(self.first_step)
+            else:
+                self.Engine.first()
+                self.time = 0
+                self.draw_assembly(self.Engine.getCurrentAssembly())
+                self.Update_available_moves()
 
     def prev_step(self):
-        self.stop_sequence()
+        if self.play:
+            return
+
         if self.SysLoaded == True:
             if self.Engine.currentIndex > 0:
                 self.Engine.back()
@@ -697,7 +777,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 
 
     def next_step(self):
-        self.stop_sequence()
+        if self.play:
+            return
+        
         if self.SysLoaded == True:
             if self.Engine.step() != -1:
                 # Might need to go above
@@ -705,47 +787,55 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 self.draw_move(self.Engine.getCurrentMove(), 1)
 
     def last_step(self):
-        self.stop_sequence()
         if self.SysLoaded == True:
-            while (self.Engine.step() != -1):
-                self.time = self.time + (self.Engine.timeTaken())
+            if self.play:
+                self.stop_sequence()
+                self.thread.finished.connect(self.last_step)
+            elif not self.threadlast.isRunning():
 
-            self.draw_assembly(self.Engine.getCurrentAssembly())
-            self.Update_available_moves()
+                self.threadlast.deleteLater()
+                self.threadlast = QThread()
+                self.workerlast = ComputeLast()
+                self.workerlast.give_ui(self)
+
+                self.workerlast.moveToThread(self.threadlast)
+
+                self.threadlast.started.connect(self.workerlast.run)
+
+                self.workerlast.finished.connect(self.threadlast.quit)
+                self.workerlast.finished.connect(self.workerlast.deleteLater)
+
+                self.threadlast.finished.connect(lambda: self.draw_assembly(self.Engine.getCurrentAssembly()))
+                self.threadlast.finished.connect(lambda: self.Update_available_moves())
+
+                self.threadlast.start()
 
     def play_sequence(self):
         if self.SysLoaded == True:
             if self.play == False:
-                self.Play_button.setIcon(QtGui.QIcon(
-                    'Icons/tabler-icon-player-pause.png'))
                 self.play = True
-                while((self.Engine.step() != -1) and self.play == True):
-                    #print(self.Engine.currentIndex)
-                    self.time = self.time + (self.Engine.timeTaken())
+                self.Play_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-pause.png'))
+                
+                self.thread.deleteLater()
+                self.thread = QThread()
+                self.worker = Player()
+                self.worker.give_ui(self)
 
-                    loop = QtCore.QEventLoop()
-                    if self.Engine.currentIndex != 0:
-                        QtCore.QTimer.singleShot(
-                            int(self.delay * self.Engine.timeTaken()), loop.quit)
-                    else:
-                        QtCore.QTimer.singleShot(self.delay, loop.quit)
-                    loop.exec_()
+                self.worker.moveToThread(self.thread)
 
-                    self.draw_move(self.Engine.getCurrentMove(), 1)
-                    # if self.Engine.currentIndex != 0: #and self.Engine.currentIndex < self.Engine.lastIndex:
+                self.thread.started.connect(self.worker.run)
 
-                # self.step = len(self.Engine.assemblyList) - 1 #this line is here to prevent a crash that happens if you click last after play finishes
+                self.worker.finished.connect(self.thread.quit)
+                self.worker.finished.connect(self.worker.deleteLater)
+
+                self.thread.finished.connect(lambda: self.draw_assembly(self.Engine.getCurrentAssembly()))
+                self.thread.finished.connect(lambda: self.Update_available_moves())
+                self.thread.finished.connect(lambda: self.Play_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-play.png')))
+
+                self.thread.start()
+
+            elif self.play == True:
                 self.stop_sequence()
-                self.draw_assembly(self.Engine.getCurrentAssembly())
-                self.Update_available_moves()
-                self.Play_button.setIcon(QtGui.QIcon(
-                    'Icons/tabler-icon-player-play.png'))
-
-            if self.play == True:
-                self.Play_button.setIcon(QtGui.QIcon(
-                    'Icons/tabler-icon-player-play.png'))
-                self.stop_sequence()
-                self.Update_available_moves()
 
     def stop_sequence(self):
         self.play = False
@@ -768,6 +858,9 @@ class Move(QWidget):
     
     def draw(self, event, qp):
         moveText = ""
+        
+        if self.move == None:
+            return
 
         if self.move["type"] == "a":
             moveText = "Attach\n" +  self.move["state1"].get_label() + " at " + str(self.move["x"]) + " , " + str(self.move["y"])
@@ -785,6 +878,9 @@ class Move(QWidget):
         qp.drawRect(event.rect())
     
     def mousePressEvent(self, event):
+        if self.move == None:
+            return
+        
         self.mw.do_move(self.move)
 
 

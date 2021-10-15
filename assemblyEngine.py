@@ -5,6 +5,8 @@ import UniversalClasses
 
 import sys
 
+import copy
+
 
 ### Debugging Functions
 def printMove(move):
@@ -37,7 +39,8 @@ class Engine:
         self.seedAssembly.set_tiles([seed])
         # Changed from adding to list to setting it as the current assembly
         #self.assemblyList.append(seedAssembly)
-        self.currentAssembly = self.seedAssembly
+        # self.currentAssembly = self.seedAssembly
+        self.currentAssembly = copy.deepcopy(self.seedAssembly)
 
         self.validMoves = self.currentAssembly.getMoves(self.system)
 
@@ -82,7 +85,7 @@ class Engine:
 
     def first(self):
         self.currentIndex = 0
-        self.currentAssembly = self.seedAssembly
+        self.currentAssembly = copy.deepcopy(self.seedAssembly)
         self.validMoves = self.currentAssembly.getMoves(self.system)
 
     def last(self):
@@ -105,15 +108,11 @@ class Engine:
             return self.moveList[self.getCurrentIndex()]
 
     def build(self, nextMove=None, forwards=True):
-        # Get current Assembly
-        cAssembly = self.getCurrentAssembly()
-        #moveList = cAssembly.getMoves(self.system)
 
-        #print(moveList.length())
         # Check if assembly is terminal
         if(len(self.validMoves) == 0 and forwards): 
             print("Terminal")
-            cAssembly.print_size()
+            self.currentAssembly.print_size()
             return -1
 
         # Add or Update only if we going forwards
@@ -131,51 +130,124 @@ class Engine:
         else:
             move = nextMove
 
-        if forwards:
-            self.currentAssembly = cAssembly.performMove(move)
-            self.moveList.append(move)
-        else:
-            self.currentAssembly = cAssembly.undoMove(move)
-
-        #print("Next Move: ")
-        #printMove(move)
-
-
         moveX = move["x"]
         moveY = move["y"]
+
+        # get all moves that need to be removed
 
         # If Attachment 
         if move["type"] == "a":
             # Remove other moves for self
-            attOldMoves = cAssembly.getAttat(self.system, moveX, moveY)
+            attOldMoves = self.currentAssembly.getAttat(self.system, moveX, moveY)
             self.removeMoves(attOldMoves)
 
             # remove Attachments for neighbors
-            nAtts = cAssembly.getAttat(self.system, moveX, moveY + 1)
+            nAtts = self.currentAssembly.getAttat(self.system, moveX, moveY + 1)
             self.removeMoves(nAtts)
 
-            sAtts = cAssembly.getAttat(self.system, moveX, moveY - 1)
+            sAtts = self.currentAssembly.getAttat(self.system, moveX, moveY - 1)
             self.removeMoves(sAtts)
 
-            wAtts = cAssembly.getAttat(self.system, moveX - 1, moveY)
+            wAtts = self.currentAssembly.getAttat(self.system, moveX - 1, moveY)
             self.removeMoves(wAtts)
 
-            eAtts = cAssembly.getAttat(self.system, moveX + 1, moveY)
+            eAtts = self.currentAssembly.getAttat(self.system, moveX + 1, moveY)
             self.removeMoves(eAtts)
 
             # remove transitions when going backwards
             if not forwards:
                 # remove other move for self
-                trOldMoves = cAssembly.getTRat(self.system, moveX, moveY)
+                trOldMoves = self.currentAssembly.getTRat(self.system, moveX, moveY)
                 self.removeMoves(trOldMoves)
 
                 # remove "v" TR moves from N neighbor
-                vOldMoves = cAssembly.getTRat(self.system, moveX, moveY + 1, "v")
+                vOldMoves = self.currentAssembly.getTRat(self.system, moveX, moveY + 1, "v")
                 self.removeMoves(vOldMoves)
 
                 # remove "h" TR moves from W Neighbor
-                hOldMoves = cAssembly.getTRat(self.system, moveX - 1, moveY, "h")
+                hOldMoves = self.currentAssembly.getTRat(self.system, moveX - 1, moveY, "h")
                 self.removeMoves(hOldMoves)
+
+        elif move["type"] == "t":
+            ### Removing Moves
+            # remove other move for self
+            trOldMoves = self.currentAssembly.getTRat(self.system, moveX, moveY)
+            self.removeMoves(trOldMoves)
+
+            # remove "v" TR moves from N neighbor
+            vOldMoves = self.currentAssembly.getTRat(self.system, moveX, moveY + 1, "v")
+            self.removeMoves(vOldMoves)
+
+            # remove "h" TR moves from W Neighbor
+            hOldMoves = self.currentAssembly.getTRat(self.system, moveX - 1, moveY, "h")
+            self.removeMoves(hOldMoves)
+
+            # remove attachment rules from neighbors
+            nAtts = self.currentAssembly.getAttat(self.system, moveX, moveY + 1)
+            self.removeMoves(nAtts)
+
+            sAtts = self.currentAssembly.getAttat(self.system, moveX, moveY - 1)
+            self.removeMoves(sAtts)
+
+            wAtts = self.currentAssembly.getAttat(self.system, moveX - 1, moveY)
+            self.removeMoves(wAtts)
+
+            eAtts = self.currentAssembly.getAttat(self.system, moveX + 1, moveY)
+            self.removeMoves(eAtts)
+
+            # Update tile 2
+            # If V rule
+            if move["dir"] == "v":
+                #### Removing moves
+                # remove TR from self
+                vOldMoves = self.currentAssembly.getTRat(self.system, moveX, moveY - 1)
+                self.removeMoves(vOldMoves)
+
+                # Remove "h" rules for SW
+                swMoves = self.currentAssembly.getTRat(self.system, moveX - 1, moveY - 1, "h")
+                self.removeMoves(swMoves)
+            
+                # Remove attachments from neighbors
+                s2Atts = self.currentAssembly.getAttat(self.system, moveX, moveY - 2)
+                self.removeMoves(s2Atts)
+
+                swAtts = self.currentAssembly.getAttat(self.system, moveX - 1, moveY - 1)
+                self.removeMoves(swAtts)
+
+                seAtts = self.currentAssembly.getAttat(self.system, moveX + 1, moveY - 1)
+                self.removeMoves(seAtts)                
+
+            # If H rule
+            if move["dir"] == "h":
+                # remove TR from self
+                vOldMoves = self.currentAssembly.getTRat(self.system, moveX + 1, moveY)
+                self.removeMoves(vOldMoves)
+
+                # Remove "v" rules for NE
+                neMoves = self.currentAssembly.getTRat(self.system, moveX + 1, moveY + 1, "v")
+                self.removeMoves(neMoves)
+            
+                # remove attachments from neighbors
+                e2Atts = self.currentAssembly.getAttat(self.system, moveX + 2, moveY)
+                self.removeMoves(e2Atts)
+
+                neAtts = self.currentAssembly.getAttat(self.system, moveX + 1, moveY + 1)
+                self.removeMoves(neAtts)
+
+                seAtts = self.currentAssembly.getAttat(self.system, moveX + 1, moveY - 1)
+                self.removeMoves(seAtts)
+
+        # perform move
+        if forwards:
+            self.currentAssembly.performMove(move)
+            self.moveList.append(move)
+        else:
+            self.currentAssembly = self.currentAssembly.undoMove(move)
+
+        # add all moves that need to be added
+
+        # If Attachment 
+        if move["type"] == "a":
 
             # Add Attachments for neighbors
             nAtts = self.currentAssembly.getAttat(self.system, moveX, moveY + 1)
@@ -211,31 +283,6 @@ class Engine:
 
 
         elif move["type"] == "t":
-            ### Removing Moves
-            # remove other move for self
-            trOldMoves = cAssembly.getTRat(self.system, moveX, moveY)
-            self.removeMoves(trOldMoves)
-
-            # remove "v" TR moves from N neighbor
-            vOldMoves = cAssembly.getTRat(self.system, moveX, moveY + 1, "v")
-            self.removeMoves(vOldMoves)
-
-            # remove "h" TR moves from W Neighbor
-            hOldMoves = cAssembly.getTRat(self.system, moveX - 1, moveY, "h")
-            self.removeMoves(hOldMoves)
-
-            # remove attachment rules from neighbors
-            nAtts = cAssembly.getAttat(self.system, moveX, moveY + 1)
-            self.removeMoves(nAtts)
-
-            sAtts = cAssembly.getAttat(self.system, moveX, moveY - 1)
-            self.removeMoves(sAtts)
-
-            wAtts = cAssembly.getAttat(self.system, moveX - 1, moveY)
-            self.removeMoves(wAtts)
-
-            eAtts = cAssembly.getAttat(self.system, moveX + 1, moveY)
-            self.removeMoves(eAtts)
 
             ###### Adding Moves
             # add new transitions rules for self
@@ -267,25 +314,6 @@ class Engine:
             # Update tile 2
             # If V rule
             if move["dir"] == "v":
-                #### Removing moves
-                # remove TR from self
-                vOldMoves = cAssembly.getTRat(self.system, moveX, moveY - 1)
-                self.removeMoves(vOldMoves)
-
-
-                # Remove "h" rules for SW
-                swMoves = cAssembly.getTRat(self.system, moveX - 1, moveY - 1, "h")
-                self.removeMoves(swMoves)
-            
-                # Remove attachments from neighbors
-                s2Atts = cAssembly.getAttat(self.system, moveX, moveY - 2)
-                self.removeMoves(s2Atts)
-
-                swAtts = cAssembly.getAttat(self.system, moveX - 1, moveY - 1)
-                self.removeMoves(swAtts)
-
-                seAtts = cAssembly.getAttat(self.system, moveX + 1, moveY - 1)
-                self.removeMoves(seAtts)
 
                 ### Adding Moves
                 # Add TR to self
@@ -311,24 +339,6 @@ class Engine:
 
             # If H rule
             if move["dir"] == "h":
-                # remove TR from self
-                vOldMoves = cAssembly.getTRat(self.system, moveX + 1, moveY)
-                self.removeMoves(vOldMoves)
-
-                # Remove "v" rules for NE
-                neMoves = cAssembly.getTRat(self.system, moveX + 1, moveY + 1, "v")
-                self.removeMoves(neMoves)
-            
-                # remove attachments from neighbors
-                e2Atts = cAssembly.getAttat(self.system, moveX + 2, moveY)
-                self.removeMoves(e2Atts)
-
-                neAtts = cAssembly.getAttat(self.system, moveX + 1, moveY + 1)
-                self.removeMoves(neAtts)
-
-                seAtts = cAssembly.getAttat(self.system, moveX + 1, moveY - 1)
-                self.removeMoves(seAtts)
-
 
                 # add TR from self
                 vNewMoves = self.currentAssembly.getTRat(self.system, moveX + 1, moveY)
