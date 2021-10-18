@@ -25,7 +25,7 @@ class Historian:
     
     def dump(self):
         if self.engine == None:
-            pass
+            return
 
         filename = QFileDialog.getSaveFileName(self.ui, "Assembly JSON File", "", "JSON Files (*.json)")
 
@@ -75,7 +75,7 @@ class Historian:
 
     def load(self):
         if self.engine == None:
-            pass
+            return
 
         filename = QFileDialog.getOpenFileName(self.ui, "Select JSON History", "", "JSON Files (*.json)")
 
