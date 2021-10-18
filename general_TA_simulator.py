@@ -144,17 +144,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         # Assembly History
         self.historian = Historian()
         self.historian.set_ui_parent(self)
-        
-        self.SaveHistory_button = QPushButton(self.page)
-        self.verticalLayout_6.addWidget(self.SaveHistory_button)
-        self.SaveHistory_button.setText("Save History")
 
-        self.LoadHistory_button = QPushButton(self.page)
-        self.verticalLayout_6.addWidget(self.LoadHistory_button)
-        self.LoadHistory_button.setText("Load History")
-
-        self.SaveHistory_button.clicked.connect(self.historian.dump)
-        self.LoadHistory_button.clicked.connect(self.historian.load)
+        self.SaveHistory_Button.clicked.connect(self.historian.dump)
+        self.LoadHistory_Button.clicked.connect(self.historian.load)
         self.move_status = QLabel("No Available Moves")
         self.movesLayout.addWidget(self.move_status)
 
@@ -302,28 +294,37 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
     def keyPressEvent(self, event):
         #### Moving tiles across screen functions #####
-        # up arrow key is pressed
+        #modifiers = QtWidgets.QApplication.keyboardModifiers()
+
+        # "up" arrow key is pressed
         if event.key() == Qt.Key_W and not self.play:
             self.seedY = self.seedY - 10
             self.textY = self.textY - 10
             if self.Engine != None:
                 self.draw_assembly(self.Engine.getCurrentAssembly())
 
-        # down arrow key is pressed
+        elif event.key() == Qt.Key_W and event.modifiers() == Qt.ShiftModifier:
+            print("CAPITAL W")
+            self.seedY = self.seedY - 10
+            self.textY = self.textY - 10
+            if self.Engine != None:
+                self.draw_assembly(self.Engine.getCurrentAssembly())
+        
+        # "down" arrow key is pressed
         elif event.key() == Qt.Key_S and not self.play:
             self.seedY = self.seedY + 10
             self.textY = self.textY + 10
             if self.Engine != None:
                 self.draw_assembly(self.Engine.getCurrentAssembly())
 
-        # left arrow key is pressed
+        # "left" arrow key is pressed
         elif event.key() == Qt.Key_A and not self.play:
             self.seedX = self.seedX - 10
             self.textX = self.textX - 10
             if self.Engine != None:
                 self.draw_assembly(self.Engine.getCurrentAssembly())
 
-        # down arrow key is pressed
+        # "down" arrow key is pressed
         elif event.key() == Qt.Key_D and not self.play:
             self.seedX = self.seedX + 10
             self.textX = self.textX + 10
