@@ -662,6 +662,7 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
             label_cell.setTextAlignment(Qt.AlignCenter)
             self.tableWidget.setItem(r, 1, label_cell)
 
+            # 
             seedWidget = QtWidgets.QWidget()
             seedCheckbox = QCheckBox()
             seedChkLayout = QtWidgets.QHBoxLayout(seedWidget)
@@ -795,20 +796,24 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
             color_cell = self.tableWidget.item(row, 0)
             label_cell = self.tableWidget.item(row, 1)
             initialCheckbox = self.tableWidget.cellWidget(row, 3)
-
+            seedCheckbox = self.tableWidget.cellWidget(row, 2)
             color = color_cell.text()
             label = label_cell.text()
-            ## Qwidget object has no attribute isChecked!! 
-            # crash on "Apply as" click
-            initial = initialCheckbox.isChecked()
-
+            
+            #print(initialCheckbox)
+            # 'apply as' works now
+            initial = initialCheckbox.layout().itemAt(0).widget().isChecked()
+            seed = seedCheckbox.layout().itemAt(0).widget().isChecked()
             s = State(label, color)
 
             self.system.add_State(s)
 
             if initial:
                 self.system.add_Initial_State(s)
+            if seed:
+                self.system.add_Seed_State(s)
 
+        # affinity
         for row in range(self.newAffinityIndex, self.tableWidget_2.rowCount()):
             label1 = self.tableWidget_2.item(row, 0)
             label2 = self.tableWidget_2.item(row, 1)
@@ -825,6 +830,7 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
 
             self.system.add_affinity(afRule)
 
+        # transitions 
         for row in range(self.newTransitionIndex, self.tableWidget_3.rowCount()):
             tLabel1 = self.tableWidget_3.item(row, 0)
             tLabel2 = self.tableWidget_3.item(row, 1)
