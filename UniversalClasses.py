@@ -589,7 +589,7 @@ class System:
             if state.get_label() == label:
                 return state
     # Utility
-
+    # if tr remove dont work and still in system look here
     def translateListsToDicts(self):
         for rule in self.vertical_affinities_list:
             label1 = rule.returnLabel1()
@@ -749,7 +749,7 @@ class System:
 
     def set_tile_horizontal_transitions(self, tile_ht):
         self.tile_horizontal_transitions = tile_ht
-
+    # each of these: add a remove functions to UC to call
     def add_State(self, state):
         if isinstance(state, list):
             for s in state:
@@ -762,6 +762,12 @@ class System:
     def add_Initial_State(self, state):
         self.initial_states.append(state)
 
+    # idk if this will work
+    def add_Seed_State(self, state):
+        self.seed_states.append(state)
+
+
+    # start here 
     def add_transition_rule(self, tr):
         label1 = tr.returnLabel1()
         label2 = tr.returnLabel2()
