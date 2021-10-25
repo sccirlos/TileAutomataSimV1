@@ -781,7 +781,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                         self.draw_move(prev_move, 1, "black")
                     # Might need to go above
                     self.time = self.time + (self.Engine.timeTaken())
-                    self.draw_move(self.Engine.getCurrentMove(), 1, "blue")
+                    self.draw_move(move, 1, "blue")
 
     def first_step(self):
         if self.SysLoaded == True:
