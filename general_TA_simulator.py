@@ -431,8 +431,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         
         #reversing transition on screen
         elif move['type'] == 't' and forward == 0: #(type, x, y, dir, state1, state2, state1Final, state2Final)
-            pen.setColor(QtGui.QColor("blue"))
-            painter.setPen(pen)
             self.transition_draw_function(move, move['state1'], move['state2'], painter, brush)
 
         painter.end()
@@ -750,10 +748,13 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             # Shouldn't need all this code but copying from next_step() anyways
             self.stop_sequence()
             if self.SysLoaded == True:
-                if self.Engine.step(move) != -1:
+                prev_move = self.Engine.getCurrentMove()
+                if self.Engine.step() != -1:
+                    if self.Engine.currentIndex > 1:
+                        self.draw_move(prev_move, 1, "black")
                     # Might need to go above
                     self.time = self.time + (self.Engine.timeTaken())
-                    self.draw_move(move, 1, "blue")
+                    self.draw_move(self.Engine.getCurrentMove(), 1, "blue")
 
     def first_step(self):
         if self.SysLoaded == True:
