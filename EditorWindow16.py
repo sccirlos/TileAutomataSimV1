@@ -46,14 +46,20 @@ class Ui_EditorWindow(object):
          self.page.setMinimumSize(QtCore.QSize(0, 340))
          self.page.setObjectName("page")
          self.label = QtWidgets.QLabel(self.page)
-         self.label.setGeometry(QtCore.QRect(30, 30, 60, 16))
+         self.label.setGeometry(QtCore.QRect(35, 25, 150, 16))
          self.label.setObjectName("label")
          self.comboBox = QtWidgets.QComboBox(self.page)
-         self.comboBox.setGeometry(QtCore.QRect(90, 20, 91, 32))
+         self.comboBox.setGeometry(QtCore.QRect(200, 20, 80, 32))
          self.comboBox.setObjectName("comboBox")
+         #self.toolBox.addItem(self.page, "")
+
+          # freezing check button
+          # user clicks and pop up of cycle/noncycle graph will show [Armando]
+         self.pushButton_12 = QtWidgets.QPushButton(self.page)
+         self.pushButton_12.setGeometry(QtCore.QRect(30, 90, 145, 32))
+         self.pushButton_12.setObjectName("pushButton_12")
          self.toolBox.addItem(self.page, "")
 
-          # add freezing check button
 
          ### Page 2 of editor; Add State
          self.page_2 = QtWidgets.QWidget()
@@ -61,7 +67,7 @@ class Ui_EditorWindow(object):
          self.page_2.setObjectName("page_2")
           # table for states
          self.tableWidget = QtWidgets.QTableWidget(self.page_2)
-         self.tableWidget.setGeometry(QtCore.QRect(0, 70, 771, 200))
+         self.tableWidget.setGeometry(QtCore.QRect(0, 20, 600, 261))
          self.tableWidget.setObjectName("tableWidget")
          self.tableWidget.setColumnCount(4)
          columns = ['Color', 'Label', 'Seed', 'Initial']
@@ -77,10 +83,21 @@ class Ui_EditorWindow(object):
           # add row for state table
           # after clicking add row; scroll down table to see it and edit boxes
          self.pushButton_3 = QtWidgets.QPushButton(self.page_2)
-         self.pushButton_3.setGeometry(QtCore.QRect(10, 10, 113, 32))
+         self.pushButton_3.setGeometry(QtCore.QRect(615, 40, 141, 32))
          self.pushButton_3.setObjectName("pushButton_3")
-         self.toolBox.addItem(self.page_2, "")
+         # self.toolBox.addItem(self.page_2, "")
 
+          # duplicate row for state table
+          # user can select one or multiple rows (use command) and hit duplicate row 
+          # user can then edit columns of duplicated row if needed.
+         self.pushButton_6 = QtWidgets.QPushButton(self.page_2)
+         self.pushButton_6.setGeometry(QtCore.QRect(615, 90, 141, 32))
+         self.pushButton_6.setObjectName("pushButton_6")
+          # delete row
+         self.pushButton_11 = QtWidgets.QPushButton(self.page_2)
+         self.pushButton_11.setGeometry(QtCore.QRect(615, 140, 141, 32))
+         self.pushButton_11.setObjectName("pushButton_11")
+         self.toolBox.addItem(self.page_2, "")
 
          ### Page 3; Affinity Rules
          self.page_3 = QtWidgets.QWidget()
@@ -88,7 +105,7 @@ class Ui_EditorWindow(object):
          self.page_3.setObjectName("page_3")
        
          self.tableWidget_2 = QtWidgets.QTableWidget(self.page_3)
-         self.tableWidget_2.setGeometry(QtCore.QRect(0, 50, 771, 261))
+         self.tableWidget_2.setGeometry(QtCore.QRect(0, 20, 600, 261))
          self.tableWidget_2.setObjectName("tableWidget_2")
         
          self.tableWidget_2.setColumnCount(4)
@@ -103,8 +120,17 @@ class Ui_EditorWindow(object):
          self.tableWidget_2.setRowHeight(1, 40)
           # Add row button for affinity rules
          self.pushButton_4 = QtWidgets.QPushButton(self.page_3)
-         self.pushButton_4.setGeometry(QtCore.QRect(20, 0, 113, 32))
+         self.pushButton_4.setGeometry(QtCore.QRect(615, 40, 141, 32))
          self.pushButton_4.setObjectName("pushButton_4")
+
+         # duplicate row button for aff rules
+         self.pushButton_7 = QtWidgets.QPushButton(self.page_3)
+         self.pushButton_7.setGeometry(QtCore.QRect(615, 90, 141, 32))
+         self.pushButton_7.setObjectName("pushButton_7")
+         # delete row
+         self.pushButton_10 = QtWidgets.QPushButton(self.page_3)
+         self.pushButton_10.setGeometry(QtCore.QRect(615, 140, 141, 32))
+         self.pushButton_10.setObjectName("pushButton_10")
          self.toolBox.addItem(self.page_3, "")
 
         ### Page 4; Transition Rules
@@ -113,13 +139,13 @@ class Ui_EditorWindow(object):
          self.page_4.setObjectName("page_4")
         
          self.tableWidget_3 = QtWidgets.QTableWidget(self.page_4)
-         self.tableWidget_3.setGeometry(QtCore.QRect(0, 50, 771, 261))
+         self.tableWidget_3.setGeometry(QtCore.QRect(0, 20, 600, 261))
          self.tableWidget_3.setObjectName("tableWidget_3")
          self.tableWidget_3.setColumnCount(6)
          columns = ['State 1', 'State 2', '-->', 'State 1 Final', 'State 2 Final', 'Direction']
          self.tableWidget_3.setColumnWidth(0, 100)
          self.tableWidget_3.setColumnWidth(1, 100)
-         self.tableWidget_3.setColumnWidth(2, 90)
+         self.tableWidget_3.setColumnWidth(2, 40)
          self.tableWidget_3.setColumnWidth(3, 120)
          self.tableWidget_3.setColumnWidth(4, 120)
          self.tableWidget_3.setColumnWidth(5, 100)
@@ -127,10 +153,18 @@ class Ui_EditorWindow(object):
          self.tableWidget_3.setRowCount(2)
          self.tableWidget_3.setRowHeight(0, 40)
          self.tableWidget_3.setRowHeight(1, 40)
-          # Add row button for transition rules
+          # Add row button 
          self.pushButton_5 = QtWidgets.QPushButton(self.page_4)
-         self.pushButton_5.setGeometry(QtCore.QRect(10, 0, 113, 32))
+         self.pushButton_5.setGeometry(QtCore.QRect(615, 40, 141, 32))
          self.pushButton_5.setObjectName("pushButton_5")
+         # duplicate row 
+         self.pushButton_8 = QtWidgets.QPushButton(self.page_4)
+         self.pushButton_8.setGeometry(QtCore.QRect(615, 90, 141, 32))
+         self.pushButton_8.setObjectName("pushButton_8")
+         # delete row 
+         self.pushButton_9 = QtWidgets.QPushButton(self.page_4)
+         self.pushButton_9.setGeometry(QtCore.QRect(615, 140, 141, 32))
+         self.pushButton_9.setObjectName("pushButton_9")
          self.toolBox.addItem(self.page_4, "")
          
 
@@ -168,7 +202,7 @@ class Ui_EditorWindow(object):
      def retranslateUi(self, EditorWindow):
          _translate = QtCore.QCoreApplication.translate
          EditorWindow.setWindowTitle(_translate("EditorWindow", "Editor "))
-         self.label.setText(_translate("EditorWindow", "Temp:"))
+         self.label.setText(_translate("EditorWindow", "System Temperature:"))
          self.toolBox.setItemText(self.toolBox.indexOf(self.page), _translate("EditorWindow", "General Settings"))
          self.toolBox.setItemText(self.toolBox.indexOf(self.page_2), _translate("EditorWindow", "Add State"))
          self.toolBox.setItemText(self.toolBox.indexOf(self.page_3), _translate("EditorWindow", "Add Affinity Rule"))
@@ -178,7 +212,13 @@ class Ui_EditorWindow(object):
          self.pushButton_3.setText(_translate("EditorWindow", "Add Row"))
          self.pushButton_4.setText(_translate("EditorWindow", "Add Row"))
          self.pushButton_5.setText(_translate("EditorWindow", "Add Row"))
-
+         self.pushButton_6.setText(_translate("EditorWindow", "Duplicate Row"))
+         self.pushButton_7.setText(_translate("EditorWindow", "Duplicate Row"))
+         self.pushButton_8.setText(_translate("EditorWindow", "Duplicate Row"))
+         self.pushButton_9.setText(_translate("EditorWindow", "Delete Row"))
+         self.pushButton_10.setText(_translate("EditorWindow", "Delete Row"))
+         self.pushButton_11.setText(_translate("EditorWindow", "Delete Row"))
+         self.pushButton_12.setText(_translate("EditorWindow", "Freezing Check"))
 
 if __name__ == "__main__":
      import sys
