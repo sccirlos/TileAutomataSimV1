@@ -773,8 +773,13 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         if self.SysLoaded == True:
             if self.Engine.currentIndex > 0:
+                
+                if self.Engine.currentIndex < self.Engine.lastIndex:
+                    prev_move = self.Engine.getLastMove()
+                    self.draw_move(prev_move, 0, "black")
+
                 self.Engine.back()
-                self.draw_move(self.Engine.getLastMove(), 0, "black")
+                self.draw_move(self.Engine.getLastMove(), 0, "red")
                 
                 # Might need to go below
                 self.time = self.time - (self.Engine.timeTaken())
