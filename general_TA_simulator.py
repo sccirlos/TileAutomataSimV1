@@ -188,6 +188,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         self.time = 0
         self.delay = 0
+        self.color_flag = 2 #0 is red, 1 is blue, and 2 is black. Nums correspond with forward/backward highlight
         self.seedX = self.geometry().width() / 2
         self.seedY = self.geometry().height() / 2
         self.clickPosition = QtCore.QPoint(
@@ -475,7 +476,10 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.draw_to_screen(tile.x, tile.y, tile.state.label, painter, brush)
 
         if self.Engine.currentIndex > 0: 
-            self.highlight_move(self.Engine.getCurrentMove(), 1, painter, brush, pen)
+            if self.color_flag == 0:
+                self.highlight_move(self.Engine.getLastMove(), self.color_flag, painter, brush, pen)
+            else:
+                self.highlight_move(self.Engine.getCurrentMove(), self.color_flag, painter, brush, pen)
 
         painter.end()
 
@@ -559,9 +563,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                     self.moveWidgets[i].show()
                     i += 1
 
-    def highlight_move(self, move, forward, painter, brush, pen):
+    def highlight_move(self, move, color_flag, painter, brush, pen):
         #attachment highlight
-        if move['type'] == 'a' and forward == 1: #(type, x, y, state1)
+        if move['type'] == 'a' and color_flag == 1: #(type, x, y, state1)
             if self.onScreen_check(move['x'], move['y']) != 1:
                 brush.setColor(QtGui.QColor("#" + move['state1'].returnColor()))
                 pen.setColor(QtGui.QColor("blue"))
@@ -569,8 +573,13 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 self.draw_to_screen(move['x'], move['y'], move['state1'].get_label(), painter, brush)
         
         #transition highlight
-        elif move['type'] == 't' and forward == 1: #(type, x, y, dir, state1, state2, state1Final, state2Final)
+        elif move['type'] == 't' and color_flag == 1: #(type, x, y, dir, state1, state2, state1Final, state2Final)
             pen.setColor(QtGui.QColor("blue"))
+            painter.setPen(pen)
+            self.transition_draw_function(move, move['state1Final'], move['state2Final'], painter, brush)
+
+        elif move['type'] == 't' and color_flag == 0: #(type, x, y, dir, state1, state2, state1Final, state2Final)
+            pen.setColor(QtGui.QColor("red"))
             painter.setPen(pen)
             self.transition_draw_function(move, move['state1Final'], move['state2Final'], painter, brush)
 
@@ -767,6 +776,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             if self.SysLoaded == True:
                 prev_move = self.Engine.getCurrentMove()
                 if self.Engine.step() != -1:
+                    self.color_flag = 1
                     if self.Engine.currentIndex > 1:
                         self.draw_move(prev_move, 1, "black")
                     # Might need to go above
@@ -790,7 +800,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         if self.SysLoaded == True:
             if self.Engine.currentIndex > 0:
-                
+                self.color_flag = 0
                 if self.Engine.currentIndex < self.Engine.lastIndex:
                     prev_move = self.Engine.getLastMove()
                     self.draw_move(prev_move, 0, "black")
@@ -809,6 +819,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         if self.SysLoaded == True:
             prev_move = self.Engine.getCurrentMove()
             if self.Engine.step() != -1:
+                self.color_flag = 1
                 if self.Engine.currentIndex > 1:
                     self.draw_move(prev_move, 1, "black")
                 # Might need to go above
@@ -816,6 +827,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 self.draw_move(self.Engine.getCurrentMove(), 1, "blue")
 
             else:
+                self.color_flag = 2
                 self.draw_move(self.Engine.getCurrentMove(), 1, "black")
 
     def last_step(self):
