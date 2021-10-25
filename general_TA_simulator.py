@@ -366,7 +366,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         if self.Engine != None:
             self.draw_assembly(self.Engine.getCurrentAssembly())
 
-    def draw_move(self, move, forward):    
+    def draw_move(self, move, forward, color):    
         painter = QPainter(self.label.pixmap())
         pen = QtGui.QPen()
         brush = QtGui.QBrush()
@@ -381,7 +381,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         font.setPixelSize(self.textSize)
         painter.setFont(font)
 
-        pen.setColor(QtGui.QColor("black"))
+        pen.setColor(QtGui.QColor(color))
         painter.setPen(pen)
 
         #adding attachment on screen
@@ -431,6 +431,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         
         #reversing transition on screen
         elif move['type'] == 't' and forward == 0: #(type, x, y, dir, state1, state2, state1Final, state2Final)
+            pen.setColor(QtGui.QColor("blue"))
+            painter.setPen(pen)
             self.transition_draw_function(move, move['state1'], move['state2'], painter, brush)
 
         painter.end()
@@ -751,7 +753,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 if self.Engine.step(move) != -1:
                     # Might need to go above
                     self.time = self.time + (self.Engine.timeTaken())
-                    self.draw_move(move, 1)
+                    self.draw_move(move, 1, "blue")
 
     def first_step(self):
         if self.SysLoaded == True:
@@ -771,7 +773,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         if self.SysLoaded == True:
             if self.Engine.currentIndex > 0:
                 self.Engine.back()
-                self.draw_move(self.Engine.getLastMove(), 0)
+                self.draw_move(self.Engine.getLastMove(), 0, "black")
                 
                 # Might need to go below
                 self.time = self.time - (self.Engine.timeTaken())
@@ -782,10 +784,13 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             return
         
         if self.SysLoaded == True:
+            prev_move = self.Engine.getCurrentMove()
             if self.Engine.step() != -1:
+                if self.Engine.currentIndex > 1:
+                    self.draw_move(prev_move, 1, "black")
                 # Might need to go above
                 self.time = self.time + (self.Engine.timeTaken())
-                self.draw_move(self.Engine.getCurrentMove(), 1)
+                self.draw_move(self.Engine.getCurrentMove(), 1, "blue")
 
     def last_step(self):
         if self.SysLoaded == True:
