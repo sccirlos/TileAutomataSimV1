@@ -798,6 +798,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 self.time = self.time + (self.Engine.timeTaken())
                 self.draw_move(self.Engine.getCurrentMove(), 1, "blue")
 
+            else:
+                self.draw_move(self.Engine.getCurrentMove(), 1, "black")
+
     def last_step(self):
         if self.SysLoaded == True:
             if self.play:
