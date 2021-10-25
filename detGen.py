@@ -187,20 +187,17 @@ def genSqrtBaseBString(value, base):
         else:
             color = white
 
-        stateI = uc.State(str(i), color)
+        stateI = uc.State(str(i) + "s", color)
         genSys.add_State(stateI)
 
         trBPrimeI = uc.TransitionRule(
-            str(i), str(sqrtLen - 1) + "B'", str(i), str(sqrtLen - 1) + "B''", "v")
+            str(i) + "s", str(sqrtLen - 1) + "B'", str(i) + "s", str(sqrtLen - 1) + "B''", "v")
         genSys.add_transition_rule(trBPrimeI)
 
     trBPrime = uc.TransitionRule(
         "0B", str(sqrtLen - 1) + "B'", "0B", str(sqrtLen - 1) + "B''", "v")
     genSys.add_transition_rule(trBPrime)
 
-    trBPrime1 = uc.TransitionRule(
-        "1", str(sqrtLen - 1) + "B'", "1", str(sqrtLen - 1) + "B''", "v")
-    genSys.add_transition_rule(trBPrime1)
 
     for i in range(sqrtLen):
         for j in range(sqrtLen):
@@ -218,9 +215,9 @@ def genSqrtBaseBString(value, base):
 
             index = (i * sqrtLen) + j
             if index < len(value):
-                symbol = str(revValue[index])
+                symbol = str(revValue[index]) + "s"
             else:
-                symbol = "1"
+                symbol = str(base - 1) + "s"
 
             tr = uc.TransitionRule(labelA, labelB, labelA, symbol, "h")
             genSys.add_transition_rule(tr)
@@ -406,6 +403,13 @@ def genSqrtBaseBCount(value, base=None):
     genSys = genSqrtBaseBString(value, base)
 
     # Add states for binary counter
+    for i in range(base):
+        if i % 2 == 0:
+            color = black
+        else:
+            color = white
+        stateI = uc.State(str(i), color)
+        genSys.add_State(stateI)
 
     # New Initial States
     # State for indicating carry
@@ -455,20 +459,28 @@ def genSqrtBaseBCount(value, base=None):
         #        <Rule Label1="nc" Label2="1" Dir="v" Strength="1"></Rule>
         nc1 = uc.AffinityRule("nc", str(i), "v")
         genSys.add_affinity(nc1)
+        nc1s = uc.AffinityRule("nc", str(i) + "s", "v")
+        genSys.add_affinity(nc1s)
 
         if i < base - 1:
             # <Rule Label1="0" Label2="c" Label1Final="0" Label2Final="1" Dir="h"></Rule>
             carry0TR = uc.TransitionRule(str(i), "c", str(i), str(i + 1), "h")
             genSys.add_transition_rule(carry0TR)
+            carry0TRs = uc.TransitionRule(str(i) + "s", "c", str(i) + "s", str(i + 1), "h")
+            genSys.add_transition_rule(carry0TRs)
         else:
             # <Rule Label1="1" Label2="c" Label1Final="1" Label2Final="0c" Dir="h"></Rule>
             zeroCarryTR = uc.TransitionRule(str(i), "c", (str(i)), "0c", "h")
             genSys.add_transition_rule(zeroCarryTR)
+            zeroCarryTRs = uc.TransitionRule(str(i) + "s", "c", str(i) + "s", "0c", "h")
+            genSys.add_transition_rule(zeroCarryTRs)
 
 
         # <Rule Label1="0" Label2="nc" Label1Final="0" Label2Final="0" Dir="h"></Rule>
         noCarryTR = uc.TransitionRule(str(i), "nc", str(i), str(i), "h")
         genSys.add_transition_rule(noCarryTR)
+        noCarryTRs = uc.TransitionRule(str(i) + "s", "nc", str(i) + "s", str(i), "h")
+        genSys.add_transition_rule(noCarryTRs)
 
 
         # <Rule Label1="1" Label2="+" Label1Final="1" Label2Final="S" Dir="v"></Rule>
