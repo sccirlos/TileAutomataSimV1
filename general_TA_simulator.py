@@ -474,6 +474,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
             self.draw_to_screen(tile.x, tile.y, tile.state.label, painter, brush)
 
+        if self.Engine.currentIndex > 0: 
+            self.highlight_move(self.Engine.getCurrentMove(), 1, painter, brush, pen)
+
         painter.end()
 
         #self.Update_time_onScreen()
@@ -555,7 +558,21 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                     self.moveWidgets[i].move = m
                     self.moveWidgets[i].show()
                     i += 1
-                
+
+    def highlight_move(self, move, forward, painter, brush, pen):
+        #attachment highlight
+        if move['type'] == 'a' and forward == 1: #(type, x, y, state1)
+            if self.onScreen_check(move['x'], move['y']) != 1:
+                brush.setColor(QtGui.QColor("#" + move['state1'].returnColor()))
+                pen.setColor(QtGui.QColor("blue"))
+                painter.setPen(pen)
+                self.draw_to_screen(move['x'], move['y'], move['state1'].get_label(), painter, brush)
+        
+        #transition highlight
+        elif move['type'] == 't' and forward == 1: #(type, x, y, dir, state1, state2, state1Final, state2Final)
+            pen.setColor(QtGui.QColor("blue"))
+            painter.setPen(pen)
+            self.transition_draw_function(move, move['state1Final'], move['state2Final'], painter, brush)
 
     def draw_to_screen(self, x, y, label, painter, brush):
         painter.setBrush(brush)
