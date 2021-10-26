@@ -775,7 +775,11 @@ if __name__ == "__main__":
 
     # App Stuff
     app = QApplication(sys.argv)
+    #app.setAttribute(QtCore.Qt.ApplicationAttribute.AA_UseHighDpiPixmaps, True)
+    #app.setAttribute(QtCore.Qt.ApplicationAttribute.AA_EnableHighDpiScaling, True)
+    
     w = Ui_MainWindow()
+    
     w.show()
 
     sys.exit(app.exec_())
