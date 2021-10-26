@@ -369,6 +369,16 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             if self.Engine != None:
                 self.draw_assembly(self.Engine.getCurrentAssembly())
 
+        # Spacebar to center seed
+        elif event.key() == Qt.Key_C and not self.play:
+            self.seedX = self.geometry().width() / 2
+            self.seedY = self.geometry().height() / 2
+
+            self.textX = self.seedX + 10
+            self.textY = self.seedY + 25
+            if self.Engine != None:
+                self.draw_assembly(self.Engine.getCurrentAssembly())
+
         # Hotkeys for the toolbar
         elif event.key() == Qt.Key_H:
             self.first_step()
@@ -513,10 +523,11 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.draw_to_screen(tile.x, tile.y, tile.state.label, painter, brush)
 
         if self.Engine.currentIndex > 0: 
-            if self.color_flag == 0:
+            if self.color_flag == 0 and self.play != True and self.Engine.currentIndex < self.Engine.lastIndex:
                 self.highlight_move(self.Engine.getLastMove(), self.color_flag, painter, brush, pen)
-            else:
+            elif self.color_flag == 1:
                 self.highlight_move(self.Engine.getCurrentMove(), self.color_flag, painter, brush, pen)
+                
 
         painter.end()
 
@@ -895,9 +906,11 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 self.threadlast.start()
 
     def play_sequence(self):
+        self.color_flag == 2
         if self.SysLoaded == True:
             if self.play == False:
                 self.play = True
+                
                 self.Play_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-pause.png'))
                 
                 self.thread.deleteLater()
