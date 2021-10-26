@@ -906,12 +906,22 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 self.threadlast.start()
 
     def play_sequence(self):
-        self.color_flag == 2
         if self.SysLoaded == True:
             if self.play == False:
                 self.play = True
                 
                 self.Play_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-pause.png'))
+
+                if self.color_flag == 0:
+                    if self.Engine.currentIndex > 0:
+                        if self.Engine.currentIndex < self.Engine.lastIndex:
+                            prev_move = self.Engine.getLastMove()
+                            self.draw_move(prev_move, 0, "black")
+                elif self.color_flag == 1:
+                    if self.Engine.currentIndex > 1:
+                        prev_move = self.Engine.getCurrentMove()
+                        self.draw_move(prev_move, 1, "black")
+                self.color_flag = 2
                 
                 self.thread.deleteLater()
                 self.thread = QThread()
