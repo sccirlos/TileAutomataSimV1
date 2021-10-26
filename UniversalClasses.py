@@ -766,6 +766,13 @@ class System:
     def add_Seed_State(self, state):
         self.seed_states.append(state)
 
+    def remove_state(self, state):
+        # if 
+        if isinstance(state, list):
+            for s in state:
+                self.states.remove(s)
+        elif isinstance(state, State):
+            self.states.remove(state)
 
     # start here 
     def add_transition_rule(self, tr):

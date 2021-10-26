@@ -662,7 +662,7 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
             label_cell.setTextAlignment(Qt.AlignCenter)
             self.tableWidget.setItem(r, 1, label_cell)
 
-            # 
+        
             seedWidget = QtWidgets.QWidget()
             seedCheckbox = QCheckBox()
             seedChkLayout = QtWidgets.QHBoxLayout(seedWidget)
@@ -695,7 +695,7 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
         self.pushButton_3.clicked.connect(self.Click_AddRowStates)
         self.pushButton_4.clicked.connect(self.Click_AddRowAff)
         self.pushButton_5.clicked.connect(self.Click_AddRowTrans)
-
+        self.pushButton_11.clicked.connect(self.click_removeRowState)
 
     # for 'add state'
     def cellchanged(self, row, col):
@@ -708,8 +708,7 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
             color_cell.setForeground(QtGui.QColor("#" + color))
             color_cell.setBackground(QtGui.QColor("#" + color))
 
-    # would have to change widget geometry here as well? 
-    # Yes
+ 
     def Click_AddRowStates(self):
         print("Add Row in States clicked")
         newrow = self.tableWidget.rowCount()
@@ -788,8 +787,19 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
         self.tableWidget_3.setItem(newrow, 5, tDirec)
 
 
+    # remove/delete rows from state table
+    def click_removeRowState(self):
+    
+        print("remove row button clicked")
+
+        if self.tableWidget_2.rowCount() > 0: 
+            currentRow = self.tableWidget_2.currentRow()
+            self.tableWidget_2.removeRow(currentRow)
+
+        self.system.remove_state(states)
+
     def Click_EditApply(self):
-        print("Apply button clicked")
+     #print("Apply button clicked")
 
         # go through new rows, create states, add states to system
         for row in range(self.newStateIndex, self.tableWidget.rowCount()):
@@ -848,6 +858,8 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
 
             self.system.add_transition(trRule)
 
+     
+    
 
      # working on this currently
     def Click_EditSaveAs(self):
