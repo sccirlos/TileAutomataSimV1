@@ -39,14 +39,16 @@ def build_A(string, string_position):
     # Main: Construct Figure Macro
     # Sub: Grass for Figure
     tempLabels = ["A!", "A@", "A#", "A*"]
-    # TO-DO from here: Make the grass and finish the rest of the body
-    for label in tempLabels:
-        tempState = State(label, '00ff00')
+    for i in range(4):
+        tempState = State(tempLabels[i], '00ff00')
         initial_states.append(tempState)
         complete_states.append(tempState)
-    # Connect to the 'seed' of the Macro (A)
-    horizontal_affinities.append(AffinityRule('A', tempLabels[0], 'h', 1))
-    # Connect the 'internal' grass tiles together.
+        if(i == 0):
+            horizontal_affinities.append(
+                AffinityRule('A' + str(string_position), tempLabels[i], 'h', 1))
+        else:
+            horizontal_affinities.append(AffinityRule(
+                tempLabels[i-1], tempLabels[i], 'h', 1))
 
     # Sub: Left Leg
     # First, handle state rules
@@ -69,6 +71,100 @@ def build_A(string, string_position):
     horizontal_affinities.append(tempRule)
 
     # Sub: Right Leg; Reflection of Left Leg basically.
+    tempState = State('ARL1', '000000')
+    initial_states.append(tempState)
+    complete_states.append(tempState)
+    tempState = State('ARL2', 'ffffff')
+    initial_states.append(tempState)
+    complete_states.append(tempState)
+    tempState = State('ARL3', '000000')
+    initial_states.append(tempState)
+    complete_states.append(tempState)
+    # Second, handle affinity rules
+    tempRule = AffinityRule('ARL1', 'A*', 'v', 1)
+    vertical_affinities.append(tempRule)
+    tempRule = AffinityRule('ARL2', 'ARL1', 'v', 1)
+    vertical_affinities.append(tempRule)
+    tempRule = AffinityRule('ARL3', 'ARL2', 'h', 1)
+    horizontal_affinities.append(tempRule)
+
+    # Sub: Hips; Connects Legs to Torso
+    tempState = State('ALH1', 'ffffff')
+    initial_states.append(tempState)
+    complete_states.append(tempState)
+    tempState = State('AMH', '000000')
+    initial_states.append(tempState)
+    complete_states.append(tempState)
+
+    vertical_affinities.append(AffinityRule('ALH1', 'ALL3', 'v', 1))
+    horizontal_affinities.append(AffinityRule('ALH1', 'AMH', 'h', 1))
+
+    # Sub: Torso + Neck; Connects to Hips, Head, and Arms
+    tempLabels = ['AT1', 'AT2', 'AT3', 'AT4']
+    for i in range(4):
+        tempState = State(tempLabels[i], '000000')
+        initial_states.append(tempState)
+        complete_states.append(tempState)
+        if(i == 0):
+            vertical_affinities.append(
+                AffinityRule(tempLabels[i], 'AMH', 'v', 1))
+        else:
+            vertical_affinities.append(AffinityRule(
+                tempLabels[i], tempLabels[i-1], 'v', 1))
+
+    # Sub: Arms; Connects to Torso
+    # Left Arm
+    tempState = State('ALA1', '000000')
+    initial_states.append(tempState)
+    complete_states.append(tempState)
+    tempState = State('ALA2', 'ffffff')
+    initial_states.append(tempState)
+    complete_states.append(tempState)
+    tempState = State('ALA3', '000000')
+    initial_states.append(tempState)
+    complete_states.append(tempState)
+
+    horizontal_affinities.append(AffinityRule('ALA1', 'AT3', 'h', 1))
+    horizontal_affinities.append(AffinityRule('ALA2', 'ALA1', 'h', 1))
+    vertical_affinities.append(AffinityRule('ALA2', 'ALA3', 'v', 1))
+
+    # Right Arm
+    tempState = State('ARA1', '000000')
+    initial_states.append(tempState)
+    complete_states.append(tempState)
+    tempState = State('ARA2', 'ffffff')
+    initial_states.append(tempState)
+    complete_states.append(tempState)
+    tempState = State('ARA3', '000000')
+    initial_states.append(tempState)
+    complete_states.append(tempState)
+
+    horizontal_affinities.append(AffinityRule('AT3', 'ARA1', 'h', 1))
+    horizontal_affinities.append(AffinityRule('ARA1', 'ARA2', 'h', 1))
+    vertical_affinities.append(AffinityRule('ARA2', 'ARA3', 'v', 1))
+
+    # Sub: Head; Connects to Torso/Neck
+    tempLabels = ['AH1', 'AH2', 'AH3', 'AH4']
+    for i in range(4):
+        tempState = State(tempLabels[i], '000000')
+        initial_states.append(tempState)
+        complete_states.append(tempState)
+        if(i == 0):
+            vertical_affinities.append(
+                AffinityRule(tempLabels[i], 'AT4', 'v', 1))
+        elif(i == 1):
+            vertical_affinities.append(AffinityRule(
+                tempLabels[i], 'AH1', 'v', 1))
+        elif(i == 2):
+            horizontal_affinities.append(
+                AffinityRule(tempLabels[i], 'AH1', 'h', 1))
+            horizontal_affinities.append(
+                AffinityRule(tempLabels[i], 'AH2', 'h', 1))
+        else:
+            horizontal_affinities.append(
+                AffinityRule('AH1', tempLabels[i], 'h', 1))
+            horizontal_affinities.append(
+                AffinityRule('AH2', tempLabels[i], 'h', 1))
 
 
 def main(input_string=None):

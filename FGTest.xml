@@ -1,2 +1,99 @@
 <?xml version='1.0' encoding='utf-8'?>
-<System Temp="1"><AllStates><State Label="A0" Color="00ff00" /><State Label="ALL1" Color="000000" /><State Label="ALL2" Color="ffffff" /><State Label="ALL3" Color="000000" /></AllStates><InitialStates><State Label="A0" Color="00ff00" /><State Label="ALL1" Color="000000" /><State Label="ALL2" Color="ffffff" /><State Label="ALL3" Color="000000" /></InitialStates><SeedStates><State Label="X" Color="00ff00" /></SeedStates><VerticalTransitions /><HorizontalTransitions /><VerticalAffinities><Rule Label1="ALL1" Label2="A0" Strength="1" /><Rule Label1="ALL2" Label2="ALL1" Strength="1" /></VerticalAffinities><HorizontalAffinities><Rule Label1="X" Label2="A0" Strength="1" /><Rule Label1="ALL2" Label2="ALL3" Strength="1" /></HorizontalAffinities></System>
+<System Temp="1">
+    <AllStates>
+        <State Label="A0" Color="00ff00" />
+        <State Label="A!" Color="00ff00" />
+        <State Label="A@" Color="00ff00" />
+        <State Label="A#" Color="00ff00" />
+        <State Label="A*" Color="00ff00" />
+        <State Label="ALL1" Color="000000" />
+        <State Label="ALL2" Color="ffffff" />
+        <State Label="ALL3" Color="000000" />
+        <State Label="ARL1" Color="000000" />
+        <State Label="ARL2" Color="ffffff" />
+        <State Label="ARL3" Color="000000" />
+        <State Label="ALH1" Color="ffffff" />
+        <State Label="AMH" Color="000000" />
+        <State Label="AT1" Color="000000" />
+        <State Label="AT2" Color="000000" />
+        <State Label="AT3" Color="000000" />
+        <State Label="AT4" Color="000000" />
+        <State Label="ALA1" Color="000000" />
+        <State Label="ALA2" Color="ffffff" />
+        <State Label="ALA3" Color="000000" />
+        <State Label="ARA1" Color="000000" />
+        <State Label="ARA2" Color="ffffff" />
+        <State Label="ARA3" Color="000000" />
+        <State Label="AH1" Color="000000" />
+        <State Label="AH2" Color="000000" />
+        <State Label="AH3" Color="000000" />
+        <State Label="AH4" Color="000000" />
+    </AllStates>
+    <InitialStates>
+        <State Label="A0" Color="00ff00" />
+        <State Label="A!" Color="00ff00" />
+        <State Label="A@" Color="00ff00" />
+        <State Label="A#" Color="00ff00" />
+        <State Label="A*" Color="00ff00" />
+        <State Label="ALL1" Color="000000" />
+        <State Label="ALL2" Color="ffffff" />
+        <State Label="ALL3" Color="000000" />
+        <State Label="ARL1" Color="000000" />
+        <State Label="ARL2" Color="ffffff" />
+        <State Label="ARL3" Color="000000" />
+        <State Label="ALH1" Color="ffffff" />
+        <State Label="AMH" Color="000000" />
+        <State Label="AT1" Color="000000" />
+        <State Label="AT2" Color="000000" />
+        <State Label="AT3" Color="000000" />
+        <State Label="AT4" Color="000000" />
+        <State Label="ALA1" Color="000000" />
+        <State Label="ALA2" Color="ffffff" />
+        <State Label="ALA3" Color="000000" />
+        <State Label="ARA1" Color="000000" />
+        <State Label="ARA2" Color="ffffff" />
+        <State Label="ARA3" Color="000000" />
+        <State Label="AH1" Color="000000" />
+        <State Label="AH2" Color="000000" />
+        <State Label="AH3" Color="000000" />
+        <State Label="AH4" Color="000000" />
+    </InitialStates>
+    <SeedStates>
+        <State Label="X" Color="00ff00" />
+    </SeedStates>
+    <VerticalTransitions />
+    <HorizontalTransitions />
+    <VerticalAffinities>
+        <Rule Label1="ALL1" Label2="A0" Strength="1" />
+        <Rule Label1="ALL2" Label2="ALL1" Strength="1" />
+        <Rule Label1="ARL1" Label2="A*" Strength="1" />
+        <Rule Label1="ARL2" Label2="ARL1" Strength="1" />
+        <Rule Label1="ALH1" Label2="ALL3" Strength="1" />
+        <Rule Label1="AT1" Label2="AMH" Strength="1" />
+        <Rule Label1="AT2" Label2="AT1" Strength="1" />
+        <Rule Label1="AT3" Label2="AT2" Strength="1" />
+        <Rule Label1="AT4" Label2="AT3" Strength="1" />
+        <Rule Label1="ALA2" Label2="ALA3" Strength="1" />
+        <Rule Label1="ARA2" Label2="ARA3" Strength="1" />
+        <Rule Label1="AH1" Label2="AT4" Strength="1" />
+        <Rule Label1="AH2" Label2="AH1" Strength="1" />
+    </VerticalAffinities>
+    <HorizontalAffinities>
+        <Rule Label1="X" Label2="A0" Strength="1" />
+        <Rule Label1="A0" Label2="A!" Strength="1" />
+        <Rule Label1="A!" Label2="A@" Strength="1" />
+        <Rule Label1="A@" Label2="A#" Strength="1" />
+        <Rule Label1="A#" Label2="A*" Strength="1" />
+        <Rule Label1="ALL2" Label2="ALL3" Strength="1" />
+        <Rule Label1="ARL3" Label2="ARL2" Strength="1" />
+        <Rule Label1="ALH1" Label2="AMH" Strength="1" />
+        <Rule Label1="ALA1" Label2="AT3" Strength="1" />
+        <Rule Label1="ALA2" Label2="ALA1" Strength="1" />
+        <Rule Label1="AT3" Label2="ARA1" Strength="1" />
+        <Rule Label1="ARA1" Label2="ARA2" Strength="1" />
+        <Rule Label1="AH3" Label2="AH1" Strength="1" />
+        <Rule Label1="AH3" Label2="AH2" Strength="1" />
+        <Rule Label1="AH1" Label2="AH4" Strength="1" />
+        <Rule Label1="AH2" Label2="AH4" Strength="1" />
+    </HorizontalAffinities>
+</System>
