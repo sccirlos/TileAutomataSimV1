@@ -9,7 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-import general_TA_simulator 
+# import general_TA_simulator 
 
 class Ui_EditorWindow(object):
      def setupUi(self, EditorWindow):

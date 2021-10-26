@@ -2,7 +2,7 @@
 # Unnamed TA Simulator
 # Version 1.0
 # Author: ASARG
-# Description: Implements the tile automata model as designed by Angel Cantu, Austin Luchsinger, Robert Schweller, and Tim Wylie.
+# Description: Implements the tile automata model as designed by Chalk et al.
 #################################################################################################################################
 # Unnamed TASimulator Manual
 
@@ -28,7 +28,6 @@ Section 1 - Application
 ## 1.2 Usage
   Running:
     >python3 general_TA_simulator.py
-
 
 ## 1.3 Menu Overview
 Main Menu
@@ -86,20 +85,35 @@ Main Menu
 1.4.4 Papers
 1.4.4.1
   
-## 1.3 Controls
+## 1.5 Simulator Screen
+Windows users, we are aware of a bug that does not let you interact with the simulator when you press play on some systems and are looking into it.
+
+1.5.1 Simulator Area
+  This is where the simulation occurs. When a system with a seed is loaded, the chosen seed tile will appear here. 
+  Tiles are displayed here with their respective label and color. It should be noted that only up to 4 characters of the label will be displayed, so it is recommended to color code should you have labels with similar beginnings.
+
+
+1.5.2 Toolbar
+  The toolbar has five buttons which include:
+  -First: returns you to the first step of the assembly
+  -Previous: shows you the previous step of the assembly
+  -Play/Pause: pressing play simulates what a system would do step by step. Pause will appear when a user presses play so you may stop the simulation on a certain step. If you would like the play sequence to be slower, be sure to press the "slow mode" radio button.
+  -Next: shows you the next step of the assembly
+  -Last: takes you to the last step of the function
+  It should be noted that these only work if a system is loaded
+
+1.5.3 Simulator Controls
   Once a system is loaded: 
   -WASD will move the assembly
   -The mouse scroll wheel can zoom in and out
-  -J will show you the previous step of an assembly
-  -K will press "play" to simulate what a system would do
-  -L will show you the next step of the assembly
 
-  you can also use the toolbar buttons, which include:
-  -First 
-  -Previous
-  -Play/Pause
-  -Next
-  -Last
+  These hotkeys correspond to the tool bar at the top of the screen and are mapped to follow the layout respectively.
+  -H -First 
+  -J -Previous
+  -K -Play/Pause
+  -L -Next 
+  -; -Last
+
 
 #############################
 Section 2 - Models Overview
@@ -147,9 +161,6 @@ EXAMPLE:
     
 #############################
 Section 4 - Feature Map
-  -Add companion papers to section
-  -Adding list of available moves
-    
 
 
 
