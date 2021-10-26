@@ -775,13 +775,16 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.stop_sequence()
             if self.SysLoaded == True:
                 prev_move = self.Engine.getCurrentMove()
-                if self.Engine.step() != -1:
+                if self.Engine.step(move) != -1:
                     self.color_flag = 1
                     if self.Engine.currentIndex > 1:
                         self.draw_move(prev_move, 1, "black")
                     # Might need to go above
                     self.time = self.time + (self.Engine.timeTaken())
                     self.draw_move(move, 1, "blue")
+                else:
+                    self.color_flag = 2
+                    self.draw_move(move, 1, "black")
 
     def first_step(self):
         if self.SysLoaded == True:
