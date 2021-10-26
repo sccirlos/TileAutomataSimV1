@@ -107,6 +107,9 @@ class Engine:
         if len(self.moveList) != 0:
             return self.moveList[self.getCurrentIndex()]
 
+    def getCurrentBorders(self):
+        return self.currentAssembly.get_borders()
+
     def build(self, nextMove=None, forwards=True):
 
         # Check if assembly is terminal

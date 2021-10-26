@@ -75,6 +75,10 @@ class Assembly:
         print("South Boundary: ", self.downMost)
         print("Size: ", len(self.tiles))
 
+    def get_borders(self):
+        borders_list = [self.leftMost, self.rightMost, self.upMost, self.downMost]
+        return borders_list
+
     def get_label(self):
         return self.label
 

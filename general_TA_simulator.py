@@ -298,20 +298,35 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         #modifiers = QtWidgets.QApplication.keyboardModifiers()
 
         # "up" arrow key is pressed
-        if event.key() == Qt.Key_W and not self.play:
-            self.seedY = self.seedY - 10
-            self.textY = self.textY - 10
+        if event.key() == Qt.Key_W and not self.play and event.modifiers() == Qt.ShiftModifier:
+            #"CAPITAL W"
+            Upborder = self.Engine.getCurrentBorders()[2]
+            Downborder = self.Engine.getCurrentBorders()[3]
+            
+            distance = (self.tileSize * Upborder) - (self.tileSize * Downborder)
+            self.seedY = self.seedY - distance / 5
+            self.textY = self.textY - distance / 5
             if self.Engine != None:
                 self.draw_assembly(self.Engine.getCurrentAssembly())
 
-        elif event.key() == Qt.Key_W and event.modifiers() == Qt.ShiftModifier:
-            print("CAPITAL W")
+        elif event.key() == Qt.Key_W and not self.play:
             self.seedY = self.seedY - 10
             self.textY = self.textY - 10
             if self.Engine != None:
                 self.draw_assembly(self.Engine.getCurrentAssembly())
         
         # "down" arrow key is pressed
+        elif event.key() == Qt.Key_S and not self.play and event.modifiers() == Qt.ShiftModifier:
+            #"CAPITAL S"
+            Upborder = self.Engine.getCurrentBorders()[2]
+            Downborder = self.Engine.getCurrentBorders()[3]
+            
+            distance = (self.tileSize * Upborder) - (self.tileSize * Downborder)
+            self.seedY = self.seedY + distance / 5
+            self.textY = self.textY + distance / 5
+            if self.Engine != None:
+                self.draw_assembly(self.Engine.getCurrentAssembly())
+
         elif event.key() == Qt.Key_S and not self.play:
             self.seedY = self.seedY + 10
             self.textY = self.textY + 10
@@ -319,13 +334,35 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 self.draw_assembly(self.Engine.getCurrentAssembly())
 
         # "left" arrow key is pressed
+        elif event.key() == Qt.Key_A and not self.play and event.modifiers() == Qt.ShiftModifier:
+            # CAPITAL A
+            Leftborder = self.Engine.getCurrentBorders()[0]
+            Rightborder = self.Engine.getCurrentBorders()[1]
+            
+            distance = (self.tileSize * Rightborder) - (self.tileSize * Leftborder)
+            self.seedX = self.seedX - distance / 5
+            self.textX = self.textX - distance / 5
+            if self.Engine != None:
+                self.draw_assembly(self.Engine.getCurrentAssembly())
+
         elif event.key() == Qt.Key_A and not self.play:
             self.seedX = self.seedX - 10
             self.textX = self.textX - 10
             if self.Engine != None:
                 self.draw_assembly(self.Engine.getCurrentAssembly())
 
-        # "down" arrow key is pressed
+        # "right" arrow key is pressed
+        elif event.key() == Qt.Key_D and not self.play and event.modifiers() == Qt.ShiftModifier:
+            #CAPITAL D
+            Leftborder = self.Engine.getCurrentBorders()[0]
+            Rightborder = self.Engine.getCurrentBorders()[1]
+            
+            distance = (self.tileSize * Rightborder) - (self.tileSize * Leftborder)
+            self.seedX = self.seedX + distance / 5
+            self.textX = self.textX + distance / 5
+            if self.Engine != None:
+                self.draw_assembly(self.Engine.getCurrentAssembly())
+
         elif event.key() == Qt.Key_D and not self.play:
             self.seedX = self.seedX + 10
             self.textX = self.textX + 10
