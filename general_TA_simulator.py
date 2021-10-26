@@ -581,7 +581,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         elif move['type'] == 't' and color_flag == 0: #(type, x, y, dir, state1, state2, state1Final, state2Final)
             pen.setColor(QtGui.QColor("red"))
             painter.setPen(pen)
-            self.transition_draw_function(move, move['state1Final'], move['state2Final'], painter, brush)
+            self.transition_draw_function(move, move['state1'], move['state2'], painter, brush)
 
     def draw_to_screen(self, x, y, label, painter, brush):
         painter.setBrush(brush)
