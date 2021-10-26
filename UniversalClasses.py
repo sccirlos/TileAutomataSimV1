@@ -3,9 +3,10 @@ from random import randrange
 
 
 class State:
-    def __init__(self, label, color):
+    def __init__(self, label, color, hidden_label=''):
         self.label = label
         self.color = color
+        self.hidden_label = hidden_label  # Used in FigureGenerator
 
     # Getters
     def returnLabel(self):
@@ -14,13 +15,15 @@ class State:
     def get_label(self):  # NOTICE: LEAVE THIS HERE FOR THE ASSEMBLER
         return self.label
 
+    def returnHiddenLabel(self):  # For FigureGenerator
+        return self.hidden_label
+
     def returnColor(self):
         return self.color
-    
+
     def __eq__(self, other):
         if isinstance(other, State):
             return self.label == other.label and self.color == other.color
-        
 
 
 def toCoords(x, y):
@@ -205,8 +208,8 @@ class Assembly:
         else:
             self.leftMost = self.leftMost
 
-
     # Elise on transitions
+
     def get_transitions(self, sy):  # takes in a system
         #t1 = (self.tiles[i-1][0])
         #t2 = (self.tiles[i][0])
@@ -265,7 +268,6 @@ class Assembly:
                         move["state1"] = iTile.get_state()
                         move["state2"] = neighborS.get_state()
 
-                   
                         move["state1Final"] = sy.get_state(
                             rules[i])  # .returnLabel1Final()
                         move["state2Final"] = sy.get_state(
@@ -289,7 +291,6 @@ class Assembly:
                         move["state1"] = iTile.get_state()
                         move["state2"] = neighborE.get_state()
 
-                    
                         move["state1Final"] = sy.get_state(
                             rules[i])  # .returnLabel1Final()
                         move["state2Final"] = sy.get_state(
@@ -309,17 +310,17 @@ class Assembly:
         #change = trans["type"]
 
         # print(a.tiles[change])
-        #print(trans["state2Final"].get_label())
-        #print(trans["type"])
+        # print(trans["state2Final"].get_label())
+        # print(trans["type"])
         self.coords[toCoords(trans["x"], trans["y"])].set_state(
             trans["state1Final"])
         # a.tiles[trans["x"]][trans["y"]].setState(trans["state1Final"])
         if(trans["dir"] == "v"):
             self.coords[toCoords(trans["x"], trans["y"] - 1)
-                     ].set_state(trans["state2Final"])
+                        ].set_state(trans["state2Final"])
         if(trans["dir"] == "h"):
             self.coords[toCoords(trans["x"] + 1, trans["y"])
-                     ].set_state(trans["state2Final"])
+                        ].set_state(trans["state2Final"])
         #print("New Assembly Tiles: ", a.tiles)
 
     def getMoves(self, sy):
@@ -344,16 +345,15 @@ class Assembly:
             # a.tiles[trans["x"]][trans["y"]].setState(trans["state1Final"])
             if(move["dir"] == "v"):
                 a.coords[toCoords(move["x"], move["y"] - 1)
-                        ].set_state(move["state2"])
+                         ].set_state(move["state2"])
             if(move["dir"] == "h"):
                 a.coords[toCoords(move["x"] + 1, move["y"])
-                        ].set_state(move["state2"])
-
-
+                         ].set_state(move["state2"])
 
             return a
         if(move["type"] == "a"):
-            print("Removing state", move["state1"], "from ", move["x"], ", ", move["y"])
+            print("Removing state", move["state1"],
+                  "from ", move["x"], ", ", move["y"])
             tile = a.coords[toCoords(x, y)]
             del a.coords[toCoords(x, y)]
 
@@ -420,73 +420,66 @@ class Assembly:
                 attachments_list.append(attMove)
         return attachments_list
 
-
     def getTRat(self, sy, x, y, dir=None):
         transitions_list = []
         sys_h_tr = sy.returnHorizontalTransitionDict()
         sys_v_tr = sy.returnVerticalTransitionDict()
 
         iTile = self.coords.get(toCoords(x, y))
-        
+
         if iTile == None:
             return transitions_list
 
-                # Get only the south and east neighbors of iTile
+            # Get only the south and east neighbors of iTile
         neighborS = self.coords.get(toCoords(x, y - 1))
         neighborE = self.coords.get(toCoords(x + 1, y))
 
         if dir == None or dir == "v":
             if(neighborS != None):
-                    # second dictionary
-                    # rules = iVTranRules.get(neighborS.get_label())
-                    rules = sys_v_tr.get(
-                        (iTile.get_label(), neighborS.get_label()))
-                    # rules.append(iVTranRules)
-                    if rules != None:
-                        for i in range(0, len(rules), 2):     
-                            move = {"type": "t"}
-                            move["x"] = iTile.x
-                            move["y"] = iTile.y
-                            move["dir"] = "v"
-                            move["state1"] = iTile.get_state()
-                            move["state2"] = neighborS.get_state()
-                          
-                            move["state1Final"] = sy.get_state(
-                                rules[i])  # .returnLabel1Final()
-                            move["state2Final"] = sy.get_state(
-                                rules[i + 1])  # .returnLabel2Final()
-                            transitions_list.append(move)
+                # second dictionary
+                # rules = iVTranRules.get(neighborS.get_label())
+                rules = sys_v_tr.get(
+                    (iTile.get_label(), neighborS.get_label()))
+                # rules.append(iVTranRules)
+                if rules != None:
+                    for i in range(0, len(rules), 2):
+                        move = {"type": "t"}
+                        move["x"] = iTile.x
+                        move["y"] = iTile.y
+                        move["dir"] = "v"
+                        move["state1"] = iTile.get_state()
+                        move["state2"] = neighborS.get_state()
 
+                        move["state1Final"] = sy.get_state(
+                            rules[i])  # .returnLabel1Final()
+                        move["state2Final"] = sy.get_state(
+                            rules[i + 1])  # .returnLabel2Final()
+                        transitions_list.append(move)
 
         if dir == None or dir == "h":
             if(neighborE != None):
-                    # second dictionary
-                    # rules = iVTranRules.get(neighborS.get_label())
-                    rules = sys_h_tr.get(
-                        (iTile.get_label(), neighborE.get_label()))
-                    # rules.append(iVTranRules)
-                    if rules != None:
-                        for i in range(0, len(rules), 2): 
-                            move = {"type": "t"}
-                            move["x"] = iTile.x
-                            move["y"] = iTile.y
-                            move["dir"] = "h"
-                            move["state1"] = iTile.get_state()
-                            move["state2"] = neighborE.get_state()
-  
-                            move["state1Final"] = sy.get_state(
-                                rules[i])  # .returnLabel1Final()
-                            move["state2Final"] = sy.get_state(
-                                rules[i + 1])  # .returnLabel2Final()
-                            transitions_list.append(move)
+                # second dictionary
+                # rules = iVTranRules.get(neighborS.get_label())
+                rules = sys_h_tr.get(
+                    (iTile.get_label(), neighborE.get_label()))
+                # rules.append(iVTranRules)
+                if rules != None:
+                    for i in range(0, len(rules), 2):
+                        move = {"type": "t"}
+                        move["x"] = iTile.x
+                        move["y"] = iTile.y
+                        move["dir"] = "h"
+                        move["state1"] = iTile.get_state()
+                        move["state2"] = neighborE.get_state()
+
+                        move["state1Final"] = sy.get_state(
+                            rules[i])  # .returnLabel1Final()
+                        move["state2Final"] = sy.get_state(
+                            rules[i + 1])  # .returnLabel2Final()
+                        transitions_list.append(move)
 
         return transitions_list
 
-
-
-
-                    
-            
 
 # Not in use right now.
 
@@ -793,8 +786,6 @@ class System:
             else:
                 oldList.append(label1Final)
                 oldList.append(label2Final)
-
-            
 
             self.horizontal_transitions_dict[label1, label2] = oldList
 
