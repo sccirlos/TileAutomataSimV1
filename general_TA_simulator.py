@@ -163,6 +163,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.moves_page = 0
         self.moves_per_page = 8
 
+        #updating combobox
         self.movesLayout.addWidget(self.next_moves_button)
         self.movesLayout.addWidget(self.prev_moves_button)
 
