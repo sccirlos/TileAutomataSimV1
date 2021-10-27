@@ -1226,14 +1226,15 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
 
     # remove/delete rows from state table
     def click_removeRowState(self):
-    
-        print("remove row button clicked")
 
-        if self.tableWidget_2.rowCount() > 0: 
-            currentRow = self.tableWidget_2.currentRow()
-            self.tableWidget_2.removeRow(currentRow)
+        # debug print the selected rows and columns
+        # for i in self.tableWidget.selectedIndexes():
+        #     print("row", i.row(), "col", i.column())
 
-        self.system.remove_state(states)
+        # only delete if there is something in the table, and if there is something selected
+        if self.tableWidget.rowCount() > 0 and len(self.tableWidget.selectedIndexes()) > 0:
+            self.tableWidget.removeRow(self.tableWidget.selectedIndexes()[0].row())
+
 
     def Click_EditApply(self):
 
