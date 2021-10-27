@@ -173,6 +173,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.moveWidgets.append(mGUI)
             self.movesLayout.addWidget(mGUI)
 
+        example_options = ["Strings", "Thin Rectangle", "Squares"]
+        self.comboBox.addItems(example_options)
+
         # Function to Move window on mouse drag event on the title bar
         def moveWindow(e):
             # Detect if the window is  normal size
