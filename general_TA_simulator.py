@@ -177,6 +177,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         example_options = ["Strings", "Thin Rectangle", "Squares"]
         self.comboBox.addItems(example_options)
 
+        self.ExampleButton.clicked.connect(self.Begin_example)
+
         # Function to Move window on mouse drag event on the title bar
         def moveWindow(e):
             # Detect if the window is  normal size
@@ -823,6 +825,14 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.delay = 1000
         else:
             self.delay = 0
+
+    def Begin_example(self):
+        if self.comboBox.currentText() == "Strings":
+            print("Strings " + self.lineEdit.text())
+        elif self.comboBox.currentText() == "Thin Rectangle":
+            print("Thin Rectangle " + self.lineEdit.text())
+        elif self.comboBox.currentText() == "Squares":
+            print("Squares " + self.lineEdit.text())
 
     def do_move(self, move):
         if not self.play:
