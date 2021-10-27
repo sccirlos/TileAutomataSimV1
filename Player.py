@@ -34,7 +34,7 @@ class Player(QObject):
     def run(self):
         while(self.ui.play == True and (self.ui.Engine.step() != -1)):
             self.ui.time = self.ui.time + (self.ui.Engine.timeTaken())
-            self.ui.draw_move(self.ui.Engine.getCurrentMove(), 1)
+            self.ui.draw_move(self.ui.Engine.getCurrentMove(), 1, "black")
             if self.ui.SlowMode_button.isChecked():
                 if self.ui.Engine.currentIndex != 0:
                     time.sleep(self.ui.delay * self.ui.Engine.timeTaken() / 1000)

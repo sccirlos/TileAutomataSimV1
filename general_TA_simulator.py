@@ -147,17 +147,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         # Assembly History
         self.historian = Historian()
         self.historian.set_ui_parent(self)
-        
-        self.SaveHistory_button = QPushButton(self.page)
-        self.verticalLayout_6.addWidget(self.SaveHistory_button)
-        self.SaveHistory_button.setText("Save History")
 
-        self.LoadHistory_button = QPushButton(self.page)
-        self.verticalLayout_6.addWidget(self.LoadHistory_button)
-        self.LoadHistory_button.setText("Load History")
-
-        self.SaveHistory_button.clicked.connect(self.historian.dump)
-        self.LoadHistory_button.clicked.connect(self.historian.load)
+        self.SaveHistory_Button.clicked.connect(self.historian.dump)
+        self.LoadHistory_Button.clicked.connect(self.historian.load)
         self.move_status = QLabel("No Available Moves")
         self.movesLayout.addWidget(self.move_status)
 
@@ -199,6 +191,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         self.time = 0
         self.delay = 0
+        self.color_flag = 2 #0 is red, 1 is blue, and 2 is black. Nums correspond with forward/backward highlight
         self.seedX = self.geometry().width() / 2
         self.seedY = self.geometry().height() / 2
         self.clickPosition = QtCore.QPoint(
@@ -305,31 +298,87 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
     def keyPressEvent(self, event):
         #### Moving tiles across screen functions #####
-        # up arrow key is pressed
-        if event.key() == Qt.Key_W and not self.play:
+        #modifiers = QtWidgets.QApplication.keyboardModifiers()
+
+        # "up" arrow key is pressed
+        if event.key() == Qt.Key_W and not self.play and event.modifiers() == Qt.ShiftModifier:
+            #"CAPITAL W"
+            Upborder = self.Engine.getCurrentBorders()[2]
+            Downborder = self.Engine.getCurrentBorders()[3]
+            
+            distance = (self.tileSize * Upborder) - (self.tileSize * Downborder)
+            self.seedY = self.seedY - distance / 5
+            self.textY = self.textY - distance / 5
+            if self.Engine != None:
+                self.draw_assembly(self.Engine.getCurrentAssembly())
+
+        elif event.key() == Qt.Key_W and not self.play:
             self.seedY = self.seedY - 10
             self.textY = self.textY - 10
             if self.Engine != None:
                 self.draw_assembly(self.Engine.getCurrentAssembly())
+        
+        # "down" arrow key is pressed
+        elif event.key() == Qt.Key_S and not self.play and event.modifiers() == Qt.ShiftModifier:
+            #"CAPITAL S"
+            Upborder = self.Engine.getCurrentBorders()[2]
+            Downborder = self.Engine.getCurrentBorders()[3]
+            
+            distance = (self.tileSize * Upborder) - (self.tileSize * Downborder)
+            self.seedY = self.seedY + distance / 5
+            self.textY = self.textY + distance / 5
+            if self.Engine != None:
+                self.draw_assembly(self.Engine.getCurrentAssembly())
 
-        # down arrow key is pressed
         elif event.key() == Qt.Key_S and not self.play:
             self.seedY = self.seedY + 10
             self.textY = self.textY + 10
             if self.Engine != None:
                 self.draw_assembly(self.Engine.getCurrentAssembly())
 
-        # left arrow key is pressed
+        # "left" arrow key is pressed
+        elif event.key() == Qt.Key_A and not self.play and event.modifiers() == Qt.ShiftModifier:
+            # CAPITAL A
+            Leftborder = self.Engine.getCurrentBorders()[0]
+            Rightborder = self.Engine.getCurrentBorders()[1]
+            
+            distance = (self.tileSize * Rightborder) - (self.tileSize * Leftborder)
+            self.seedX = self.seedX - distance / 5
+            self.textX = self.textX - distance / 5
+            if self.Engine != None:
+                self.draw_assembly(self.Engine.getCurrentAssembly())
+
         elif event.key() == Qt.Key_A and not self.play:
             self.seedX = self.seedX - 10
             self.textX = self.textX - 10
             if self.Engine != None:
                 self.draw_assembly(self.Engine.getCurrentAssembly())
 
-        # down arrow key is pressed
+        # "right" arrow key is pressed
+        elif event.key() == Qt.Key_D and not self.play and event.modifiers() == Qt.ShiftModifier:
+            #CAPITAL D
+            Leftborder = self.Engine.getCurrentBorders()[0]
+            Rightborder = self.Engine.getCurrentBorders()[1]
+            
+            distance = (self.tileSize * Rightborder) - (self.tileSize * Leftborder)
+            self.seedX = self.seedX + distance / 5
+            self.textX = self.textX + distance / 5
+            if self.Engine != None:
+                self.draw_assembly(self.Engine.getCurrentAssembly())
+
         elif event.key() == Qt.Key_D and not self.play:
             self.seedX = self.seedX + 10
             self.textX = self.textX + 10
+            if self.Engine != None:
+                self.draw_assembly(self.Engine.getCurrentAssembly())
+
+        # Spacebar to center seed
+        elif event.key() == Qt.Key_C and not self.play:
+            self.seedX = self.geometry().width() / 2
+            self.seedY = self.geometry().height() / 2
+
+            self.textX = self.seedX + 10
+            self.textY = self.seedY + 25
             if self.Engine != None:
                 self.draw_assembly(self.Engine.getCurrentAssembly())
 
@@ -368,7 +417,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         if self.Engine != None:
             self.draw_assembly(self.Engine.getCurrentAssembly())
 
-    def draw_move(self, move, forward):    
+    def draw_move(self, move, forward, color):    
         painter = QPainter(self.label.pixmap())
         pen = QtGui.QPen()
         brush = QtGui.QBrush()
@@ -383,7 +432,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         font.setPixelSize(self.textSize)
         painter.setFont(font)
 
-        pen.setColor(QtGui.QColor("black"))
+        pen.setColor(QtGui.QColor(color))
         painter.setPen(pen)
 
         #adding attachment on screen
@@ -476,6 +525,13 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
             self.draw_to_screen(tile.x, tile.y, tile.state.label, painter, brush)
 
+        if self.Engine.currentIndex > 0: 
+            if self.color_flag == 0 and self.play != True and self.Engine.currentIndex < self.Engine.lastIndex:
+                self.highlight_move(self.Engine.getLastMove(), self.color_flag, painter, brush, pen)
+            elif self.color_flag == 1:
+                self.highlight_move(self.Engine.getCurrentMove(), self.color_flag, painter, brush, pen)
+                
+
         painter.end()
 
         #self.Update_time_onScreen()
@@ -557,7 +613,26 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                     self.moveWidgets[i].move = m
                     self.moveWidgets[i].show()
                     i += 1
-                
+
+    def highlight_move(self, move, color_flag, painter, brush, pen):
+        #attachment highlight
+        if move['type'] == 'a' and color_flag == 1: #(type, x, y, state1)
+            if self.onScreen_check(move['x'], move['y']) != 1:
+                brush.setColor(QtGui.QColor("#" + move['state1'].returnColor()))
+                pen.setColor(QtGui.QColor("blue"))
+                painter.setPen(pen)
+                self.draw_to_screen(move['x'], move['y'], move['state1'].get_label(), painter, brush)
+        
+        #transition highlight
+        elif move['type'] == 't' and color_flag == 1: #(type, x, y, dir, state1, state2, state1Final, state2Final)
+            pen.setColor(QtGui.QColor("blue"))
+            painter.setPen(pen)
+            self.transition_draw_function(move, move['state1Final'], move['state2Final'], painter, brush)
+
+        elif move['type'] == 't' and color_flag == 0: #(type, x, y, dir, state1, state2, state1Final, state2Final)
+            pen.setColor(QtGui.QColor("red"))
+            painter.setPen(pen)
+            self.transition_draw_function(move, move['state1'], move['state2'], painter, brush)
 
     def draw_to_screen(self, x, y, label, painter, brush):
         painter.setBrush(brush)
@@ -750,10 +825,17 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             # Shouldn't need all this code but copying from next_step() anyways
             self.stop_sequence()
             if self.SysLoaded == True:
+                prev_move = self.Engine.getCurrentMove()
                 if self.Engine.step(move) != -1:
+                    self.color_flag = 1
+                    if self.Engine.currentIndex > 1:
+                        self.draw_move(prev_move, 1, "black")
                     # Might need to go above
                     self.time = self.time + (self.Engine.timeTaken())
-                    self.draw_move(move, 1)
+                    self.draw_move(move, 1, "blue")
+                else:
+                    self.color_flag = 2
+                    self.draw_move(move, 1, "black")
 
     def first_step(self):
         if self.SysLoaded == True:
@@ -772,8 +854,13 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         if self.SysLoaded == True:
             if self.Engine.currentIndex > 0:
+                self.color_flag = 0
+                if self.Engine.currentIndex < self.Engine.lastIndex:
+                    prev_move = self.Engine.getLastMove()
+                    self.draw_move(prev_move, 0, "black")
+
                 self.Engine.back()
-                self.draw_move(self.Engine.getLastMove(), 0)
+                self.draw_move(self.Engine.getLastMove(), 0, "red")
                 
                 # Might need to go below
                 self.time = self.time - (self.Engine.timeTaken())
@@ -784,10 +871,18 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             return
         
         if self.SysLoaded == True:
+            prev_move = self.Engine.getCurrentMove()
             if self.Engine.step() != -1:
+                self.color_flag = 1
+                if self.Engine.currentIndex > 1:
+                    self.draw_move(prev_move, 1, "black")
                 # Might need to go above
                 self.time = self.time + (self.Engine.timeTaken())
-                self.draw_move(self.Engine.getCurrentMove(), 1)
+                self.draw_move(self.Engine.getCurrentMove(), 1, "blue")
+
+            else:
+                self.color_flag = 2
+                self.draw_move(self.Engine.getCurrentMove(), 1, "black")
 
     def last_step(self):
         if self.SysLoaded == True:
@@ -817,7 +912,19 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         if self.SysLoaded == True:
             if self.play == False:
                 self.play = True
+                
                 self.Play_button.setIcon(QtGui.QIcon('Icons/tabler-icon-player-pause.png'))
+
+                if self.color_flag == 0:
+                    if self.Engine.currentIndex > 0:
+                        if self.Engine.currentIndex < self.Engine.lastIndex:
+                            prev_move = self.Engine.getLastMove()
+                            self.draw_move(prev_move, 0, "black")
+                elif self.color_flag == 1:
+                    if self.Engine.currentIndex > 1:
+                        prev_move = self.Engine.getCurrentMove()
+                        self.draw_move(prev_move, 1, "black")
+                self.color_flag = 2
                 
                 self.thread.deleteLater()
                 self.thread = QThread()
