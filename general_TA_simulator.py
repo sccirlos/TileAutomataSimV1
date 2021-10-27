@@ -1,5 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QFileDialog, QPushButton, QWidget, QVBoxLayout
+from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QFileDialog, QPushButton, QWidget, QVBoxLayout, QTableWidgetItem, QCheckBox
 from PyQt5.QtGui import QPainter, QBrush, QPen, QColor, QFont
 from PyQt5.QtCore import QObject, QThread, pyqtSignal
 
@@ -9,8 +9,9 @@ from Player import ComputeLast, Player
 from Historian import Historian
 
 from assemblyEngine import Engine
-from UniversalClasses import System, Assembly, Tile
+from UniversalClasses import AffinityRule, System, Assembly, Tile, State, TransitionRule
 import TAMainWindow
+import EditorWindow16
 import LoadFile
 import SaveFile
 import Assembler_Proto
@@ -20,6 +21,7 @@ import QuickReflect
 import math
 
 import sys
+
 
 # Global Variables
 # Note: currentSystem is still global but had to be moved into the loading method
@@ -121,6 +123,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.Last_button.setIcon(QtGui.QIcon(
             'Icons/tabler-icon-player-skip-forward.png'))
 
+        self.Edit_button.clicked.connect(self.Click_EditFile)
         # "Quick Rotate"
         self.Rotate_button.clicked.connect(self.Click_QuickRotate)
 
@@ -840,7 +843,355 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def stop_sequence(self):
         self.play = False
 
+
+    # opens editor window 
+    def Click_EditFile(self):
+         # if system loaded, open editorwindow
+        if self.SysLoaded == True:
+            self.e = Ui_EditorWindow(self.Engine)
+            self.e.show()
+        else: 
+            print("Please load a file to edit.")
+# add self, engine - then fill the table 
+# engine has the system 
+
+
+# do i need another function per page??
+class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
+    def __init__(self, engine):
+        super().__init__()
+        self.setupUi(self)
+        self.Engine = engine
+        self.system = engine.system
+         # set row count state table
+        self.newStateIndex = len(self.system.states)
+        self.tableWidget.setRowCount(len(self.system.states))
+        print(len(self.system.states))
+         # set row count affinity table
+        self.newAffinityIndex = (len(self.system.vertical_affinities_list)) + (len(self.system.horizontal_affinities_list))
+        self.tableWidget_2.setRowCount(len(self.system.vertical_affinities_list) + len(self.system.horizontal_affinities_list))
+        print(len(self.system.vertical_affinities_list) + len(self.system.horizontal_affinities_list))
+         # set row count transition table
+        self.newTransitionIndex = (len(self.system.vertical_transitions_list)) + (len(self.system.horizontal_transitions_list))
+        self.tableWidget_3.setRowCount(len(self.system.vertical_transitions_list) + len(self.system.horizontal_transitions_list))
+        print(len(self.system.vertical_transitions_list) + len(self.system.horizontal_transitions_list))
+
+
+         # connect the color change
+        self.tableWidget.cellChanged.connect(self.cellchanged)
+
+         # filling in table 2 with vertical affinities
+        r = 0
+        for af in self.system.vertical_affinities_list:
+            label1 = QTableWidgetItem()
+            label1.setText(af.returnLabel1()) 
+            label1.setTextAlignment(Qt.AlignCenter)
+            label2 = QTableWidgetItem()
+            label2.setText(af.returnLabel2())
+            label2.setTextAlignment(Qt.AlignCenter)
+            self.tableWidget_2.setItem(r, 0, label1)
+            self.tableWidget_2.setItem(r, 1, label2)
+           
+            direc = QTableWidgetItem()
+            direc.setText(af.returnDir())
+            direc.setTextAlignment(Qt.AlignCenter)
+            self.tableWidget_2.setItem(r, 2, direc)
+            glue = QTableWidgetItem()
+            glue.setText(af.returnStr())
+            glue.setTextAlignment(Qt.AlignCenter)
+            self.tableWidget_2.setItem(r, 3, glue)
+            r += 1
+
+        # filling in table 2 with horizontal affinities
+        for afH in self.system.horizontal_affinities_list:
+            label1HR = QTableWidgetItem()
+            label1HR.setText(afH.returnLabel1())
+            label1HR.setTextAlignment(Qt.AlignCenter)
+            self.tableWidget_2.setItem(r, 0, label1HR)
+            label2HR = QTableWidgetItem()
+            label2HR.setText(afH.returnLabel2())
+            label2HR.setTextAlignment(Qt.AlignCenter)
+            self.tableWidget_2.setItem(r, 1, label2HR)
+            direcHR = QTableWidgetItem()
+            direcHR.setText(afH.returnDir())
+            direcHR.setTextAlignment(Qt.AlignCenter)
+            self.tableWidget_2.setItem(r, 2, direcHR)
+            glueHR = QTableWidgetItem()
+            glueHR.setText(afH.returnStr())
+            glueHR.setTextAlignment(Qt.AlignCenter)
+            self.tableWidget_2.setItem(r, 3, glueHR)
+            r += 1
+
+
+        # filling in table 3 with vertical transitions
+        r = 0
+        for trV in self.system.vertical_transitions_list:
+            stateVT1 = QTableWidgetItem()
+            stateVT1.setText(trV.returnLabel1())
+            stateVT1.setTextAlignment(Qt.AlignCenter)
+            self.tableWidget_3.setItem(r, 0, stateVT1)
+            stateVT2 = QTableWidgetItem()
+            stateVT2.setText(trV.returnLabel2())
+            stateVT2.setTextAlignment(Qt.AlignCenter)
+            self.tableWidget_3.setItem(r, 1, stateVT2)
+            finalVT1 = QTableWidgetItem()
+            finalVT1.setText(trV.returnLabel1Final())
+            finalVT1.setTextAlignment(Qt.AlignCenter)
+            self.tableWidget_3.setItem(r, 3, finalVT1)
+            finalVT2 = QTableWidgetItem()
+            finalVT2.setText(trV.returnLabel2Final())
+            finalVT2.setTextAlignment(Qt.AlignCenter)
+            self.tableWidget_3.setItem(r, 4, finalVT2)
+            direcVT = QTableWidgetItem()
+            direcVT.setText(trV.returnDir())
+            direcVT.setTextAlignment(Qt.AlignCenter)
+            self.tableWidget_3.setItem(r, 5, direcVT)
+            r += 1
+
+        # filling in table 3 with horizontal transitions
+        for trH in self.system.horizontal_transitions_list:
+            stateHT1 = QTableWidgetItem()
+            stateHT1.setText(trH.returnLabel1())
+            stateHT1.setTextAlignment(Qt.AlignCenter)
+            self.tableWidget_3.setItem(r, 0, stateHT1)
+            stateHT2 = QTableWidgetItem()
+            stateHT2.setText(trH.returnLabel2())
+            stateHT2.setTextAlignment(Qt.AlignCenter)
+            self.tableWidget_3.setItem(r, 1, stateHT2)
+            finalHT1 = QTableWidgetItem()
+            finalHT1.setText(trH.returnLabel1Final())
+            finalHT1.setTextAlignment(Qt.AlignCenter)
+            self.tableWidget_3.setItem(r, 3, finalHT1)
+            finalHT2 = QTableWidgetItem()
+            finalHT2.setText(trH.returnLabel2Final())
+            finalHT2.setTextAlignment(Qt.AlignCenter)
+            self.tableWidget_3.setItem(r, 4, finalHT2)
+            direcHT = QTableWidgetItem()
+            direcHT.setText(trH.returnDir())
+            direcHT.setTextAlignment(Qt.AlignCenter)
+            self.tableWidget_3.setItem(r, 5, direcHT)
+            r += 1
+
+
+        # filling in table 1 with states
+        r = 0
+        for s in self.system.states:
+            color_cell = QTableWidgetItem()
+            color_cell.setText(s.get_color())
+            color_cell.setTextAlignment(Qt.AlignCenter)
+            color_cell.setForeground(QtGui.QColor("#" + s.get_color()))
+            color_cell.setBackground(QtGui.QColor("#" + s.get_color()))
+            self.tableWidget.setItem(r, 0, color_cell)
+
+            label_cell = QTableWidgetItem()
+            label_cell.setText(s.get_label())
+            label_cell.setTextAlignment(Qt.AlignCenter)
+            self.tableWidget.setItem(r, 1, label_cell)
+
+        
+            seedWidget = QtWidgets.QWidget()
+            seedCheckbox = QCheckBox()
+            seedChkLayout = QtWidgets.QHBoxLayout(seedWidget)
+            seedChkLayout.addWidget(seedCheckbox)
+            seedChkLayout.setAlignment(Qt.AlignCenter)
+            seedChkLayout.setContentsMargins(0,0,0,0)
+            self.tableWidget.setCellWidget(r, 2, seedWidget)
+            for sstate in self.system.seed_states:
+                if sstate.get_label() == s.get_label():
+                    seedCheckbox.setChecked(True)
+            
+            initialWidget = QtWidgets.QWidget()
+            initialCheckbox = QCheckBox()
+            initialChkLayout = QtWidgets.QHBoxLayout(initialWidget)
+            initialChkLayout.addWidget(initialCheckbox)
+            initialChkLayout.setAlignment(Qt.AlignCenter)
+            initialChkLayout.setContentsMargins(0,0,0,0)
+            self.tableWidget.setCellWidget(r, 3, initialWidget)
+            for istate in self.system.initial_states:
+                if istate.get_label() == s.get_label():
+                    initialCheckbox.setChecked(True)
+            
+            r += 1
+
+    
+     # action for 'apply' the changes made to the side edit window to the view states side 
+        self.pushButton.clicked.connect(self.Click_EditApply)
+         # action for 'save' the changes made to the side edit window to the XML file
+        self.pushButton_2.clicked.connect(self.Click_EditSaveAs)
+        self.pushButton_3.clicked.connect(self.Click_AddRowStates)
+        self.pushButton_4.clicked.connect(self.Click_AddRowAff)
+        self.pushButton_5.clicked.connect(self.Click_AddRowTrans)
+        self.pushButton_11.clicked.connect(self.click_removeRowState)
+
+    # for 'add state'
+    def cellchanged(self, row, col):
+        # only do anything is we are in the color column (0)
+        if col == 0:
+            print("in color column")
+
+            color_cell = self.tableWidget.item(row, col)
+            color = color_cell.text()
+            color_cell.setForeground(QtGui.QColor("#" + color))
+            color_cell.setBackground(QtGui.QColor("#" + color))
+
+ 
+    def Click_AddRowStates(self):
+        print("Add Row in States clicked")
+        newrow = self.tableWidget.rowCount()
+        self.tableWidget.setRowCount(newrow + 1)
+
+        color_cell = QTableWidgetItem()
+        color_cell.setTextAlignment(Qt.AlignCenter)
+        self.tableWidget.setItem(newrow, 0, color_cell)
+
+        label_cell = QTableWidgetItem()
+        label_cell.setTextAlignment(Qt.AlignCenter)
+        self.tableWidget.setItem(newrow, 1, label_cell)
+
+        seedWidget = QtWidgets.QWidget()
+        seedCheckbox = QCheckBox()
+        seedChkLayout = QtWidgets.QHBoxLayout(seedWidget)
+        seedChkLayout.addWidget(seedCheckbox)
+        seedChkLayout.setAlignment(Qt.AlignCenter)
+        seedChkLayout.setContentsMargins(0,0,0,0)
+        self.tableWidget.setCellWidget(newrow, 2, seedWidget)
+
+        initialWidget = QtWidgets.QWidget()
+        initialCheckbox = QCheckBox()
+        initialChkLayout = QtWidgets.QHBoxLayout(initialWidget)
+        initialChkLayout.addWidget(initialCheckbox)
+        initialChkLayout.setAlignment(Qt.AlignCenter)
+        initialChkLayout.setContentsMargins(0,0,0,0)       
+        self.tableWidget.setCellWidget(newrow, 3, initialWidget)
+        
+     # To add new row entered by user as a rule
+    def Click_AddRowAff(self):
+        print("Add Row in Affinities clicked")
+        newrow = self.tableWidget_2.rowCount()
+        self.tableWidget_2.setRowCount(newrow + 1)
+
+        label1 = QTableWidgetItem()
+        label1.setTextAlignment(Qt.AlignCenter)
+        self.tableWidget_2.setItem(newrow, 0, label1)
+
+        label2 = QTableWidgetItem()
+        label2.setTextAlignment(Qt.AlignCenter)
+        self.tableWidget_2.setItem(newrow, 1, label2)
+
+        direc = QTableWidgetItem()  
+        direc.setTextAlignment(Qt.AlignCenter)      
+        self.tableWidget_2.setItem(newrow, 2, direc)
+
+        glue = QTableWidgetItem()
+        glue.setTextAlignment(Qt.AlignCenter)
+        self.tableWidget_2.setItem(newrow, 3, glue)
+
+    def Click_AddRowTrans(self):
+        print("Add Row in Transitions clicked")
+        newrow = self.tableWidget_3.rowCount()
+        self.tableWidget_3.setRowCount(newrow + 1)
+
+        tLabel1 = QTableWidgetItem()
+        tLabel1.setTextAlignment(Qt.AlignCenter)
+        self.tableWidget_3.setItem(newrow, 0, tLabel1)
+
+        tLabel2 = QTableWidgetItem()
+        tLabel2.setTextAlignment(Qt.AlignCenter)
+        self.tableWidget_3.setItem(newrow, 1, tLabel2)
+
+        tFinal1 = QTableWidgetItem()
+        tFinal1.setTextAlignment(Qt.AlignCenter)
+        self.tableWidget_3.setItem(newrow, 3, tFinal1)
+
+        tFinal2 = QTableWidgetItem()
+        tFinal2.setTextAlignment(Qt.AlignCenter)
+        self.tableWidget_3.setItem(newrow, 4, tFinal2)
+
+        tDirec = QTableWidgetItem()
+        tDirec.setTextAlignment(Qt.AlignCenter)
+        self.tableWidget_3.setItem(newrow, 5, tDirec)
+
+
+    # remove/delete rows from state table
+    def click_removeRowState(self):
+    
+        print("remove row button clicked")
+
+        if self.tableWidget_2.rowCount() > 0: 
+            currentRow = self.tableWidget_2.currentRow()
+            self.tableWidget_2.removeRow(currentRow)
+
+        self.system.remove_state(states)
+
+    def Click_EditApply(self):
+     #print("Apply button clicked")
+
+        # go through new rows, create states, add states to system
+        for row in range(self.newStateIndex, self.tableWidget.rowCount()):
+            color_cell = self.tableWidget.item(row, 0)
+            label_cell = self.tableWidget.item(row, 1)
+            initialCheckbox = self.tableWidget.cellWidget(row, 3)
+            seedCheckbox = self.tableWidget.cellWidget(row, 2)
+            color = color_cell.text()
+            label = label_cell.text()
+            
+            #print(initialCheckbox)
+            # 'apply as' works now
+            initial = initialCheckbox.layout().itemAt(0).widget().isChecked()
+            seed = seedCheckbox.layout().itemAt(0).widget().isChecked()
+            s = State(label, color)
+
+            self.system.add_State(s)
+
+            if initial:
+                self.system.add_Initial_State(s)
+            if seed:
+                self.system.add_Seed_State(s)
+
+        # affinity
+        for row in range(self.newAffinityIndex, self.tableWidget_2.rowCount()):
+            label1 = self.tableWidget_2.item(row, 0)
+            label2 = self.tableWidget_2.item(row, 1)
+            
+            direc = self.tableWidget_2.item(row, 2)
+            glue = self.tableWidget_2.item(row,3)
+
+            lab1 = label1.text()
+            lab2 = label2.text()
+            dire = direc.text()
+            glu = glue.text()
+
+            afRule = AffinityRule(lab1, lab2, dire, glu)
+
+            self.system.add_affinity(afRule)
+
+        # transitions 
+        for row in range(self.newTransitionIndex, self.tableWidget_3.rowCount()):
+            tLabel1 = self.tableWidget_3.item(row, 0)
+            tLabel2 = self.tableWidget_3.item(row, 1)
+            tFinal1 = self.tableWidget_3.item(row, 3)
+            tFinal2 = self.tableWidget_3.item(row, 4)
+            tDirec = self.tableWidget_3.item(row, 5)
+
+            tLab1 = tLabel1.text()
+            tLab2 = tLabel2.text()
+            tFin1 = tFinal1.text()
+            tFin2 = tFinal2.text()
+            tDir = tDirec.text()
+
+            trRule = TransitionRule(tLab1, tLab2, tFin1, tFin2, tDir)
+
+            self.system.add_transition(trRule)
+
+     
+    
+
+     # working on this currently
+    def Click_EditSaveAs(self):
+        print("Save As button clicked")
+
 class Move(QWidget):
+
     def __init__(self, move, mw, parent):
         super().__init__(parent)
         self.move = move
@@ -883,13 +1234,15 @@ class Move(QWidget):
         
         self.mw.do_move(self.move)
 
+        
+
+
+    
 
 if __name__ == "__main__":
-
-    # App Stuff
-    app = QApplication(sys.argv)
-    w = Ui_MainWindow()
-    w.show()
-
-    sys.exit(app.exec_())
-#
+     # App Stuff
+        app = QApplication(sys.argv)
+        w = Ui_MainWindow()
+        w.show()
+        sys.exit(app.exec_())
+        #
