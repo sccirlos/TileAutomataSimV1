@@ -35,16 +35,21 @@ Main Menu
     - New 
     - Load
     - Save As
-    - Exit
+    - Save History
+    - Load History
  + Tools
     - Edit
     - Rotate
     - Combine
+    - X-Reflect
+    - Y-Reflect
     - Slow Mode
     - Time Elapsed
  + Available Moves
-    - 
- + Papers
+    - List of available moves
+    - Next
+    - Previous
+ + Examples
     - 
     
 ## 1.4 Menu Functions
@@ -60,8 +65,11 @@ Main Menu
 1.4.1.3 Save As . . .
   This menu option will prompt the user for a file name and location to log the information to. It will overwrite a file if it already exists.
 
-1.4.1.4 Exit
-  This closes the application.
+1.4.1.4 Save History
+  This menu option saves where the assembly is currently at to a JSON file.
+
+1.4.1.5 Load History
+  This menu option takes a JSON file and loads a system, assembly, and all steps to a certain point.
 
 1.4.2 Tools Menu
 1.4.2.1 Edit
@@ -72,6 +80,10 @@ Main Menu
   
 1.4.2.3 Combine
   Prompts the user to select a valid file and attempts to combine the system in the file with the current loaded system
+
+1.4.2.4 X-Reflect
+
+1.4.2.5 Y-Reflect
   
 1.4.2.4 Slow Mode
   This is a radio button that, when selected, adds a brief delay in between steps while the play option is selected.
