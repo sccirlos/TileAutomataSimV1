@@ -67,6 +67,10 @@ Main Menu
 
 1.4.1.4 Save History
   This menu option saves where the assembly is currently at to a JSON file.
+  This menu option saves the current assembly to a JSON file.
+  Since some assemblies can get quite large, you have the ability to save multiple versions of the assembly at different points in time.
+  When prompted, enter the name of the JSON file, then enter how many steps inbetween each version of the assembly you want. If you would like only
+  the current assembly and no multiple versions, enter 0.
 
 1.4.1.5 Load History
   This menu option takes a JSON file and loads a system, assembly, and all steps to a certain point.
@@ -92,7 +96,11 @@ Main Menu
   This is just text that shows the user how many "time steps" have occured at the current step.
 
 1.4.3 Available Moves
-1.4.3.1 
+  This section allows a particular attachment or transition to be selected rather than a move being picked at random.
+1.4.3.1 Next
+  When there are more moves than can be shown, you can page through the moves with 'Next'.
+1.4.3.2 Prev
+  Similar to 'Next', you can page through the moves with 'Prev'.
 
 1.4.4 Papers
 1.4.4.1
