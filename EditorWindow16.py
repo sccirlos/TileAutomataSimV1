@@ -48,9 +48,9 @@ class Ui_EditorWindow(object):
          self.label = QtWidgets.QLabel(self.page)
          self.label.setGeometry(QtCore.QRect(35, 25, 150, 16))
          self.label.setObjectName("label")
-         self.comboBox = QtWidgets.QComboBox(self.page)
-         self.comboBox.setGeometry(QtCore.QRect(200, 20, 80, 32))
-         self.comboBox.setObjectName("comboBox")
+         self.spinBox = QtWidgets.QSpinBox(self.page)
+         self.spinBox.setGeometry(QtCore.QRect(200, 20, 80, 32))
+         self.spinBox.setObjectName("spinBox")
          #self.toolBox.addItem(self.page, "")
 
           # freezing check button

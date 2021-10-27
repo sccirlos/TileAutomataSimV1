@@ -955,7 +955,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def Click_EditFile(self):
          # if system loaded, open editorwindow
         if self.SysLoaded == True:
-            self.e = Ui_EditorWindow(self.Engine)
+            self.e = Ui_EditorWindow(self.Engine, self)
             self.e.show()
         else: 
             print("Please load a file to edit.")
@@ -965,9 +965,10 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
 # do i need another function per page??
 class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
-    def __init__(self, engine):
+    def __init__(self, engine, mainGUI):
         super().__init__()
         self.setupUi(self)
+        self.mainGUI = mainGUI
         self.Engine = engine
         self.system = engine.system
          # set row count state table
@@ -982,6 +983,10 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
         self.newTransitionIndex = (len(self.system.vertical_transitions_list)) + (len(self.system.horizontal_transitions_list))
         self.tableWidget_3.setRowCount(len(self.system.vertical_transitions_list) + len(self.system.horizontal_transitions_list))
         print(len(self.system.vertical_transitions_list) + len(self.system.horizontal_transitions_list))
+
+        # set tempurature
+        self.spinBox.setMinimum(1)
+        self.spinBox.setValue(self.system.returnTemp())
 
 
          # connect the color change
@@ -1231,10 +1236,15 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
         self.system.remove_state(states)
 
     def Click_EditApply(self):
-     #print("Apply button clicked")
+
+        newtemp = self.spinBox.value()
+
+        newsys = System(newtemp, [], [], [], [], [], [], [], [], [], True)
+
+        self.system = newsys
 
         # go through new rows, create states, add states to system
-        for row in range(self.newStateIndex, self.tableWidget.rowCount()):
+        for row in range(0, self.tableWidget.rowCount()):
             color_cell = self.tableWidget.item(row, 0)
             label_cell = self.tableWidget.item(row, 1)
             initialCheckbox = self.tableWidget.cellWidget(row, 3)
@@ -1256,7 +1266,7 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
                 self.system.add_Seed_State(s)
 
         # affinity
-        for row in range(self.newAffinityIndex, self.tableWidget_2.rowCount()):
+        for row in range(0, self.tableWidget_2.rowCount()):
             label1 = self.tableWidget_2.item(row, 0)
             label2 = self.tableWidget_2.item(row, 1)
             
@@ -1273,7 +1283,7 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
             self.system.add_affinity(afRule)
 
         # transitions 
-        for row in range(self.newTransitionIndex, self.tableWidget_3.rowCount()):
+        for row in range(0, self.tableWidget_3.rowCount()):
             tLabel1 = self.tableWidget_3.item(row, 0)
             tLabel2 = self.tableWidget_3.item(row, 1)
             tFinal1 = self.tableWidget_3.item(row, 3)
@@ -1288,10 +1298,14 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
 
             trRule = TransitionRule(tLab1, tLab2, tFin1, tFin2, tDir)
 
-            self.system.add_transition(trRule)
+            self.system.add_transition_rule(trRule)
+        
+        # update the engine, and update the main GUI
+        self.Engine.reset_engine(self.system)
 
-     
-    
+        self.mainGUI.draw_assembly(self.Engine.getCurrentAssembly())
+        self.mainGUI.Update_available_moves()
+
 
      # working on this currently
     def Click_EditSaveAs(self):
