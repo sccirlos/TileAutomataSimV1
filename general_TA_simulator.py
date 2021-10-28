@@ -19,6 +19,7 @@ import QuickRotate
 import QuickCombine
 import QuickReflect
 import math
+import sampleGen
 
 import sys
 
@@ -70,7 +71,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         ###Set window title and Icon####
         #self.setWindowIcon(QtGui.QIcon("path goes here"))
-        self.setWindowTitle("TA Simulator")
+        self.setWindowTitle("AutoTile")
 
         ### Minimize window ######
         self.minimize_button.clicked.connect(lambda: self.showMinimized())
@@ -163,6 +164,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.moves_page = 0
         self.moves_per_page = 8
 
+        #updating combobox
         self.movesLayout.addWidget(self.next_moves_button)
         self.movesLayout.addWidget(self.prev_moves_button)
 
@@ -172,6 +174,18 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             mGUI.setFixedHeight(40)
             self.moveWidgets.append(mGUI)
             self.movesLayout.addWidget(mGUI)
+
+        shape_options = ["Strings", "Thin Rectangle", "Squares"]
+        self.GenShape_Box.addItems(shape_options)
+
+        model_options = ["Deterministic", "Non-Deterministic", "One-Sided"]
+        self.GenModel_Box.addItems(model_options)
+
+        self.InputLabel.setText("Enter a binary string.")
+
+        self.GenShape_Box.currentIndexChanged.connect(self.exampleTextChange)
+
+        self.ExampleButton.clicked.connect(self.Begin_example)
 
         # Function to Move window on mouse drag event on the title bar
         def moveWindow(e):
@@ -819,6 +833,46 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.delay = 1000
         else:
             self.delay = 0
+
+    def exampleTextChange(self):
+        if self.GenShape_Box.currentText() == "Strings":
+            self.InputLabel.setText("Enter a binary string.")
+        elif self.GenShape_Box.currentText() == "Thin Rectangle" or self.GenShape_Box.currentText() == "Squares":
+            self.InputLabel.setText("Enter an integer.")
+        
+    def Begin_example(self):
+        self.stop_sequence()
+        if self.GenShape_Box.currentText() == "Strings":
+            print("Strings " + self.lineEdit.text())
+        elif self.GenShape_Box.currentText() == "Thin Rectangle":
+            print("Thin Rectangle " + self.lineEdit.text())
+        elif self.GenShape_Box.currentText() == "Squares":
+            print("Squares " + self.lineEdit.text())
+        self.GenShape_Box.currentText()
+
+        shape = self.GenShape_Box.currentText()
+        model = self.GenModel_Box.currentText()
+        value = self.lineEdit.text()
+
+        genSystem = sampleGen.generator(shape, value, model)
+
+        if type(genSystem) == System:
+            self.SysLoaded = True
+            # the -150 is to account for the slide menu
+            self.seedX = (self.geometry().width() - 150) / 2
+            self.seedY = self.geometry().height() / 2
+            self.textX = self.seedX + 10
+            self.textY = self.seedY + 25
+
+            self.tileSize = 40
+            self.textSize = int(self.tileSize / 3)
+
+            self.time = 0
+            self.Engine = Engine(genSystem)
+            self.historian.set_engine(self.Engine)
+
+            self.draw_assembly(self.Engine.getCurrentAssembly())
+            self.Update_available_moves()
 
     def do_move(self, move):
         if not self.play:

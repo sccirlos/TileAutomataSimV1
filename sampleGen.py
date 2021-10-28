@@ -3,6 +3,8 @@ import SaveFile
 import detGen
 import oneSidedGen
 import nonDetGen
+import squareGen
+
 
 red = "f03a47"
 blue = "3f88c5"
@@ -13,7 +15,40 @@ white = "DFE0E2"
 grey = "9EA9A4"
 light_blue = "C2DCFE"
 
-if __name__ == "__main__":
+# This function handles all generators from UI
+def generator(shape, value, model):
+    
+    if model == "Deterministic":
+        if shape == "Strings":
+            return detGen.genString(value)
+        if shape == "Thin Rectangle":
+            value = int(value)
+            return detGen.genRect(value - 1)
+
+
+    if model == "One-Sided":
+        if shape == "Strings":
+            return oneSidedGen.genString(value)
+        if shape == "Thin Rectangle":
+            value = int(value)
+            return oneSidedGen.genRect(value - 1)   
+
+    if model == "Non-Deterministic":
+        if shape == "Strings":
+            return nonDetGen.genString(value)
+        if shape == "Thin Rectangle":
+            value = int(value)
+            return nonDetGen.genRect(value - 1)    
+
+    if shape == "Squares":
+        value = int(value)
+        return squareGen.genSquare(value, model)
+
+
+
+
+
+def genSamples():
     # Sample determinsitic systems
     sys1 = detGen.genDoubleIndexStates(9)
     SaveFile.main(sys1, ["XML Files/samples/IndexStates/smallIndexStatesDet.xml"])
@@ -72,3 +107,6 @@ if __name__ == "__main__":
 
     sys16 = nonDetGen.quadBinCount(1500)
     SaveFile.main(sys16, ["XML Files/samples/Counters/BinCountND.xml"])
+
+if __name__ == "__main__":
+    genSamples()
