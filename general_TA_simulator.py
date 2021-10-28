@@ -71,7 +71,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         ###Set window title and Icon####
         #self.setWindowIcon(QtGui.QIcon("path goes here"))
-        self.setWindowTitle("TA Simulator")
+        self.setWindowTitle("AutoTile")
 
         ### Minimize window ######
         self.minimize_button.clicked.connect(lambda: self.showMinimized())
@@ -175,8 +175,11 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.moveWidgets.append(mGUI)
             self.movesLayout.addWidget(mGUI)
 
-        example_options = ["Strings", "Thin Rectangle", "Squares"]
-        self.comboBox.addItems(example_options)
+        shape_options = ["Strings", "Thin Rectangle", "Squares"]
+        self.GenShape_Box.addItems(shape_options)
+
+        model_options = ["Deterministic", "Non-Deterministic", "One-Sided"]
+        self.GenModel_Box.addItems(model_options)
 
         self.ExampleButton.clicked.connect(self.Begin_example)
 
@@ -828,15 +831,16 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.delay = 0
 
     def Begin_example(self):
-        if self.comboBox.currentText() == "Strings":
+        
+        if self.GenShape_Box.currentText() == "Strings":
             print("Strings " + self.lineEdit.text())
-        elif self.comboBox.currentText() == "Thin Rectangle":
+        elif self.GenShape_Box.currentText() == "Thin Rectangle":
             print("Thin Rectangle " + self.lineEdit.text())
-        elif self.comboBox.currentText() == "Squares":
+        elif self.GenShape_Box.currentText() == "Squares":
             print("Squares " + self.lineEdit.text())
 
 
-        shape = self.comboBox.currentText()
+        shape = self.GenShape_Box.currentText()
         value = self.lineEdit.text()
 
         genSystem = sampleGen.generator(shape, value, "Det")
