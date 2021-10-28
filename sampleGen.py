@@ -3,6 +3,8 @@ import SaveFile
 import detGen
 import oneSidedGen
 import nonDetGen
+import squareGen
+
 
 red = "f03a47"
 blue = "3f88c5"
@@ -16,12 +18,33 @@ light_blue = "C2DCFE"
 # This function handles all generators from UI
 def generator(shape, value, model):
     
-    if model == "Det":
+    if model == "Deterministic":
         if shape == "Strings":
             return detGen.genString(value)
         if shape == "Thin Rectangle":
             value = int(value)
             return detGen.genRect(value - 1)
+
+
+    if model == "One-Sided":
+        if shape == "Strings":
+            return oneSidedGen.genString(value)
+        if shape == "Thin Rectangle":
+            value = int(value)
+            return oneSidedGen.genRect(value - 1)   
+
+    if model == "Non-Deterministic":
+        if shape == "Strings":
+            return nonDetGen.genString(value)
+        if shape == "Thin Rectangle":
+            value = int(value)
+            return nonDetGen.genRect(value - 1)    
+
+    if shape == "Squares":
+        value = int(value)
+        return squareGen.genSquare(value, model)
+
+
 
 
 

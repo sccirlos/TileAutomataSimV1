@@ -831,7 +831,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.delay = 0
 
     def Begin_example(self):
-        
+        self.stop_sequence()
         if self.GenShape_Box.currentText() == "Strings":
             print("Strings " + self.lineEdit.text())
         elif self.GenShape_Box.currentText() == "Thin Rectangle":
@@ -841,9 +841,10 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
 
         shape = self.GenShape_Box.currentText()
+        model = self.GenModel_Box.currentText()
         value = self.lineEdit.text()
 
-        genSystem = sampleGen.generator(shape, value, "Det")
+        genSystem = sampleGen.generator(shape, value, model)
 
         if type(genSystem) == System:
             self.SysLoaded = True
