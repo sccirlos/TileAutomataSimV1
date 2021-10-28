@@ -19,6 +19,7 @@ import QuickRotate
 import QuickCombine
 import QuickReflect
 import math
+import sampleGen
 
 import sys
 
@@ -833,6 +834,30 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             print("Thin Rectangle " + self.lineEdit.text())
         elif self.comboBox.currentText() == "Squares":
             print("Squares " + self.lineEdit.text())
+
+
+        shape = self.comboBox.currentText()
+        value = self.lineEdit.text()
+
+        genSystem = sampleGen.generator(shape, value, "Det")
+
+        if type(genSystem) == System:
+            self.SysLoaded = True
+            # the -150 is to account for the slide menu
+            self.seedX = (self.geometry().width() - 150) / 2
+            self.seedY = self.geometry().height() / 2
+            self.textX = self.seedX + 10
+            self.textY = self.seedY + 25
+
+            self.tileSize = 40
+            self.textSize = int(self.tileSize / 3)
+
+            self.time = 0
+            self.Engine = Engine(genSystem)
+            self.historian.set_engine(self.Engine)
+
+            self.draw_assembly(self.Engine.getCurrentAssembly())
+            self.Update_available_moves()
 
     def do_move(self, move):
         if not self.play:
