@@ -181,6 +181,10 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         model_options = ["Deterministic", "Non-Deterministic", "One-Sided"]
         self.GenModel_Box.addItems(model_options)
 
+        self.InputLabel.setText("Enter a binary string.")
+
+        self.GenShape_Box.currentIndexChanged.connect(self.exampleTextChange)
+
         self.ExampleButton.clicked.connect(self.Begin_example)
 
         # Function to Move window on mouse drag event on the title bar
@@ -830,6 +834,12 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         else:
             self.delay = 0
 
+    def exampleTextChange(self):
+        if self.GenShape_Box.currentText() == "Strings":
+            self.InputLabel.setText("Enter a binary string.")
+        elif self.GenShape_Box.currentText() == "Thin Rectangle" or self.GenShape_Box.currentText() == "Squares":
+            self.InputLabel.setText("Enter an integer.")
+        
     def Begin_example(self):
         self.stop_sequence()
         if self.GenShape_Box.currentText() == "Strings":
@@ -838,7 +848,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             print("Thin Rectangle " + self.lineEdit.text())
         elif self.GenShape_Box.currentText() == "Squares":
             print("Squares " + self.lineEdit.text())
-
+        self.GenShape_Box.currentText()
 
         shape = self.GenShape_Box.currentText()
         model = self.GenModel_Box.currentText()
