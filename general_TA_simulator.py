@@ -963,7 +963,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 # engine has the system 
 
 
-# do i need another function per page??
+
 class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
     def __init__(self, engine, mainGUI):
         super().__init__()
@@ -1133,7 +1133,17 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
         self.pushButton_3.clicked.connect(self.Click_AddRowStates)
         self.pushButton_4.clicked.connect(self.Click_AddRowAff)
         self.pushButton_5.clicked.connect(self.Click_AddRowTrans)
+         # user deletes state - currently only deletes state from 
+         # state table. 
+         # need to delete from aff rules and trans rules too and 
+         # add the pop up message "are you sure delete state and its rules?"
         self.pushButton_11.clicked.connect(self.click_removeRowState)
+        self.pushButton_10.clicked.connect(self.click_removeRowAff)
+        self.pushButton_9.clicked.connect(self.click_removeRowTran)
+       
+
+        # duplicate row
+        self.pushButton_6.clicked.connect(self.click_duplicateRowState)
 
     # for 'add state'
     def cellchanged(self, row, col):
@@ -1235,6 +1245,74 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
         if self.tableWidget.rowCount() > 0 and len(self.tableWidget.selectedIndexes()) > 0:
             self.tableWidget.removeRow(self.tableWidget.selectedIndexes()[0].row())
 
+        # want to delete state and associated aff/trans rules
+        # search through affinity and transitions rules & delete 
+        # the rows that contain that deleted state label.
+    def click_removeRowAff(self):
+        if self.tableWidget_2.rowCount() > 0 and len(self.tableWidget_2.selectedIndexes()) > 0:
+            self.tableWidget_2.removeRow(self.tableWidget_2.selectedIndexes()[0].row())
+
+    def click_removeRowTran(self):
+        if self.tableWidget_3.rowCount() > 0 and len(self.tableWidget_3.selectedIndexes()) > 0:
+            self.tableWidget_3.removeRow(self.tableWidget_3.selectedIndexes()[0].row())
+
+
+    def copy_widget(w):
+        if isinstance(w, QtWidgets.QWidget):
+            new_w = type(w)()
+            if isinstance(w, QtWidgets.QCheckbox):
+                #copy values
+                if w.isChecked():
+                    new_w.setChecked(True)
+                else:
+                    new_w.setChecked(False)
+
+    def copy(self, cells, r):
+        self.tableWidget.insertRow(r)
+        for i, it in cells["items"]:
+            self.tableWidget.setItem(r, i, it)
+        for i, w in cells["widgets"]:
+            self.tableWidget.setCellWidget(r, i, w)
+                
+
+    def click_duplicateRowState(self):
+        
+        currentRow = self.tableWidget.currentRow()
+        #columnCount = self.tableWidget.columnCount()
+
+        if self.tableWidget.rowCount() > 0 and len(self.tableWidget.selectedIndexes()) > 0:
+            cells = {"items": [], "widgets": []}
+            for i in range(self.tableWidget.columnCount()):
+                it = self.tableWidget.item(currentRow, i)
+                if it:
+                    cells["items"].append((i, it.clone()))
+                    w = self.tableWidget.cellWidget(currentRow, i)
+                if w:
+                    cells["widgets"].append((i, self.copy_widget(w)))
+            self.copy(cells, currentRow+1)
+
+            # adding a new row below selected row - use insert row
+            # ok inserts row right below the selected one- thats good 
+            #currentRow = self.tableWidget.selectedIndexes()[0].row()
+            #newrow = self.tableWidget.insertRow(currentRow+1)
+
+         
+    
+
+
+
+
+            #for j in range(columnCount):
+               #  self.tableWidget.setItem(newrow, j, QTableWidgetItem(self.tableWidget.item(currentRow, j).text()))
+
+            #for j in range(columnCount):
+             #   if not self.tableWidget(currentRow +1, j) is None:
+             #       self.setItem(currentRow +1, j, QTableWidgetItem(self.item.(currentRow+1, j).text()))
+
+
+
+
+
 
     def Click_EditApply(self):
 
@@ -1308,9 +1386,17 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
         self.mainGUI.Update_available_moves()
 
 
-     # working on this currently
+     
     def Click_EditSaveAs(self):
         print("Save As button clicked")
+       
+        if(self.SysLoaded == True):
+            fileName = QFileDialog.getSaveFileName(
+                self, "QFileDialog.getSaveFileName()", "", "XML Files (*.xml)")
+
+            if(fileName[0] != ''):
+                SaveFile.main(currentSystem, fileName)
+
 
 class Move(QWidget):
 
