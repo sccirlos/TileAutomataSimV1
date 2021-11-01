@@ -822,7 +822,6 @@ class NLength_LineGenerator(LinesGenerator):
             self.genSys.add_transition_rule(tr)
 
             if line_len > 2:
-
                 tr = uc.TransitionRule(f0, b0, f0, bp0, "h")
                 self.genSys.add_transition_rule(tr)
 
