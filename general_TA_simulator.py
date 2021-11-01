@@ -99,12 +99,18 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         # this is "Load" on the "File" menu
         self.Load_button.clicked.connect(self.Click_FileSearch)
-        self.Load_button.setStyleSheet("border: 1px solid black;")
+        self.Load_button.setStyleSheet("QPushButton::hover"
+                                       "{"
+                                       "background-color : lightblue;"
+                                       "}")
 
         # "Save" from the "File" menu
         self.SaveAs_button.clicked.connect(self.Click_SaveFile)
         self.SaveAs_button.setIcon(QtGui.QIcon('Icons/save-icon.png'))
-        self.SaveAs_button.setStyleSheet("border: 1px solid black;")
+        self.SaveAs_button.setStyleSheet("QPushButton::hover"
+                                       "{"
+                                       "background-color : lightblue;"
+                                       "}")
 
         self.First_button.clicked.connect(self.first_step)
         self.First_button.setIcon(QtGui.QIcon(
@@ -229,6 +235,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.label.setPixmap(canvas)
 
         self.label_2.setText("")
+
+        self.frame_6.setGeometry(0,0,164,463)
 
         self.thread = QThread()
         self.threadlast = QThread()
