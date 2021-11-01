@@ -97,6 +97,12 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.Menu_button.clicked.connect(lambda: self.slideLeftMenu())
         self.Menu_button.setIcon(QtGui.QIcon('Icons/menu_icon.png'))
 
+        # "New" on the File menu
+        self.New_button.setStyleSheet("QPushButton::hover"
+                                       "{"
+                                       "background-color : lightblue;"
+                                       "}")
+
         # this is "Load" on the "File" menu
         self.Load_button.clicked.connect(self.Click_FileSearch)
         self.Load_button.setStyleSheet("QPushButton::hover"
@@ -133,17 +139,37 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             'Icons/tabler-icon-player-skip-forward.png'))
 
         self.Edit_button.clicked.connect(self.Click_EditFile)
+        self.Edit_button.setStyleSheet("QPushButton::hover"
+                                       "{"
+                                       "background-color : lightblue;"
+                                       "}")
         # "Quick Rotate"
         self.Rotate_button.clicked.connect(self.Click_QuickRotate)
+        self.Rotate_button.setStyleSheet("QPushButton::hover"
+                                       "{"
+                                       "background-color : lightblue;"
+                                       "}")
 
         # "Quick Combine"
         self.Combine_button.clicked.connect(self.Click_QuickCombine)
+        self.Combine_button.setStyleSheet("QPushButton::hover"
+                                       "{"
+                                       "background-color : lightblue;"
+                                       "}")
 
         # "Quick Reflect-X."
         self.X_reflect_button.clicked.connect(self.Click_XReflect)
+        self.X_reflect_button.setStyleSheet("QPushButton::hover"
+                                       "{"
+                                       "background-color : lightblue;"
+                                       "}")
 
         # "Quick Reflect-Y"
         self.Y_reflect_button.clicked.connect(self.Click_YReflect)
+        self.Y_reflect_button.setStyleSheet("QPushButton::hover"
+                                       "{"
+                                       "background-color : lightblue;"
+                                       "}")
 
         self.SlowMode_button.clicked.connect(self.slowMode_toggle)
 
@@ -158,16 +184,32 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.historian.set_ui_parent(self)
 
         self.SaveHistory_Button.clicked.connect(self.historian.dump)
+        self.SaveHistory_Button.setStyleSheet("QPushButton::hover"
+                                       "{"
+                                       "background-color : lightblue;"
+                                       "}")
         self.LoadHistory_Button.clicked.connect(self.historian.load)
+        self.LoadHistory_Button.setStyleSheet("QPushButton::hover"
+                                       "{"
+                                       "background-color : lightblue;"
+                                       "}")
         self.move_status = QLabel("No Available Moves")
         self.movesLayout.addWidget(self.move_status)
 
         self.next_moves_button = QPushButton()
         self.next_moves_button.setText("Next")
         self.next_moves_button.clicked.connect(self.next_set_of_moves)
+        self.next_moves_button.setStyleSheet("QPushButton::hover"
+                                       "{"
+                                       "background-color : lightblue;"
+                                       "}")
         self.prev_moves_button = QPushButton()
         self.prev_moves_button.setText("Prev")
         self.prev_moves_button.clicked.connect(self.prev_set_of_moves)
+        self.prev_moves_button.setStyleSheet("QPushButton::hover"
+                                       "{"
+                                       "background-color : lightblue;"
+                                       "}")
 
         self.moves_page = 0
         self.moves_per_page = 8
@@ -194,6 +236,10 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.GenShape_Box.currentIndexChanged.connect(self.exampleTextChange)
 
         self.ExampleButton.clicked.connect(self.Begin_example)
+        self.ExampleButton.setStyleSheet("QPushButton::hover"
+                                       "{"
+                                       "background-color : lightblue;"
+                                       "}")
 
         # Function to Move window on mouse drag event on the title bar
         def moveWindow(e):
