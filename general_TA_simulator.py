@@ -959,10 +959,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.e.show()
         else: 
             print("Please load a file to edit.")
-# add self, engine - then fill the table 
-# engine has the system 
-
-
 
 class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
     def __init__(self, engine, mainGUI):
@@ -971,6 +967,7 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
         self.mainGUI = mainGUI
         self.Engine = engine
         self.system = engine.system
+        
          # set row count state table
         self.newStateIndex = len(self.system.states)
         self.tableWidget.setRowCount(len(self.system.states))
@@ -1239,15 +1236,11 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
 
         # debug print the selected rows and columns
         # for i in self.tableWidget.selectedIndexes():
-        #     print("row", i.row(), "col", i.column())
-
+        #     print("row", i.row(), "col", i.column()
         # only delete if there is something in the table, and if there is something selected
         if self.tableWidget.rowCount() > 0 and len(self.tableWidget.selectedIndexes()) > 0:
             self.tableWidget.removeRow(self.tableWidget.selectedIndexes()[0].row())
 
-        # want to delete state and associated aff/trans rules
-        # search through affinity and transitions rules & delete 
-        # the rows that contain that deleted state label.
     def click_removeRowAff(self):
         if self.tableWidget_2.rowCount() > 0 and len(self.tableWidget_2.selectedIndexes()) > 0:
             self.tableWidget_2.removeRow(self.tableWidget_2.selectedIndexes()[0].row())
@@ -1256,17 +1249,26 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
         if self.tableWidget_3.rowCount() > 0 and len(self.tableWidget_3.selectedIndexes()) > 0:
             self.tableWidget_3.removeRow(self.tableWidget_3.selectedIndexes()[0].row())
 
+    # not copying widget 
+    # to do: create a new widget, feed it data from previous
+    def copy_widget(self, w):
 
-    def copy_widget(w):
+
+
+        r = self.tableWidget.currentRow()
+
         if isinstance(w, QtWidgets.QWidget):
             new_w = type(w)()
             if isinstance(w, QtWidgets.QCheckbox):
+                
+                self.tableWidget.setCellWidget(r+1, 2, w)
                 #copy values
                 if w.isChecked():
                     new_w.setChecked(True)
                 else:
                     new_w.setChecked(False)
 
+         
     def copy(self, cells, r):
         self.tableWidget.insertRow(r)
         for i, it in cells["items"]:
@@ -1290,28 +1292,6 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
                 if w:
                     cells["widgets"].append((i, self.copy_widget(w)))
             self.copy(cells, currentRow+1)
-
-            # adding a new row below selected row - use insert row
-            # ok inserts row right below the selected one- thats good 
-            #currentRow = self.tableWidget.selectedIndexes()[0].row()
-            #newrow = self.tableWidget.insertRow(currentRow+1)
-
-         
-    
-
-
-
-
-            #for j in range(columnCount):
-               #  self.tableWidget.setItem(newrow, j, QTableWidgetItem(self.tableWidget.item(currentRow, j).text()))
-
-            #for j in range(columnCount):
-             #   if not self.tableWidget(currentRow +1, j) is None:
-             #       self.setItem(currentRow +1, j, QTableWidgetItem(self.item.(currentRow+1, j).text()))
-
-
-
-
 
 
     def Click_EditApply(self):
@@ -1386,16 +1366,15 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
         self.mainGUI.Update_available_moves()
 
 
-     
+    
     def Click_EditSaveAs(self):
-        print("Save As button clicked")
+      print("Save As button clicked")
        
-        if(self.SysLoaded == True):
-            fileName = QFileDialog.getSaveFileName(
-                self, "QFileDialog.getSaveFileName()", "", "XML Files (*.xml)")
+      fileName = QFileDialog.getSaveFileName(
+      self, "QFileDialog.getSaveFileName()", "", "XML Files (*.xml)")
 
-            if(fileName[0] != ''):
-                SaveFile.main(currentSystem, fileName)
+      if(fileName[0] != ''):
+        SaveFile.main(currentSystem, fileName)
 
 
 class Move(QWidget):
@@ -1443,10 +1422,6 @@ class Move(QWidget):
         self.mw.do_move(self.move)
 
         
-
-
-    
-
 if __name__ == "__main__":
      # App Stuff
         app = QApplication(sys.argv)
