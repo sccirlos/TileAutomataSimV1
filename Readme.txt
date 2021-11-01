@@ -146,6 +146,7 @@ Windows users, we are aware of a bug that does not let you interact with the sim
   -L -Next 
   -; -Last
 
+## 1.6 Editor Menu
 
 #############################
 Section 2 - Models Overview
