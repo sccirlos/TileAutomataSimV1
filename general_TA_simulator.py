@@ -179,10 +179,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                                        "{"
                                        "background-color : lightblue;"
                                        "}")
-        self.Edit_button.setStyleSheet("QPushButton::hover"
-                                       "{"
-                                       "background-color : lightgrey;"
-                                       "}")
         # "Quick Rotate"
         self.Rotate_button.clicked.connect(self.Click_QuickRotate)
         self.Rotate_button.setStyleSheet("QPushButton::hover"
