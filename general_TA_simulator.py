@@ -151,6 +151,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         # Assembly History
         self.historian = Historian()
         self.historian.set_ui_parent(self)
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        
 
         self.SaveHistory_Button.clicked.connect(self.historian.dump)
         self.LoadHistory_Button.clicked.connect(self.historian.load)
@@ -160,6 +163,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.next_moves_button = QPushButton()
         self.next_moves_button.setText("Next")
         self.next_moves_button.clicked.connect(self.next_set_of_moves)
+        self.next_moves_button.setFont(font)
         self.next_moves_button.setStyleSheet("QPushButton::hover"
                                        "{"
                                        "background-color : lightblue;"
@@ -167,6 +171,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.prev_moves_button = QPushButton()
         self.prev_moves_button.setText("Prev")
         self.prev_moves_button.clicked.connect(self.prev_set_of_moves)
+        self.prev_moves_button.setFont(font)
         self.prev_moves_button.setStyleSheet("QPushButton::hover"
                                        "{"
                                        "background-color : lightblue;"
