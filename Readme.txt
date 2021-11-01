@@ -50,7 +50,9 @@ Main Menu
     - Next
     - Previous
  + Examples
-    - 
+    - Shape
+	- Model
+	- Input
     
 ## 1.4 Menu Functions
 1.4.1 File Menu
@@ -102,8 +104,12 @@ Main Menu
 1.4.3.2 Prev
   Similar to 'Next', you can page through the moves with 'Prev'.
 
-1.4.4 Papers
-1.4.4.1
+1.4.4 Example
+1.4.4.1 Shape
+
+1.4.4.2 Model
+
+1.4.4.3 Input
   
 ## 1.5 Simulator Screen
 Windows users, we are aware of a bug that does not let you interact with the simulator when you press play on some systems and are looking into it.
@@ -124,8 +130,9 @@ Windows users, we are aware of a bug that does not let you interact with the sim
 
 1.5.3 Simulator Controls
   Once a system is loaded: 
-  -WASD will move the assembly
+  -WASD will move the assembly. Holding shift with any of the WASD keys will move the assembly faster, this functions speed relates to the size of the assembly 
   -The mouse scroll wheel can zoom in and out
+  -C will "recenter" the seed of the assembly.
 
   These hotkeys correspond to the tool bar at the top of the screen and are mapped to follow the layout respectively.
   -H -First 
@@ -147,8 +154,6 @@ Section 3 - File I/O
 
 3.1 XML format
   The editor can create an XML file for you, but should you desire to check or build your own XML file an example simple system XML file is shown below. 
-  
-  ****DESCRIPTION OF XML FILE HERE****
 
 EXAMPLE:
     <?xml version='1.0' encoding='utf-8'?>
