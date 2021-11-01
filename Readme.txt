@@ -35,17 +35,24 @@ Main Menu
     - New 
     - Load
     - Save As
-    - Exit
+    - Save History
+    - Load History
  + Tools
     - Edit
     - Rotate
     - Combine
+    - X-Reflect
+    - Y-Reflect
     - Slow Mode
     - Time Elapsed
  + Available Moves
-    - 
- + Papers
-    - 
+    - List of available moves
+    - Next
+    - Previous
+ + Examples
+    - Shape
+	- Model
+	- Input
     
 ## 1.4 Menu Functions
 1.4.1 File Menu
@@ -60,19 +67,32 @@ Main Menu
 1.4.1.3 Save As . . .
   This menu option will prompt the user for a file name and location to log the information to. It will overwrite a file if it already exists.
 
-1.4.1.4 Exit
-  This closes the application.
+1.4.1.4 Save History
+  This menu option saves where the assembly is currently at to a JSON file.
+  This menu option saves the current assembly to a JSON file.
+  Since some assemblies can get quite large, you have the ability to save multiple versions of the assembly at different points in time.
+  When prompted, enter the name of the JSON file, then enter how many steps inbetween each version of the assembly you want. If you would like only
+  the current assembly and no multiple versions, enter 0.
+
+1.4.1.5 Load History
+  This menu option takes a JSON file and loads a system, assembly, and all steps to a certain point.
 
 1.4.2 Tools Menu
 1.4.2.1 Edit
   When clicked, opens the editor with the current system loaded.
   
 1.4.2.2 Rotate
-  Rotates the current system
+  Rotates the current system 90 degrees clockwise. Ex. a assembly where the final shape is " |" will now be "__"
   
 1.4.2.3 Combine
-  Prompts the user to select a valid file and attempts to combine the system in the file with the current loaded system
-  
+  Prompts the user to select a valid file and attempts to combine the system in the file with the current loaded system.
+
+1.4.2.4 X-Reflect
+  "Reflects" the system across the x-axis.
+
+1.4.2.5 Y-Reflect
+  "Reflects" the system across the y-axis.
+
 1.4.2.4 Slow Mode
   This is a radio button that, when selected, adds a brief delay in between steps while the play option is selected.
 
@@ -80,11 +100,22 @@ Main Menu
   This is just text that shows the user how many "time steps" have occured at the current step.
 
 1.4.3 Available Moves
-1.4.3.1 
+  This section allows a particular attachment or transition to be selected rather than a move being picked at random.
+1.4.3.1 Next
+  When there are more moves than can be shown, you can page through the moves with 'Next'.
+1.4.3.2 Prev
+  Similar to 'Next', you can page through the moves with 'Prev'.
 
-1.4.4 Papers
-1.4.4.1
-  
+1.4.4 Example
+1.4.4.1 Shape
+	Here you will see a combo box with three options "strings," "Thin Rectangle," and "Square." Select your desired shape to begin loading an example system
+
+1.4.4.2 Model
+	Here you will see a combo box with three options "Deterministic," "Non-Deterministic," and "One-Sided." Select your desired model of computation for the example to follow.
+
+1.4.4.3 Input
+	Above the input box is text saying valid input types for the chosen options. Type your input in here then press the button below to load an example system. 
+
 ## 1.5 Simulator Screen
 Windows users, we are aware of a bug that does not let you interact with the simulator when you press play on some systems and are looking into it.
 
@@ -104,8 +135,9 @@ Windows users, we are aware of a bug that does not let you interact with the sim
 
 1.5.3 Simulator Controls
   Once a system is loaded: 
-  -WASD will move the assembly
+  -WASD will move the assembly. Holding shift with any of the WASD keys will move the assembly faster, this functions speed relates to the size of the assembly 
   -The mouse scroll wheel can zoom in and out
+  -C will "recenter" the seed of the assembly.
 
   These hotkeys correspond to the tool bar at the top of the screen and are mapped to follow the layout respectively.
   -H -First 
@@ -114,21 +146,36 @@ Windows users, we are aware of a bug that does not let you interact with the sim
   -L -Next 
   -; -Last
 
+## 1.6 Editor Menu
 
 #############################
 Section 2 - Models Overview
 
-## 2.1 Basic Model
-## 2.2 Freezing Model
-## 2.3 Non-Freezing Model
+2.1 Tile Automata 
+A Tile Automata system is a marriage between cellular automata and 2-handed self-assembly.
+Systems consist of a set of monomer tile states, along with local affinities between states
+denoting the strength of attraction between adjacent monomer tiles in those states. A set  
+of local state-change rules are included for pairs of adjacent states. Assemblies (collections
+of edge-connected tiles) in the model are created from an initial set of starting assemblies
+by combining previously built assemblies given sufficient binding strength from the affinity
+function. Further, existing assemblies may change states of internal monomer tiles according
+to any applicable state change rules.
+
+2.1.1 Freezing
+Consider a tile automata system and a directed graph G constructed as follows:
+Each state type is a vertex
+for any two state types, a and b, an edge from a to b exists if and only if there exists a
+transition rule between them i.e. a transitions to b
+The system is said to be freezing if G is acyclic and non-freezing otherwise. Intuitively, a tile
+automata system is freezing if any one tile in the system can never return to a state which
+it held previously. This implies that any given tile in the system can only undergo a finite
+number of state transitions.
 
 #############################
 Section 3 - File I/O
 
 3.1 XML format
   The editor can create an XML file for you, but should you desire to check or build your own XML file an example simple system XML file is shown below. 
-  
-  ****DESCRIPTION OF XML FILE HERE****
 
 EXAMPLE:
     <?xml version='1.0' encoding='utf-8'?>

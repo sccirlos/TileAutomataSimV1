@@ -226,8 +226,8 @@ def cbrtBinString(value):
 
 
     # Add Binary Symbol states
-    state0 = uc.State("0", black)
-    state1 = uc.State("1", white)
+    state0 = uc.State("0i", black)
+    state1 = uc.State("1i", white)
     genSys.add_State(state0)
     genSys.add_State(state1)
 
@@ -287,8 +287,8 @@ def cbrtBinString(value):
 
             # If the index matches we grabbed the right value 
             if i == j:
-                tr0 = uc.TransitionRule(labelC0, labelC, labelC0, "0", "h")
-                tr1 = uc.TransitionRule(labelC1, labelC, labelC1, "1", "h")
+                tr0 = uc.TransitionRule(labelC0, labelC, labelC0, "0i", "h")
+                tr1 = uc.TransitionRule(labelC1, labelC, labelC1, "1i", "h")
             else: 
                 # If the index is incorrect we transtion back to the blank assembly
                 tr0 = uc.TransitionRule(labelC0, labelC, "Bx", labelC, "h")
@@ -362,6 +362,12 @@ def cbrtBinCount(value):
     genSys.add_State(noCarry)
     genSys.add_Initial_State(noCarry)
 
+    # Add Binary Symbol states
+    state0 = uc.State("0", black)
+    state1 = uc.State("1", white)
+    genSys.add_State(state0)
+    genSys.add_State(state1)
+
 
     # North Bit states
     n1 = uc.State("1n", white)
@@ -377,6 +383,12 @@ def cbrtBinCount(value):
     genSys.add_Initial_State(incState)
 
     northWall = uc.State("N", black)
+    genSys.add_State(northWall)
+    genSys.add_Initial_State(northWall)
+    northWall = uc.State("N1", black)
+    genSys.add_State(northWall)
+    genSys.add_Initial_State(northWall)
+    northWall = uc.State("N2", black)
     genSys.add_State(northWall)
     genSys.add_Initial_State(northWall)
 
@@ -417,6 +429,13 @@ def cbrtBinCount(value):
     north0carry = uc.AffinityRule("0cn", "0c", "v")
     genSys.add_affinity(north0carry)
 
+    # Affinity to attach north bit state
+    nWall1 = uc.AffinityRule("N1", str(cbrtLen - 1) + "A'", "v")
+    genSys.add_affinity(nWall1)
+    nWall2 = uc.AffinityRule("N1", "N2", "h")
+    genSys.add_affinity(nWall2)
+    nWall3 = uc.AffinityRule("N2", "N", "h")
+    genSys.add_affinity(nWall3)
 
     ###### Transitions
     ### Carry state transitions
@@ -424,12 +443,20 @@ def cbrtBinCount(value):
     genSys.add_transition_rule(carry0)
     carry1 = uc.TransitionRule("1", "c", "1", "0c", "h")
     genSys.add_transition_rule(carry1)
+    carry0i = uc.TransitionRule("0i", "c", "0i", "1", "h")
+    genSys.add_transition_rule(carry0i)
+    carry1i = uc.TransitionRule("1i", "c", "1i", "0c", "h")
+    genSys.add_transition_rule(carry1i)
 
     ### No Carry transitions
     noCarry0 = uc.TransitionRule("0", "nc", "0", "0", "h")
     genSys.add_transition_rule(noCarry0)
     noCarry1 = uc.TransitionRule("1", "nc", "1", "1", "h")
     genSys.add_transition_rule(noCarry1)
+    noCarry0i = uc.TransitionRule("0i", "nc", "0i", "0", "h")
+    genSys.add_transition_rule(noCarry0i)
+    noCarry1i = uc.TransitionRule("1i", "nc", "1i", "1", "h")
+    genSys.add_transition_rule(noCarry1i)
 
     ### Once a number is set in the Least Significant Bit transtions the '+' state to the south wall state "S"
     resetInc1 = uc.TransitionRule("1", "+", "1", "S", "v")
@@ -445,8 +472,17 @@ def cbrtBinCount(value):
     CarryReset = uc.TransitionRule("0n", "0c", "0n", "0", "v")
     genSys.add_transition_rule(CarryReset)  
 
+    nProp1 = uc.TransitionRule("N", "nc", "N", "N", "h")
+    genSys.add_transition_rule(nProp1)  
+
     return genSys
     
+
+def genString(value):
+    return cbrtBinString(value)
+
+def genRect(length):
+    return cbrtBinCount(length)
 
 if __name__ == "__main__":
     #sys = genTripleIndexStates(27)

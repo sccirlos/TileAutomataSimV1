@@ -16,6 +16,14 @@ class State:
 
     def returnColor(self):
         return self.color
+    
+    def __eq__(self, other):
+        if isinstance(other, State):
+            return self.label == other.label and self.color == other.color
+        
+
+    def get_color(self):      # for editor window
+        return self.color
 
 
 def toCoords(x, y):
@@ -69,6 +77,10 @@ class Assembly:
         print("North Boundary: ", self.upMost)
         print("South Boundary: ", self.downMost)
         print("Size: ", len(self.tiles))
+
+    def get_borders(self):
+        borders_list = [self.leftMost, self.rightMost, self.upMost, self.downMost]
+        return borders_list
 
     def get_label(self):
         return self.label
@@ -167,9 +179,9 @@ class Assembly:
         # ORIGINAL tuple of ((coord pair), (current labels), (transition labels))
 
     def set_attachments(self, att):  # tuple of ((type: ), (x: ), (y: ), (state1: ))
-        a = Assembly()
+        # a = Assembly()
         #a.label = self.label + "A " + att["state1"]
-        a.set_tiles(self.tiles.copy())
+        # a.set_tiles(self.tiles.copy())
         #change = trans[0][0]
        # print(a.tiles[change][0])
         # print(trans[2][1])
@@ -179,28 +191,27 @@ class Assembly:
         #print("New Assembly Tiles: ", a.tiles)
 
         att_tile = Tile(att["state1"], att["x"], att["y"])
-        a.tiles.append(att_tile)
-        a.coords[toCoords(att["x"], att["y"])] = att_tile
+        self.tiles.append(att_tile)
+        self.coords[toCoords(att["x"], att["y"])] = att_tile
 
         # Update Boundaries
         if(int(att["y"]) > self.upMost):
-            a.upMost = att["y"]
+            self.upMost = att["y"]
         else:
-            a.upMost = self.upMost
+            self.upMost = self.upMost
         if(int(att["y"]) < self.downMost):
-            a.downMost = att["y"]
+            self.downMost = att["y"]
         else:
-            a.downMost = self.downMost
+            self.downMost = self.downMost
         if(int(att["x"]) > self.rightMost):
-            a.rightMost = att["x"]
+            self.rightMost = att["x"]
         else:
-            a.rightMost = self.rightMost
+            self.rightMost = self.rightMost
         if(int(att["x"]) < self.leftMost):
-            a.leftMost = att["x"]
+            self.leftMost = att["x"]
         else:
-            a.leftMost = self.leftMost
+            self.leftMost = self.leftMost
 
-        return a
 
     # Elise on transitions
     def get_transitions(self, sy):  # takes in a system
@@ -297,27 +308,26 @@ class Assembly:
 
     # tuple of {'type': 't', 'x': 0, 'y': 0, 'state1': 'S', 'state2': 'A', 'state1Final': 'S', 'state2Final': 'A'}
     def set_transition(self, trans):
-        a = Assembly()
+        # a = Assembly()
         # originally trans[2][0] + trans[2][1]
-        a.label = self.label + "T " + \
+        self.label = self.label + "T " + \
             trans["state1Final"].get_label() + trans["state2Final"].get_label()
-        a.set_tiles(self.tiles.copy())
+        # self.set_tiles(self.tiles.copy())
         #change = trans["type"]
 
         # print(a.tiles[change])
         #print(trans["state2Final"].get_label())
         #print(trans["type"])
-        a.coords[toCoords(trans["x"], trans["y"])].set_state(
+        self.coords[toCoords(trans["x"], trans["y"])].set_state(
             trans["state1Final"])
         # a.tiles[trans["x"]][trans["y"]].setState(trans["state1Final"])
         if(trans["dir"] == "v"):
-            a.coords[toCoords(trans["x"], trans["y"] - 1)
+            self.coords[toCoords(trans["x"], trans["y"] - 1)
                      ].set_state(trans["state2Final"])
         if(trans["dir"] == "h"):
-            a.coords[toCoords(trans["x"] + 1, trans["y"])
+            self.coords[toCoords(trans["x"] + 1, trans["y"])
                      ].set_state(trans["state2Final"])
         #print("New Assembly Tiles: ", a.tiles)
-        return a
 
     def getMoves(self, sy):
         #print("attachments: " + str(len(self.get_attachments(sy))) + " transitions: " + str(len(self.get_transitions(sy))))
@@ -325,9 +335,9 @@ class Assembly:
 
     def performMove(self, move):
         if(move["type"] == "a"):
-            return self.set_attachments(move)
+            self.set_attachments(move)
         if(move["type"] == "t"):
-            return self.set_transition(move)
+            self.set_transition(move)
 
     def undoMove(self, move):
         a = Assembly()
@@ -588,7 +598,7 @@ class System:
             if state.get_label() == label:
                 return state
     # Utility
-
+    # if tr remove dont work and still in system look here
     def translateListsToDicts(self):
         for rule in self.vertical_affinities_list:
             label1 = rule.returnLabel1()
@@ -748,7 +758,7 @@ class System:
 
     def set_tile_horizontal_transitions(self, tile_ht):
         self.tile_horizontal_transitions = tile_ht
-
+    # each of these: add a remove functions to UC to call
     def add_State(self, state):
         if isinstance(state, list):
             for s in state:
@@ -769,6 +779,19 @@ class System:
     def add_Initial_State(self, state):
         self.initial_states.append(state)
 
+    # idk if this will work
+    def add_Seed_State(self, state):
+        self.seed_states.append(state)
+
+    def remove_state(self, state):
+        # if 
+        if isinstance(state, list):
+            for s in state:
+                self.states.remove(s)
+        elif isinstance(state, State):
+            self.states.remove(state)
+
+    # start here 
     def add_transition_rule(self, tr):
         label1 = tr.returnLabel1()
         label2 = tr.returnLabel2()
