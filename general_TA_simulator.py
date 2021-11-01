@@ -70,23 +70,35 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.centralwidget.setGraphicsEffect(self.shadow)
 
         ###Set window title and Icon####
-        #self.setWindowIcon(QtGui.QIcon("path goes here"))
+        #self.setWindowIcon(QtGui.QIcon('Icons/Logo.png'))
         self.setWindowTitle("AutoTile")
 
         ### Minimize window ######
         self.minimize_button.clicked.connect(lambda: self.showMinimized())
         self.minimize_button.setIcon(QtGui.QIcon(
             'Icons/Programming-Minimize-Window-icon.png'))
+        self.minimize_button.setStyleSheet("QPushButton::hover"
+                                       "{"
+                                       "background-color : lightgrey;"
+                                       "}")
 
         ### Close window ####
         self.close_button.clicked.connect(lambda: self.close())
         self.close_button.setIcon(QtGui.QIcon('Icons/X-icon.png'))
+        self.close_button.setStyleSheet("QPushButton::hover"
+                                       "{"
+                                       "background-color : lightred;"
+                                       "}")
 
         ### Restore/Maximize window ####
         self.maximize_button.clicked.connect(
             lambda: self.restore_or_maximize_window())
         self.maximize_button.setIcon(QtGui.QIcon(
             'Icons/Programming-Maximize-Window-icon.png'))
+        self.maximize_button.setStyleSheet("QPushButton::hover"
+                                       "{"
+                                       "background-color : lightgrey;"
+                                       "}")
 
         ### Window Size grip to resize window ###
         QtWidgets.QSizeGrip(self.sizeDrag_Button)
@@ -96,6 +108,10 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         # Left Menu toggle button
         self.Menu_button.clicked.connect(lambda: self.slideLeftMenu())
         self.Menu_button.setIcon(QtGui.QIcon('Icons/menu_icon.png'))
+        self.Menu_button.setStyleSheet("QPushButton::hover"
+                                       "{"
+                                       "background-color : lightgrey;"
+                                       "}")
 
         # "New" on the File menu
         self.New_button.setStyleSheet("QPushButton::hover"
@@ -121,27 +137,51 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.First_button.clicked.connect(self.first_step)
         self.First_button.setIcon(QtGui.QIcon(
             'Icons/tabler-icon-player-skip-back.png'))
+        self.First_button.setStyleSheet("QPushButton::hover"
+                                       "{"
+                                       "background-color : lightgrey;"
+                                       "}")
 
         self.Prev_button.clicked.connect(self.prev_step)
         self.Prev_button.setIcon(QtGui.QIcon(
             'Icons/tabler-icon-player-track-prev.png'))
+        self.Prev_button.setStyleSheet("QPushButton::hover"
+                                       "{"
+                                       "background-color : lightgrey;"
+                                       "}")
 
         self.Play_button.clicked.connect(self.play_sequence)
         self.Play_button.setIcon(QtGui.QIcon(
             'Icons/tabler-icon-player-play.png'))
+        self.Play_button.setStyleSheet("QPushButton::hover"
+                                       "{"
+                                       "background-color : lightgrey;"
+                                       "}")
 
         self.Next_button.clicked.connect(self.next_step)
         self.Next_button.setIcon(QtGui.QIcon(
             'Icons/tabler-icon-player-track-next.png'))
+        self.Next_button.setStyleSheet("QPushButton::hover"
+                                       "{"
+                                       "background-color : lightgrey;"
+                                       "}")
 
         self.Last_button.clicked.connect(self.last_step)
         self.Last_button.setIcon(QtGui.QIcon(
             'Icons/tabler-icon-player-skip-forward.png'))
+        self.Last_button.setStyleSheet("QPushButton::hover"
+                                       "{"
+                                       "background-color : lightgrey;"
+                                       "}")
 
         self.Edit_button.clicked.connect(self.Click_EditFile)
         self.Edit_button.setStyleSheet("QPushButton::hover"
                                        "{"
                                        "background-color : lightblue;"
+                                       "}")
+        self.Edit_button.setStyleSheet("QPushButton::hover"
+                                       "{"
+                                       "background-color : lightgrey;"
                                        "}")
         # "Quick Rotate"
         self.Rotate_button.clicked.connect(self.Click_QuickRotate)
