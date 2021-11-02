@@ -70,7 +70,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.centralwidget.setGraphicsEffect(self.shadow)
 
         ###Set window title and Icon####
-        #self.setWindowIcon(QtGui.QIcon("path goes here"))
+        #self.setWindowIcon(QtGui.QIcon('Icons/Logo.png'))
         self.setWindowTitle("AutoTile")
 
         ### Minimize window ######
@@ -80,7 +80,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         ### Close window ####
         self.close_button.clicked.connect(lambda: self.close())
-        self.close_button.setIcon(QtGui.QIcon('Icons/X-icon.png'))
+        self.close_button.setIcon(QtGui.QIcon('Icons/X-icon.jpg'))
 
         ### Restore/Maximize window ####
         self.maximize_button.clicked.connect(
@@ -96,6 +96,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         # Left Menu toggle button
         self.Menu_button.clicked.connect(lambda: self.slideLeftMenu())
         self.Menu_button.setIcon(QtGui.QIcon('Icons/menu_icon.png'))
+
+        # "New" on the File menu
+
 
         # this is "Load" on the "File" menu
         self.Load_button.clicked.connect(self.Click_FileSearch)
@@ -148,6 +151,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         # Assembly History
         self.historian = Historian()
         self.historian.set_ui_parent(self)
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        
 
         self.SaveHistory_Button.clicked.connect(self.historian.dump)
         self.LoadHistory_Button.clicked.connect(self.historian.load)
@@ -157,9 +163,19 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.next_moves_button = QPushButton()
         self.next_moves_button.setText("Next")
         self.next_moves_button.clicked.connect(self.next_set_of_moves)
+        self.next_moves_button.setFont(font)
+        self.next_moves_button.setStyleSheet("QPushButton::hover"
+                                       "{"
+                                       "background-color : lightblue;"
+                                       "}")
         self.prev_moves_button = QPushButton()
         self.prev_moves_button.setText("Prev")
         self.prev_moves_button.clicked.connect(self.prev_set_of_moves)
+        self.prev_moves_button.setFont(font)
+        self.prev_moves_button.setStyleSheet("QPushButton::hover"
+                                       "{"
+                                       "background-color : lightblue;"
+                                       "}")
 
         self.moves_page = 0
         self.moves_per_page = 8
@@ -227,6 +243,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.label.setPixmap(canvas)
 
         self.label_2.setText("")
+
+        self.frame_6.setGeometry(0,0,164,463)
 
         self.thread = QThread()
         self.threadlast = QThread()
@@ -411,6 +429,28 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         elif event.key() == Qt.Key_Semicolon:
             self.last_step()
+
+        ## "Scroll" in and out functionality for + and - keys
+        elif event.key() == Qt.Key_Plus or event.key() == Qt.Key_Equal:
+            if self.Engine != None:
+                self.tileSize = self.tileSize + 10
+                self.textX = self.textX + 2
+                self.textY = self.textY + 6
+
+                self.textSize = int(self.tileSize / 3)
+            
+                self.draw_assembly(self.Engine.getCurrentAssembly())
+                
+        elif event.key() == Qt.Key_Minus or event.key() == Qt.Key_Underscore:
+            if self.Engine != None:
+                if self.tileSize > 10:
+                    self.tileSize = self.tileSize - 10
+                    self.textX = self.textX - 2
+                    self.textY = self.textY - 6
+
+                    self.textSize = int(self.tileSize / 3)
+
+                    self.draw_assembly(self.Engine.getCurrentAssembly())
 
     def wheelEvent(self, event):
         if self.play:
@@ -913,12 +953,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                     prev_move = self.Engine.getLastMove()
                     self.draw_move(prev_move, 0, "black")
 
-                self.Engine.back()
-                self.draw_move(self.Engine.getLastMove(), 0, "red")
-                
-                # Might need to go below
                 self.time = self.time - (self.Engine.timeTaken())
-                
+                self.Engine.back()
+                self.draw_move(self.Engine.getLastMove(), 0, "red")           
 
     def next_step(self):
         if self.play:

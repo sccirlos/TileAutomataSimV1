@@ -70,9 +70,13 @@ class Ui_MainWindow(object):
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.frame_5)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.toolBox = QtWidgets.QToolBox(self.frame_5)
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.toolBox.setFont(font)
         self.toolBox.setObjectName("toolBox")
         self.page = QtWidgets.QWidget()
-        self.page.setGeometry(QtCore.QRect(0, 0, 162, 463))
+        self.page.setGeometry(QtCore.QRect(0, 0, 162, 443))
+        self.page.setStyleSheet("")
         self.page.setObjectName("page")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.page)
         self.verticalLayout_5.setContentsMargins(0, 0, 0, 0)
@@ -89,24 +93,61 @@ class Ui_MainWindow(object):
         self.frame_6.setObjectName("frame_6")
         self.verticalLayout_6 = QtWidgets.QVBoxLayout(self.frame_6)
         self.verticalLayout_6.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout_6.setSpacing(0)
+        self.verticalLayout_6.setSpacing(20)
         self.verticalLayout_6.setObjectName("verticalLayout_6")
         self.New_button = QtWidgets.QPushButton(self.frame_6)
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.New_button.setFont(font)
+        self.New_button.setStyleSheet("QPushButton::hover\n"
+"  {\n"
+"     background-color : lightblue;\n"
+"   }")
+        self.New_button.setIconSize(QtCore.QSize(16, 16))
         self.New_button.setObjectName("New_button")
         self.verticalLayout_6.addWidget(self.New_button)
         self.Load_button = QtWidgets.QPushButton(self.frame_6)
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.Load_button.setFont(font)
+        self.Load_button.setStyleSheet("QPushButton::hover\n"
+"  {\n"
+"     background-color : lightblue;\n"
+"   }")
         self.Load_button.setObjectName("Load_button")
         self.verticalLayout_6.addWidget(self.Load_button)
         self.SaveAs_button = QtWidgets.QPushButton(self.frame_6)
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.SaveAs_button.setFont(font)
+        self.SaveAs_button.setStyleSheet("QPushButton::hover\n"
+"  {\n"
+"     background-color : lightblue;\n"
+"   }")
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap("TileAutomataSimV1/Icons/save-icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.SaveAs_button.setIcon(icon)
+        self.SaveAs_button.setIconSize(QtCore.QSize(18, 18))
         self.SaveAs_button.setObjectName("SaveAs_button")
         self.verticalLayout_6.addWidget(self.SaveAs_button)
         self.SaveHistory_Button = QtWidgets.QPushButton(self.frame_6)
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.SaveHistory_Button.setFont(font)
+        self.SaveHistory_Button.setStyleSheet("QPushButton::hover\n"
+"  {\n"
+"     background-color : lightblue;\n"
+"   }")
         self.SaveHistory_Button.setObjectName("SaveHistory_Button")
         self.verticalLayout_6.addWidget(self.SaveHistory_Button)
         self.LoadHistory_Button = QtWidgets.QPushButton(self.frame_6)
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.LoadHistory_Button.setFont(font)
+        self.LoadHistory_Button.setStyleSheet("QPushButton::hover\n"
+"  {\n"
+"     background-color : lightblue;\n"
+"   }")
         self.LoadHistory_Button.setObjectName("LoadHistory_Button")
         self.verticalLayout_6.addWidget(self.LoadHistory_Button)
         self.verticalLayout_5.addWidget(self.frame_6, 0, QtCore.Qt.AlignTop)
@@ -114,7 +155,7 @@ class Ui_MainWindow(object):
         icon1.addPixmap(QtGui.QPixmap("TileAutomataSimV1/Icons/document-icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.toolBox.addItem(self.page, icon1, "")
         self.page_2 = QtWidgets.QWidget()
-        self.page_2.setGeometry(QtCore.QRect(0, 0, 162, 463))
+        self.page_2.setGeometry(QtCore.QRect(0, 0, 164, 443))
         self.page_2.setObjectName("page_2")
         self.verticalLayout_7 = QtWidgets.QVBoxLayout(self.page_2)
         self.verticalLayout_7.setContentsMargins(0, 0, 0, 0)
@@ -129,21 +170,59 @@ class Ui_MainWindow(object):
         self.verticalLayout_8.setSpacing(0)
         self.verticalLayout_8.setObjectName("verticalLayout_8")
         self.Edit_button = QtWidgets.QPushButton(self.frame_7)
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.Edit_button.setFont(font)
+        self.Edit_button.setStyleSheet("QPushButton::hover\n"
+"  {\n"
+"     background-color : lightblue;\n"
+"   }")
         self.Edit_button.setObjectName("Edit_button")
         self.verticalLayout_8.addWidget(self.Edit_button)
         self.Rotate_button = QtWidgets.QPushButton(self.frame_7)
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.Rotate_button.setFont(font)
+        self.Rotate_button.setStyleSheet("QPushButton::hover\n"
+"  {\n"
+"     background-color : lightblue;\n"
+"   }")
         self.Rotate_button.setObjectName("Rotate_button")
         self.verticalLayout_8.addWidget(self.Rotate_button)
         self.Combine_button = QtWidgets.QPushButton(self.frame_7)
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.Combine_button.setFont(font)
+        self.Combine_button.setStyleSheet("QPushButton::hover\n"
+"  {\n"
+"     background-color : lightblue;\n"
+"   }")
         self.Combine_button.setObjectName("Combine_button")
         self.verticalLayout_8.addWidget(self.Combine_button)
         self.X_reflect_button = QtWidgets.QPushButton(self.frame_7)
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.X_reflect_button.setFont(font)
+        self.X_reflect_button.setStyleSheet("QPushButton::hover\n"
+"  {\n"
+"     background-color : lightblue;\n"
+"   }")
         self.X_reflect_button.setObjectName("X_reflect_button")
         self.verticalLayout_8.addWidget(self.X_reflect_button)
         self.Y_reflect_button = QtWidgets.QPushButton(self.frame_7)
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.Y_reflect_button.setFont(font)
+        self.Y_reflect_button.setStyleSheet("QPushButton::hover\n"
+"  {\n"
+"     background-color : lightblue;\n"
+"   }")
         self.Y_reflect_button.setObjectName("Y_reflect_button")
         self.verticalLayout_8.addWidget(self.Y_reflect_button)
         self.SlowMode_button = QtWidgets.QRadioButton(self.frame_7)
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.SlowMode_button.setFont(font)
         self.SlowMode_button.setObjectName("SlowMode_button")
         self.verticalLayout_8.addWidget(self.SlowMode_button, 0, QtCore.Qt.AlignHCenter)
         self.label_2 = QtWidgets.QLabel(self.frame_7)
@@ -159,11 +238,11 @@ class Ui_MainWindow(object):
         self.verticalLayout_7.addWidget(self.frame_7)
         self.toolBox.addItem(self.page_2, "")
         self.page_3 = QtWidgets.QWidget()
-        self.page_3.setGeometry(QtCore.QRect(0, 0, 162, 463))
+        self.page_3.setGeometry(QtCore.QRect(0, 0, 164, 443))
         self.page_3.setObjectName("page_3")
         self.toolBox.addItem(self.page_3, "")
         self.page_4 = QtWidgets.QWidget()
-        self.page_4.setGeometry(QtCore.QRect(0, 0, 164, 463))
+        self.page_4.setGeometry(QtCore.QRect(0, 0, 164, 443))
         self.page_4.setObjectName("page_4")
         self.GenShape_Box = QtWidgets.QComboBox(self.page_4)
         self.GenShape_Box.setGeometry(QtCore.QRect(0, 34, 161, 18))
@@ -172,6 +251,10 @@ class Ui_MainWindow(object):
         self.ExampleButton = QtWidgets.QPushButton(self.page_4)
         self.ExampleButton.setGeometry(QtCore.QRect(0, 190, 171, 21))
         self.ExampleButton.setAutoFillBackground(False)
+        self.ExampleButton.setStyleSheet("QPushButton::hover\n"
+"  {\n"
+"     background-color : lightblue;\n"
+"   }")
         self.ExampleButton.setAutoDefault(False)
         self.ExampleButton.setDefault(False)
         self.ExampleButton.setFlat(False)
@@ -222,6 +305,10 @@ class Ui_MainWindow(object):
         self.horizontalLayout_4.setSpacing(0)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.Menu_button = QtWidgets.QPushButton(self.frame_2)
+        self.Menu_button.setStyleSheet("QPushButton::hover\n"
+"  {\n"
+"     background-color : lightgrey;\n"
+"   }")
         self.Menu_button.setText("")
         icon2 = QtGui.QIcon()
         icon2.addPixmap(QtGui.QPixmap("TileAutomataSimV1/Icons/tabler-icon-align-justified.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -242,9 +329,13 @@ class Ui_MainWindow(object):
         self.frame.setObjectName("frame")
         self.horizontalLayout_6 = QtWidgets.QHBoxLayout(self.frame)
         self.horizontalLayout_6.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout_6.setSpacing(0)
+        self.horizontalLayout_6.setSpacing(10)
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
         self.First_button = QtWidgets.QPushButton(self.frame)
+        self.First_button.setStyleSheet("QPushButton::hover\n"
+"  {\n"
+"     background-color : lightgrey;\n"
+"   }")
         self.First_button.setText("")
         icon3 = QtGui.QIcon()
         icon3.addPixmap(QtGui.QPixmap("TileAutomataSimV1/Icons/tabler-icon-player-skip-back.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -252,6 +343,10 @@ class Ui_MainWindow(object):
         self.First_button.setObjectName("First_button")
         self.horizontalLayout_6.addWidget(self.First_button)
         self.Prev_button = QtWidgets.QPushButton(self.frame)
+        self.Prev_button.setStyleSheet("QPushButton::hover\n"
+"  {\n"
+"     background-color : lightgrey;\n"
+"   }")
         self.Prev_button.setText("")
         icon4 = QtGui.QIcon()
         icon4.addPixmap(QtGui.QPixmap("TileAutomataSimV1/Icons/tabler-icon-player-track-prev.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -259,6 +354,10 @@ class Ui_MainWindow(object):
         self.Prev_button.setObjectName("Prev_button")
         self.horizontalLayout_6.addWidget(self.Prev_button)
         self.Play_button = QtWidgets.QPushButton(self.frame)
+        self.Play_button.setStyleSheet("QPushButton::hover\n"
+"  {\n"
+"     background-color : lightgrey;\n"
+"   }")
         self.Play_button.setText("")
         icon5 = QtGui.QIcon()
         icon5.addPixmap(QtGui.QPixmap("TileAutomataSimV1/Icons/tabler-icon-player-play.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -266,6 +365,10 @@ class Ui_MainWindow(object):
         self.Play_button.setObjectName("Play_button")
         self.horizontalLayout_6.addWidget(self.Play_button)
         self.Next_button = QtWidgets.QPushButton(self.frame)
+        self.Next_button.setStyleSheet("QPushButton::hover\n"
+"  {\n"
+"     background-color : lightgrey;\n"
+"   }")
         self.Next_button.setText("")
         icon6 = QtGui.QIcon()
         icon6.addPixmap(QtGui.QPixmap("TileAutomataSimV1/Icons/tabler-icon-player-track-next.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -273,6 +376,10 @@ class Ui_MainWindow(object):
         self.Next_button.setObjectName("Next_button")
         self.horizontalLayout_6.addWidget(self.Next_button)
         self.Last_button = QtWidgets.QPushButton(self.frame)
+        self.Last_button.setStyleSheet("QPushButton::hover\n"
+"  {\n"
+"     background-color : lightgrey;\n"
+"   }")
         self.Last_button.setText("")
         icon7 = QtGui.QIcon()
         icon7.addPixmap(QtGui.QPixmap("TileAutomataSimV1/Icons/tabler-icon-player-skip-forward.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -289,6 +396,10 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3.setSpacing(0)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.minimize_button = QtWidgets.QPushButton(self.frame_3)
+        self.minimize_button.setStyleSheet("QPushButton::hover\n"
+"  {\n"
+"     background-color : lightgrey;\n"
+"   }")
         self.minimize_button.setText("")
         icon8 = QtGui.QIcon()
         icon8.addPixmap(QtGui.QPixmap("TileAutomataSimV1/Icons/Programming-Minimize-Window-icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -297,6 +408,10 @@ class Ui_MainWindow(object):
         self.minimize_button.setObjectName("minimize_button")
         self.horizontalLayout_3.addWidget(self.minimize_button)
         self.maximize_button = QtWidgets.QPushButton(self.frame_3)
+        self.maximize_button.setStyleSheet("QPushButton::hover\n"
+"  {\n"
+"     background-color : lightgrey;\n"
+"   }")
         self.maximize_button.setText("")
         icon9 = QtGui.QIcon()
         icon9.addPixmap(QtGui.QPixmap("TileAutomataSimV1/Icons/Programming-Maximize-Window-icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -305,11 +420,15 @@ class Ui_MainWindow(object):
         self.maximize_button.setObjectName("maximize_button")
         self.horizontalLayout_3.addWidget(self.maximize_button)
         self.close_button = QtWidgets.QPushButton(self.frame_3)
+        self.close_button.setStyleSheet("QPushButton::hover\n"
+"  {\n"
+"     background-color : red;\n"
+"   }")
         self.close_button.setText("")
         icon10 = QtGui.QIcon()
-        icon10.addPixmap(QtGui.QPixmap("TileAutomataSimV1/Icons/X-icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon10.addPixmap(QtGui.QPixmap("TileAutomataSimV1/Icons/X-icon.jpg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.close_button.setIcon(icon10)
-        self.close_button.setIconSize(QtCore.QSize(20, 20))
+        self.close_button.setIconSize(QtCore.QSize(16, 16))
         self.close_button.setObjectName("close_button")
         self.horizontalLayout_3.addWidget(self.close_button)
         self.horizontalLayout_2.addWidget(self.frame_3, 0, QtCore.Qt.AlignRight|QtCore.Qt.AlignTop)
