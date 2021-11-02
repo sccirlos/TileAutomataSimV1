@@ -123,7 +123,10 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.Last_button.setIcon(QtGui.QIcon(
             'Icons/tabler-icon-player-skip-forward.png'))
 
+        self.New_button.clicked.connect(self.Click_newFile)
+
         self.Edit_button.clicked.connect(self.Click_EditFile)
+
         # "Quick Rotate"
         self.Rotate_button.clicked.connect(self.Click_QuickRotate)
 
@@ -960,6 +963,12 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         else: 
             print("Please load a file to edit.")
 
+    def Click_newFile(self):
+        pass
+    # new file should open editor with no system loaded
+       # if (self.SysLoaded == False):
+            # open blank editor
+
 class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
     def __init__(self, engine, mainGUI):
         super().__init__()
@@ -1123,7 +1132,7 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
             r += 1
 
     
-     # action for 'apply' the changes made to the side edit window to the view states side 
+         # action for 'apply' the changes made to the side edit window to the view states side 
         self.pushButton.clicked.connect(self.Click_EditApply)
          # action for 'save' the changes made to the side edit window to the XML file
         self.pushButton_2.clicked.connect(self.Click_EditSaveAs)
@@ -1132,17 +1141,15 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
         self.pushButton_5.clicked.connect(self.Click_AddRowTrans)
          # user deletes state - currently only deletes state from 
          # state table. 
-         # need to delete from aff rules and trans rules too and 
-         # add the pop up message "are you sure delete state and its rules?"
         self.pushButton_11.clicked.connect(self.click_removeRowState)
         self.pushButton_10.clicked.connect(self.click_removeRowAff)
         self.pushButton_9.clicked.connect(self.click_removeRowTran)
        
 
-        # duplicate row
+         # duplicate row
         self.pushButton_6.clicked.connect(self.click_duplicateRowState)
 
-    # for 'add state'
+         # for 'add state'
     def cellchanged(self, row, col):
         # only do anything is we are in the color column (0)
         if col == 0:
@@ -1233,10 +1240,6 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
 
     # remove/delete rows from state table
     def click_removeRowState(self):
-
-        # debug print the selected rows and columns
-        # for i in self.tableWidget.selectedIndexes():
-        #     print("row", i.row(), "col", i.column()
         # only delete if there is something in the table, and if there is something selected
         if self.tableWidget.rowCount() > 0 and len(self.tableWidget.selectedIndexes()) > 0:
             self.tableWidget.removeRow(self.tableWidget.selectedIndexes()[0].row())
@@ -1253,22 +1256,21 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
     # to do: create a new widget, feed it data from previous
     def copy_widget(self, w):
 
-
-
         r = self.tableWidget.currentRow()
 
         if isinstance(w, QtWidgets.QWidget):
             new_w = type(w)()
+            #error here
             if isinstance(w, QtWidgets.QCheckbox):
-                
-                self.tableWidget.setCellWidget(r+1, 2, w)
+                #self.tableWidget.setCellWidget(r+1, 2, w) 
+                new_w.tableWidget.setCellWidget(r+1, 2, w)
                 #copy values
                 if w.isChecked():
                     new_w.setChecked(True)
                 else:
                     new_w.setChecked(False)
+            return new_w
 
-         
     def copy(self, cells, r):
         self.tableWidget.insertRow(r)
         for i, it in cells["items"]:
@@ -1288,11 +1290,16 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
                 it = self.tableWidget.item(currentRow, i)
                 if it:
                     cells["items"].append((i, it.clone()))
+                    
+                    # removing this from above if it: 
+                    # gives error that Pyqt5.qqtwidgers has no attribute qcheckbox.
                     w = self.tableWidget.cellWidget(currentRow, i)
                 if w:
                     cells["widgets"].append((i, self.copy_widget(w)))
             self.copy(cells, currentRow+1)
 
+           
+        
 
     def Click_EditApply(self):
 
@@ -1311,8 +1318,6 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
             color = color_cell.text()
             label = label_cell.text()
             
-            #print(initialCheckbox)
-            # 'apply as' works now
             initial = initialCheckbox.layout().itemAt(0).widget().isChecked()
             seed = seedCheckbox.layout().itemAt(0).widget().isChecked()
             s = State(label, color)
@@ -1424,7 +1429,7 @@ class Move(QWidget):
         
 if __name__ == "__main__":
      # App Stuff
-        app = QApplication(sys.argv)
+        app = QtWidgets.QApplication(sys.argv)
         w = Ui_MainWindow()
         w.show()
         sys.exit(app.exec_())
