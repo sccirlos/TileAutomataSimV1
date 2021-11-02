@@ -1257,15 +1257,16 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
             self.tableWidget_3.removeRow(self.tableWidget_3.selectedIndexes()[0].row())
 
 
-    def copy_widget(w):
+    def copy_widget(self, w):
         if isinstance(w, QtWidgets.QWidget):
-            new_w = type(w)()
-            if isinstance(w, QtWidgets.QCheckbox):
-                #copy values
-                if w.isChecked():
-                    new_w.setChecked(True)
-                else:
-                    new_w.setChecked(False)
+            new_w = QCheckBox()
+            #copy values
+            if w.isChecked():
+                new_w.setChecked(True)
+            else:
+                new_w.setChecked(False)
+
+            return new_w
 
     def copy(self, cells, r):
         self.tableWidget.insertRow(r)
@@ -1283,10 +1284,13 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
         if self.tableWidget.rowCount() > 0 and len(self.tableWidget.selectedIndexes()) > 0:
             cells = {"items": [], "widgets": []}
             for i in range(self.tableWidget.columnCount()):
+
                 it = self.tableWidget.item(currentRow, i)
                 if it:
                     cells["items"].append((i, it.clone()))
-                    w = self.tableWidget.cellWidget(currentRow, i)
+
+                w = self.tableWidget.cellWidget(currentRow, i)
+                print(w)
                 if w:
                     cells["widgets"].append((i, self.copy_widget(w)))
             self.copy(cells, currentRow+1)
