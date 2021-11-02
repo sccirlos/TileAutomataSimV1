@@ -95,6 +95,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         # Left Menu toggle button
         self.Menu_button.clicked.connect(lambda: self.slideLeftMenu())
         self.Menu_button.setIcon(QtGui.QIcon('Icons/menu_icon.png'))
+        self.New_button.clicked.connect(self.Click_newButton)
 
         # this is "Load" on the "File" menu
         self.Load_button.clicked.connect(self.Click_FileSearch)
@@ -673,6 +674,17 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         if((y * -self.tileSize) + self.seedY > self.geometry().height() or (y * -self.tileSize) + self.seedY < -self.tileSize):
             return 1
         return 0
+    
+    def Click_newButton(self):
+        global currentSystem
+        currentSystem = System(1, [], [], [], [], [], [], [], [], [], True)
+        seed = State("X", "ffffff")
+        currentSystem.add_Seed_State(seed)
+        currentSystem.add_State(seed)
+        self.Engine = Engine(currentSystem)
+
+        self.e = Ui_EditorWindow(self.Engine, self)
+        self.e.show()
 
     def Click_Run_Simulation(self):  # Run application if everythings good
         err_flag = False
@@ -1258,17 +1270,15 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
 
         r = self.tableWidget.currentRow()
 
+    def copy_widget(self, w):
         if isinstance(w, QtWidgets.QWidget):
-            new_w = type(w)()
-            #error here
-            if isinstance(w, QtWidgets.QCheckbox):
-                #self.tableWidget.setCellWidget(r+1, 2, w) 
-                new_w.tableWidget.setCellWidget(r+1, 2, w)
-                #copy values
-                if w.isChecked():
-                    new_w.setChecked(True)
-                else:
-                    new_w.setChecked(False)
+            new_w = QCheckBox()
+            #copy values
+            if QCheckBox(w).isChecked():
+                new_w.setChecked(True)
+            else:
+                new_w.setChecked(False)
+
             return new_w
 
     def copy(self, cells, r):
@@ -1287,13 +1297,13 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
         if self.tableWidget.rowCount() > 0 and len(self.tableWidget.selectedIndexes()) > 0:
             cells = {"items": [], "widgets": []}
             for i in range(self.tableWidget.columnCount()):
+
                 it = self.tableWidget.item(currentRow, i)
                 if it:
                     cells["items"].append((i, it.clone()))
-                    
-                    # removing this from above if it: 
-                    # gives error that Pyqt5.qqtwidgers has no attribute qcheckbox.
-                    w = self.tableWidget.cellWidget(currentRow, i)
+
+                w = self.tableWidget.cellWidget(currentRow, i)
+                
                 if w:
                     cells["widgets"].append((i, self.copy_widget(w)))
             self.copy(cells, currentRow+1)
@@ -1366,6 +1376,8 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
         
         # update the engine, and update the main GUI
         self.Engine.reset_engine(self.system)
+
+        self.mainGUI.SysLoaded = True
 
         self.mainGUI.draw_assembly(self.Engine.getCurrentAssembly())
         self.mainGUI.Update_available_moves()
