@@ -430,6 +430,27 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         elif event.key() == Qt.Key_Semicolon:
             self.last_step()
 
+        elif event.key() == Qt.Key_Plus or event.key() == Qt.Key_Equal:
+            if self.Engine != None:
+                self.tileSize = self.tileSize + 10
+                self.textX = self.textX + 2
+                self.textY = self.textY + 6
+
+                self.textSize = int(self.tileSize / 3)
+            
+                self.draw_assembly(self.Engine.getCurrentAssembly())
+                
+        elif event.key() == Qt.Key_Minus or event.key() == Qt.Key_Underscore:
+            if self.Engine != None:
+                if self.tileSize > 10:
+                    self.tileSize = self.tileSize - 10
+                    self.textX = self.textX - 2
+                    self.textY = self.textY - 6
+
+                    self.textSize = int(self.tileSize / 3)
+
+                    self.draw_assembly(self.Engine.getCurrentAssembly())
+
     def wheelEvent(self, event):
         if self.play:
             return
