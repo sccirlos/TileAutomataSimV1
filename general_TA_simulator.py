@@ -1261,7 +1261,7 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
         if isinstance(w, QtWidgets.QWidget):
             new_w = QCheckBox()
             #copy values
-            if w.isChecked():
+            if QCheckBox(w).isChecked():
                 new_w.setChecked(True)
             else:
                 new_w.setChecked(False)
