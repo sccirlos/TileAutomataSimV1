@@ -430,6 +430,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         elif event.key() == Qt.Key_Semicolon:
             self.last_step()
 
+        ## "Scroll" in and out functionality for + and - keys
         elif event.key() == Qt.Key_Plus or event.key() == Qt.Key_Equal:
             if self.Engine != None:
                 self.tileSize = self.tileSize + 10
