@@ -728,10 +728,10 @@ class NLength_LineGenerator(LinesGenerator):
 
         hd = self.genSys.returnHorizontalAffinityDict()
         shd = sorted(hd)
-        if self.line_length == 14:
+        """ if self.line_length == 14:
             affinities_test_14(shd)
         elif self.line_length == 17:
-            affinities_test_17(shd)
+            affinities_test_17(shd) """
         return
 
 
@@ -835,8 +835,10 @@ class NLength_LineGenerator(LinesGenerator):
                     labelB_Final = "F1"
 
                     self.add_seed_transitions(labelA, labelB)
-                    affinities_list = self.genSys.returnHorizontalAffinityDict()
+                    affinities_list = self.genSys.returnHorizontalAffinityList()
+
                     for key in affinities_list:
+                        print(key)
                         self.add_seed_transitions(key[0], key[1])
                         self.add_reseed_transitions(key[0], key[1])
                         self.add_forward_transition(key[0], key[1])
@@ -846,7 +848,7 @@ class NLength_LineGenerator(LinesGenerator):
 
 
         transition_rules = self.genSys.returnHorizontalTransitionDict()
-        transition_rules_check_14(transition_rules)
+        #transition_rules_check_14(transition_rules)
         # B0 F0
         # B0 transitions
         # B'0 transitions
