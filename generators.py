@@ -297,17 +297,17 @@ class LinesGenerator:
         self.genSys.add_State(self.seedA)
 
 
-class NLength_LineGenerator(LinesGenerator):
+class Freezing_NLength_LineGenerator(LinesGenerator):
 
     def __init__(self, line_len=None):
         super().__init__(line_len)
         self.reseed_states = []
         self.reseed_state_nums = []
         self.smallest_reseed = None
-        self.affinities_by_type = [["Seed Affinities"], ["Self Affinities"], ["Self Prime Affinities"], ["Prime b0 f0 Affinities"], ["Back Walk Affinities"], ["Forward Walk Affinities"]]
+
         self.generate_states()
         self.add_affinities()
-        self.add_transitions()
+        #self.add_transitions()
 
 
     def generate_states(self):
@@ -322,50 +322,40 @@ class NLength_LineGenerator(LinesGenerator):
         self.genSys.add_Initial_State(b0)
 
         # New Transition States
-        ## Add B'0
-        bp0 = uc.State("B'0", light_blue)
-        self.genSys.add_State(bp0)
 
-        f0 = uc.State("F0", red)
+        if self.line_length > 2:
+            bp0 = uc.State("B'0", light_blue)
+            self.genSys.add_State(bp0)
 
-        self.genSys.add_State(f0)
-
-
-        for i in range(1, self.bit_len):
-            if i == (self.bit_len - 1):
-               bState = uc.State("B" + str(i), blue)
-               self.genSys.add_State(bState)
-            else:
-                #Add back states that are not B0
-                bState = uc.State("B" + str(i), blue)
-                self.genSys.add_State(bState)
-                ## Add forward states
-                fState = uc.State("F" + str(i), red)
-                self.genSys.add_State(fState)
-                ## Add forward prime states
-                fpState = uc.State("F'" + str(i), orange)
-                self.genSys.add_State(fpState)
-
-        print("States Are: ")
-        st = self.genSys.return_list_of_state_labels()
-        sta = self.genSys.returnStates()
-        #states_test_14(st)
-        #states_test_27(st)
-        for s in sta:
-            print(s.get_label())
+            f0 = uc.State("F0", red)
+            self.genSys.add_State(f0)
 
 
+            for i in range(1, self.bit_len):
+                if i == (self.bit_len - 1):
+                    bState = uc.State("B" + str(i), blue)
+                    self.genSys.add_State(bState)
+                else:
+                    #Add back states that are not B0
+                    bState = uc.State("B" + str(i), blue)
+                    self.genSys.add_State(bState)
+                    ## Add forward states
+                    fState = uc.State("F" + str(i), red)
+                    self.genSys.add_State(fState)
+                    ## Add forward prime states
+                    fpState = uc.State("F'" + str(i), orange)
+                    self.genSys.add_State(fpState)
+
+    #Used to generate the states that are reseeded
     def reseed_states_gen(self):
-        # Generate Reseed States
         ## The bit length will give one more than the highest power hence subtract 1
         bl = self.bit_len - 1
         ## line length minus seed
         num = self.line_length - 1
         rs = []
 
-        ## Subtracts number
+        ## Subtracts 2 to bit length from the line length to get the reseed states, decrementing bit length each time and appending if the remaining line length is greater than or equal to 0
         while num > 0:
-
             if num - 2**bl >= 0:
 
                 if not(num - 2**bl == 0):
@@ -374,7 +364,7 @@ class NLength_LineGenerator(LinesGenerator):
                     rs.append("R" + str(bl))
                     self.reseed_states.append("R" + str(bl))
 
-
+                ## If 2^bl immediately equals the line length - 1 then add the only non prime reseed states
                 elif math.log2(self.line_length - 1).is_integer():
                     rState = uc.State("R" + str(bl), grey)
                     self.genSys.add_State(rState)
@@ -400,165 +390,16 @@ class NLength_LineGenerator(LinesGenerator):
                 num = num - 2**bl
             bl = bl - 1
         self.smallest_reseed = rs[-1]
-        print("Smallest Reseed: " + rs[-1])
         return
 
     # Adding Affinities helper methods
-    ## Check if label attaches to Seed and create
-    def add_seed_affinity(self, aff_label):
-        if aff_label == "S":
-            return
-        if not("'" in aff_label):
-            if aff_label[0] == "R":
-                if int(aff_label[1:]) == (self.bit_len - 1):
-                    Aff = uc.AffinityRule("S", aff_label, "h")
-                    self.genSys.add_affinity(Aff)
-                    self.affinities_by_type[0].append(("S", aff_label))
-                elif math.log2(self.line_length - 1).is_integer():
-                    Aff = uc.AffinityRule("S", aff_label, "h")
-                    self.genSys.add_affinity(Aff)
-            else:
-                Aff = uc.AffinityRule("S", aff_label, "h")
-                self.genSys.add_affinity(Aff)
-                self.affinities_by_type[0].append(("S", aff_label))
-
-    ## Check if label attaches to self and create
-    def add_self_affinity(self, aff_label):
-        if "'" in aff_label or aff_label == "S":
-            return
-        elif aff_label[1] == "0":
-            return
-        elif aff_label[1] == "1":
-            return
-        else:
-            Aff = uc.AffinityRule(aff_label, aff_label, "h")
-            self.genSys.add_affinity(Aff)
-            self.affinities_by_type[1].append((aff_label, aff_label))
-
-    ## Check if label attaches to self prime and create
-    def add_self_prime_affinity(self, aff_label):
-        if aff_label == "S" or "'" in aff_label:
-            return
-        elif aff_label[1] == "0":
-            return
-        elif aff_label[0] == "B":
-            return
-        else:
-            l2 = make_prime(aff_label)
-            Aff = uc.AffinityRule(aff_label, l2, "h")
-            self.genSys.add_affinity(Aff)
-            self.affinities_by_type[2].append((aff_label, l2))
-
-    ## Check if label is prime and attaches to b0, create
-    ## must check if R' is last reseed
-    def add_prime_to_b0_f0_affinity(self, aff_label):
-        if aff_label == "S":
-            return
-        if "'" in aff_label:
-            if aff_label[0] == "B" or aff_label == self.smallest_reseed:
-                return
-            else:
-                Aff = uc.AffinityRule(aff_label, "B0", "h")
-                self.genSys.add_affinity(Aff)
-                self.affinities_by_type[3].append((aff_label, "B0"))
-
-                Aff = uc.AffinityRule(aff_label, "F0", "h")
-                self.genSys.add_affinity(Aff)
-                self.affinities_by_type[3].append((aff_label, "F0"))
-
-    def add_bp0_affinities(self, label):
-        if label == "F0":
-            Aff = uc.AffinityRule(label, "B'0", "h")
-            self.genSys.add_affinity(Aff)
-
-        elif label == "B1":
-            Aff = uc.AffinityRule(label, "B'0", "h")
-            self.genSys.add_affinity(Aff)
-
-        elif not ("'" in label and label == "S"):
-            if not (label[0] == "B" and label == self.smallest_reseed):
-                Aff = uc.AffinityRule(label, "B'0", "h")
-                self.genSys.add_affinity(Aff)
-
-    def add_reseed_prime_to_nextReseed_affinities(self, label):
-
-        if label == self.smallest_reseed:
-            ## Make R'0 attach to second to last reseed
-            if len(self.reseed_states) >= 3 and self.smallest_reseed == "R'0":
-                Aff = uc.AffinityRule(self.reseed_states[-2], label, "h")
-                self.genSys.add_affinity(Aff)
-
-
-        # If prime and if next reseed state is not R'0
-        elif "R'" in label:
-            l_index = self.reseed_states.index(label)
-            if len(self.reseed_states) -3 >= l_index:
-                Aff = uc.AffinityRule(label, self.reseed_states[l_index + 1],"h")
-                self.genSys.add_affinity(Aff)
-    def add_reseed_prime_affinities(self):
-
-        max_num_split = split_nonprime_label(self.reseed_states[0])
-
-        max_num = max_num_split[1]
-        rs = self.reseed_states.copy()
-        print(rs)
-        rs_filtered = list(filter(lambda i: "'" in i, rs))
-        print(rs_filtered)
-        rsnp_filtered = list(filter(lambda i: not("'" in i), rs))
-
-        # Add all affinities between reseed prime and b's equal or smaller than next reseed
-        # and f's that are smaller than next reseed
-        # Add all affinities between reseed non prime and b's that are equal or smaller
-        curr_i = max_num
-
-        for r in rs.reverse():
-            if r == "R'0":
-                continue
-
-            else:
-                for i in range(curr_i):
-                    if not(i == curr_i):
-                        b = "B" + str(i)
-                        f = "F" + str(i)
-
-
-        # for i in range(1, max_num):
-        #     for j in rs_filtered:
-        #         js = split_prime_label(j)
-        #         if js[1] == max_num:
-        #             bmax = "B" + str(max_num)
-        #             rs_aff = uc.AffinityRule(j, bmax, "h")
-        #             self.genSys.add_affinity(rs_aff)
-
-        #         if js[1] > i:
-        #             b = "B" + str(i)
-        #             rs_baff = uc.AffinityRule(j, b, "h")
-        #             self.genSys.add_affinity(rs_baff)
-        #             f = "F" + str(i)
-        #             rs_faff = uc.AffinityRule(j, f, "h")
-        #             self.genSys.add_affinity(rs_faff)
-
-    def add_fp_affinities(self, label):
-        if check_is_prime(label) and not("R'" in label or "B'" in label):
-            max_num_split = split_prime_label(label)
-            max_num = max_num_split[1]
-
-            for i in range(max_num):
-                b = "B" + str(i)
-                baff = uc.AffinityRule(label, b, "h")
-                self.genSys.add_affinity(baff)
-                if i < max_num:
-                    f = "F" + str(i)
-                    faff = uc.AffinityRule(label, f, "h")
-                    self.genSys.add_affinity(faff)
-
     #Actually in use
     def add_reseed_affinities_v2(self):
         # Adds affinity for Seed to first reseed
         rs = self.reseed_states.copy()
         aff = uc.AffinityRule("S", rs[0], "h")
         self.genSys.add_affinity(aff)
-        print("rs[0]: ", rs[0])
+
 
         rs_len = len(rs) - 1
         for i in range(rs_len):
@@ -709,35 +550,27 @@ class NLength_LineGenerator(LinesGenerator):
         print("End Affinities V2 Returns")
 
     def add_affinities(self):
-
-        states = self.genSys.returnStates()
         b0Aff = uc.AffinityRule("S","B0", "h")
         self.genSys.add_affinity(b0Aff)
 
-        b0f0Aff = uc.AffinityRule("F0","B0", "h")
-        self.genSys.add_affinity(b0f0Aff)
+        if self.line_length > 2:
 
-        bp0f0Aff = uc.AffinityRule("F0","B'0", "h")
-        self.genSys.add_affinity(bp0f0Aff)
+            b0f0Aff = uc.AffinityRule("F0","B0", "h")
+            self.genSys.add_affinity(b0f0Aff)
 
-        b1bp0Aff = uc.AffinityRule("B1","B'0", "h")
-        self.genSys.add_affinity(b1bp0Aff)
+            bp0f0Aff = uc.AffinityRule("F0","B'0", "h")
+            self.genSys.add_affinity(bp0f0Aff)
+
+            b1bp0Aff = uc.AffinityRule("B1","B'0", "h")
+            self.genSys.add_affinity(b1bp0Aff)
 
         self.add_reseed_affinities_v2()
         self.add_affinities_v2()
-
-        hd = self.genSys.returnHorizontalAffinityDict()
-        shd = sorted(hd)
-        """ if self.line_length == 14:
-            affinities_test_14(shd)
-        elif self.line_length == 17:
-            affinities_test_17(shd) """
         return
-
 
     def add_seed_transitions(self, labelA, labelB):
         if labelA == "S":
-            split_b = split_label_pnp(labelB)
+            split_b = split_label_pnp(labelB) #returns a list where element 0 is the state type and element 1 is the number [str, int]
             if split_b[1] == self.reseed_state_nums[0]:
                 labelB_Final = self.reseed_states[0]
                 tr = uc.TransitionRule(labelA, labelB, labelA, labelB_Final, "h")
@@ -817,11 +650,14 @@ class NLength_LineGenerator(LinesGenerator):
         f0 = "F0"
         line_len = self.line_length
         if line_len > 1:
-        # Seed transitions
-            tr = uc.TransitionRule(seed, b0, seed, f0, "h")
-            self.genSys.add_transition_rule(tr)
+            if line_len == 2:
+                tr = uc.TransitionRule(seed, b0, seed, "R'0", "h")
+                self.genSys.add_transition_rule(tr)
 
-            if line_len > 2:
+            elif line_len > 2:
+                tr = uc.TransitionRule(seed, b0, seed, f0, "h")
+                self.genSys.add_transition_rule(tr)
+
                 tr = uc.TransitionRule(f0, b0, f0, bp0, "h")
                 self.genSys.add_transition_rule(tr)
 
@@ -831,14 +667,13 @@ class NLength_LineGenerator(LinesGenerator):
                 if line_len > 4:
                     labelA = seed
                     labelB = "B1"
-                    labelA_Final = seed
-                    labelB_Final = "F1"
+
 
                     self.add_seed_transitions(labelA, labelB)
                     affinities_list = self.genSys.returnHorizontalAffinityList()
 
                     for key in affinities_list:
-                        print(key)
+
                         self.add_seed_transitions(key[0], key[1])
                         self.add_reseed_transitions(key[0], key[1])
                         self.add_forward_transition(key[0], key[1])
@@ -855,7 +690,7 @@ class NLength_LineGenerator(LinesGenerator):
 
         return
 
-class DeterministicLines:
+class NonFreezing_Lines_Generator:
     def __init__(self, base_number, digits_number):
         seed = self.add_seed(base_number)
         self.genSys = uc.System(
@@ -932,5 +767,4 @@ if __name__ == "__main__":
     """ sys = genSqrtBinCount("110011100")
     SaveFile.main(sys, ["biggerTestCount.xml"]) """
 
-
-    linesSys = NLength_LineGenerator(14)
+    linesSys = Freezing_NLength_LineGenerator(14)
