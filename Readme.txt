@@ -1,5 +1,5 @@
 #################################################################################################################################
-# Unnamed TA Simulator
+# AutoTile
 # Version 1.0
 # Author: ASARG
 # Description: Implements the tile automata model as designed by Chalk et al.
@@ -136,7 +136,7 @@ Windows users, we are aware of a bug that does not let you interact with the sim
 1.5.3 Simulator Controls
   Once a system is loaded: 
   -WASD will move the assembly. Holding shift with any of the WASD keys will move the assembly faster, this functions speed relates to the size of the assembly 
-  -The mouse scroll wheel can zoom in and out
+  -The mouse scroll wheel can zoom in and out, additionally + and - keys also zoom in and out
   -C will "recenter" the seed of the assembly.
 
   These hotkeys correspond to the tool bar at the top of the screen and are mapped to follow the layout respectively.
