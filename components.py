@@ -31,6 +31,21 @@ def make_prime(stri):
     fin = strings + num
     return fin
 
+def make_not_prime(stri):
+    strings = ""
+    num = ""
+
+    for i in range(len(stri)):
+        if (stri[i].isdigit()):
+            num = num + stri[i]
+        else:
+            if not(stri[i] == "'"):
+                strings += stri[i]
+    if(num == ""):
+        return strings
+    fin = strings + num
+    return fin
+
 def check_is_prime(label):
     if "'" in label:
         return True
@@ -104,6 +119,7 @@ def check_A_less(labelA, labelB):
         return True
     else:
         return False
+
 
 # States Tests
 def states_test_14(states):
@@ -652,8 +668,6 @@ def transition_rules_check_14(trans_dict):
         ("R2", "B1"):("R2", "R2"),
 
         ("F2", "B1"):("F2", "F2"),
-
-
         }
 
     trans_copy = trans_dict.copy()

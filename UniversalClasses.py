@@ -554,6 +554,8 @@ class TransitionRule:
         return self.dir
 
 
+
+
 # System is used for the assembler; represents the data in the XML
 class System:
     # Horizontal Hash Rule
@@ -755,8 +757,9 @@ class System:
 
     # Checkers
     def checkHorizontalTransitionsList(self, tr):
-        if tr in self.horizontal_transitions_list:
-            return True
+        for t in self.horizontal_transitions_list:
+            if t.returnLabel1() == tr.returnLabel1() and t.returnLabel2() == tr.returnLabel2() and t.returnLabel1Final() == tr.returnLabel1Final() and t.returnLabel2Final() == tr.returnLabel2Final():
+                return True
         return False
 
     # TO DO Update these to write to a dictionary, and to use lists of objects from universalClasses.py

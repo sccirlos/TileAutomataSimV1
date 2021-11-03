@@ -153,7 +153,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.historian.set_ui_parent(self)
         font = QtGui.QFont()
         font.setPointSize(10)
-        
+
 
         self.SaveHistory_Button.clicked.connect(self.historian.dump)
         self.LoadHistory_Button.clicked.connect(self.historian.load)
@@ -438,9 +438,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 self.textY = self.textY + 6
 
                 self.textSize = int(self.tileSize / 3)
-            
+
                 self.draw_assembly(self.Engine.getCurrentAssembly())
-                
+
         elif event.key() == Qt.Key_Minus or event.key() == Qt.Key_Underscore:
             if self.Engine != None:
                 if self.tileSize > 10:
@@ -956,7 +956,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 self.time = self.time - (self.Engine.timeTaken())
                 self.Engine.back()
 
-                self.draw_move(self.Engine.getLastMove(), 0, "red")           
+                self.draw_move(self.Engine.getLastMove(), 0, "red")
 
     def next_step(self):
         if self.play:
