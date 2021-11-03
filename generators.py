@@ -307,7 +307,8 @@ class Freezing_NLength_LineGenerator(LinesGenerator):
 
         self.generate_states()
         self.add_affinities()
-        #self.add_transitions()
+        self.add_transitions()
+
 
 
     def generate_states(self):
@@ -573,12 +574,17 @@ class Freezing_NLength_LineGenerator(LinesGenerator):
             split_b = split_label_pnp(labelB) #returns a list where element 0 is the state type and element 1 is the number [str, int]
             if split_b[1] == self.reseed_state_nums[0]:
                 labelB_Final = self.reseed_states[0]
+
                 tr = uc.TransitionRule(labelA, labelB, labelA, labelB_Final, "h")
-                self.genSys.add_transition_rule(tr)
+                if not (self.genSys.checkHorizontalTransitionsList(tr)):
+                    self.genSys.add_transition_rule(tr)
+
             else:
                 labelB_Final = transition_to_forward(labelB)
+
                 tr = uc.TransitionRule(labelA, labelB, labelA, labelB_Final, "h")
-                self.genSys.add_transition_rule(tr)
+                if not (self.genSys.checkHorizontalTransitionsList(tr)):
+                    self.genSys.add_transition_rule(tr)
 
     def add_reseed_transitions(self, labelA, labelB):
         if "R'" in labelA:
@@ -591,17 +597,19 @@ class Freezing_NLength_LineGenerator(LinesGenerator):
                             labelA_index = self.reseed_states.index(labelA)
                             if len(self.reseed_states) > (labelA_index + 1):
                                 labelB_Final = self.reseed_states[labelA_index + 1]
+
                                 tr = uc.TransitionRule(labelA, labelB, labelA, labelB_Final, "h")
-                                self.genSys.add_transition_rule(tr)
+                                if not (self.genSys.checkHorizontalTransitionsList(tr)):
+                                    self.genSys.add_transition_rule(tr)
 
         elif "R" in labelA and not("R" in labelB):
             if "B'" in labelB:
                 labelB_Final = make_prime(labelA)
             else:
                 labelB_Final = labelA
-
             tr = uc.TransitionRule(labelA, labelB, labelA, labelB_Final, "h")
-            self.genSys.add_transition_rule(tr)
+            if not (self.genSys.checkHorizontalTransitionsList(tr)):
+                self.genSys.add_transition_rule(tr)
 
     def add_forward_transition(self, labelA, labelB):
         states = self.genSys.return_list_of_state_labels()
@@ -610,19 +618,23 @@ class Freezing_NLength_LineGenerator(LinesGenerator):
             if check_A_greater(labelA, labelB):
                 labelB_Final = transition_to_forward(labelB)
                 tr = uc.TransitionRule(labelA, labelB, labelA, labelB_Final, "h")
-                self.genSys.add_transition_rule(tr)
+                if not (self.genSys.checkHorizontalTransitionsList(tr)):
+                    self.genSys.add_transition_rule(tr)
 
         elif "F" in labelA and labelA in states:
             if "B'" in labelB:
                 if check_A_greater(labelA, labelB):
                     labelB_Final = make_prime(labelA)
                     tr = uc.TransitionRule(labelA, labelB, labelA, labelB_Final, "h")
-                    self.genSys.add_transition_rule(tr)
+                    if not (self.genSys.checkHorizontalTransitionsList(tr)):
+                        self.genSys.add_transition_rule(tr)
             elif "B" in labelB:
                 if check_A_greater(labelA, labelB):
                     labelB_Final = labelA
                     tr = uc.TransitionRule(labelA, labelB, labelA, labelB_Final, "h")
-                    self.genSys.add_transition_rule(tr)
+                    if not (self.genSys.checkHorizontalTransitionsList(tr)):
+                        self.genSys.add_transition_rule(tr)
+
 
     def add_back_transition(self, labelA, labelB):
         if "R" in labelA or "S" in labelA:
@@ -633,13 +645,16 @@ class Freezing_NLength_LineGenerator(LinesGenerator):
             if check_nums_same(labelA, labelB):
                 labelA_Final = increment_string(labelA)
                 labelA_Final = transition_to_backward(labelA_Final)
+
                 tr = uc.TransitionRule(labelA, labelB, labelA_Final, labelB, "h")
-                self.genSys.add_transition_rule(tr)
+                if not (self.genSys.checkHorizontalTransitionsList(tr)):
+                    self.genSys.add_transition_rule(tr)
 
             elif check_A_less(labelA, labelB):
                 labelA_Final = labelB
                 tr = uc.TransitionRule(labelA, labelB, labelA_Final, labelB, "h")
-                self.genSys.add_transition_rule(tr)
+                if not (self.genSys.checkHorizontalTransitionsList(tr)):
+                    self.genSys.add_transition_rule(tr)
 
     def add_transitions(self):
         #tr = uc.TransitionRule(labelA, labelB, labelA_Final, labelB_Final, "h")
@@ -671,18 +686,22 @@ class Freezing_NLength_LineGenerator(LinesGenerator):
 
                     self.add_seed_transitions(labelA, labelB)
                     affinities_list = self.genSys.returnHorizontalAffinityList()
+                    self.genSys.displayHorizontalTransitionList()
 
-                    for key in affinities_list:
+                    for aff in affinities_list:
+                        l1 = aff.returnLabel1()
+                        l2 = aff.returnLabel2()
 
-                        self.add_seed_transitions(key[0], key[1])
-                        self.add_reseed_transitions(key[0], key[1])
-                        self.add_forward_transition(key[0], key[1])
-                        self.add_back_transition(key[0], key[1])
+                        self.add_seed_transitions(l1, l2)
+                        self.add_reseed_transitions(l1, l2)
+                        self.add_forward_transition(l1, l2)
+                        self.add_back_transition(l1, l2)
 
 
 
 
-        transition_rules = self.genSys.returnHorizontalTransitionDict()
+
+        #transition_rules = self.genSys.returnHorizontalTransitionDict()
         #transition_rules_check_14(transition_rules)
         # B0 F0
         # B0 transitions
@@ -690,6 +709,8 @@ class Freezing_NLength_LineGenerator(LinesGenerator):
 
         return
 
+    def return_gen_sys(self):
+        return self.genSys
 class NonFreezing_Lines_Generator:
     def __init__(self, base_number, digits_number):
         seed = self.add_seed(base_number)
@@ -735,13 +756,6 @@ if __name__ == "__main__":
     #sys = genDoubleIndexStates(16)
     #SaveFile.main(sys, ["genTest16.xml"])
 
-
-
-
-
-
-
-
 #if __name__ == "__main__":
     #flag = 0
 
@@ -766,5 +780,7 @@ if __name__ == "__main__":
 
     """ sys = genSqrtBinCount("110011100")
     SaveFile.main(sys, ["biggerTestCount.xml"]) """
-
-    linesSys = Freezing_NLength_LineGenerator(14)
+    line_len = 14
+    linesSys = Freezing_NLength_LineGenerator(line_len)
+    str(line_len)
+    SaveFile.main(linesSys.return_gen_sys(), ["XML_Files/test{line_len}.xml"])
