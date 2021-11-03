@@ -1,5 +1,5 @@
 #################################################################################################################################
-# Unnamed TA Simulator
+# AutoTile
 # Version 1.0
 # Author: ASARG
 # Description: Implements the tile automata model as designed by Chalk et al.
