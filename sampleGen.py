@@ -17,7 +17,7 @@ light_blue = "C2DCFE"
 
 # This function handles all generators from UI
 def generator(shape, value, model):
-    
+
     if model == "Deterministic":
         if shape == "Strings":
             return detGen.genString(value)
@@ -31,14 +31,14 @@ def generator(shape, value, model):
             return oneSidedGen.genString(value)
         if shape == "Thin Rectangle":
             value = int(value)
-            return oneSidedGen.genRect(value - 1)   
+            return oneSidedGen.genRect(value - 1)
 
     if model == "Non-Deterministic":
         if shape == "Strings":
             return nonDetGen.genString(value)
         if shape == "Thin Rectangle":
             value = int(value)
-            return nonDetGen.genRect(value - 1)    
+            return nonDetGen.genRect(value - 1)
 
     if shape == "Squares":
         value = int(value)
@@ -51,51 +51,51 @@ def generator(shape, value, model):
 def genSamples():
     # Sample determinsitic systems
     sys1 = detGen.genDoubleIndexStates(9)
-    SaveFile.main(sys1, ["XML Files/samples/IndexStates/smallIndexStatesDet.xml"])
+    SaveFile.main(sys1, ["XML_Files/samples/IndexStates/smallIndexStatesDet.xml"])
 
     sys2 = detGen.genDoubleIndexStates(100)
-    SaveFile.main(sys2, ["XML Files/samples/IndexStates/largeIndexStatesDet.xml"])
+    SaveFile.main(sys2, ["XML_Files/samples/IndexStates/largeIndexStatesDet.xml"])
 
     sys3 = detGen.genSqrtBinString("110011010")
-    SaveFile.main(sys3, ["XML Files/samples/Strings/smallBinStringDet.xml"])
+    SaveFile.main(sys3, ["XML_Files/samples/Strings/smallBinStringDet.xml"])
 
     sys4 = detGen.genSqrtBinString("1100110101101010101100110")
-    SaveFile.main(sys4, ["XML Files/samples/Strings/largeBinStringDet.xml"])
+    SaveFile.main(sys4, ["XML_Files/samples/Strings/largeBinStringDet.xml"])
 
     sys5 = detGen.genSqrtBinCount(50)
-    SaveFile.main(sys5, ["XML Files/samples/Counters/smallBinCountDet.xml"])
+    SaveFile.main(sys5, ["XML_Files/samples/Counters/smallBinCountDet.xml"])
 
     sys6 = detGen.genSqrtBinCount(125)
-    SaveFile.main(sys6, ["XML Files/samples/Counters/largeBinCountDet.xml"])
+    SaveFile.main(sys6, ["XML_Files/samples/Counters/largeBinCountDet.xml"])
 
     sys7 = detGen.genSqrtBaseBString("123456789", 10)
-    SaveFile.main(sys7, ["XML Files/samples/Strings/smallDecimalStringDet.xml"])
+    SaveFile.main(sys7, ["XML_Files/samples/Strings/smallDecimalStringDet.xml"])
 
     sys8 = detGen.genSqrtBaseBString("123456789012345", 10)
-    SaveFile.main(sys8, ["XML Files/samples/Strings/largeDecimalStringDet.xml"])
+    SaveFile.main(sys8, ["XML_Files/samples/Strings/largeDecimalStringDet.xml"])
 
     sys9 = detGen.genSqrtBaseBCount("9950", 10)
-    SaveFile.main(sys9, ["XML Files/samples/Counters/smallDecimalCountDet.xml"])
+    SaveFile.main(sys9, ["XML_Files/samples/Counters/smallDecimalCountDet.xml"])
 
     sys10 = detGen.genSqrtBaseBCount("999999000", 10)
-    SaveFile.main(sys10, ["XML Files/samples/Counters/largeDecimalCountDet.xml"])
+    SaveFile.main(sys10, ["XML_Files/samples/Counters/largeDecimalCountDet.xml"])
 
     # Sample One Sided systems
     sys11 = oneSidedGen.genTripleIndexStates(27)
-    SaveFile.main(sys11, ["XML Files/samples/IndexStates/smallIndexStatesSR.xml"])
+    SaveFile.main(sys11, ["XML_Files/samples/IndexStates/smallIndexStatesSR.xml"])
 
     sys12 = oneSidedGen.genTripleIndexStates(125)
-    SaveFile.main(sys12, ["XML Files/samples/IndexStates/largeIndexStatesSR.xml"])
+    SaveFile.main(sys12, ["XML_Files/samples/IndexStates/largeIndexStatesSR.xml"])
 
     sys13 = oneSidedGen.cbrtBinString("110011010110011010110011010")
-    SaveFile.main(sys13, ["XML Files/samples/Strings/BinStringSR.xml"])
+    SaveFile.main(sys13, ["XML_Files/samples/Strings/BinStringSR.xml"])
 
     sys14 = oneSidedGen.cbrtBinCount(1000)
-    SaveFile.main(sys14, ["XML Files/samples/Counters/BinCountSR.xml"])
+    SaveFile.main(sys14, ["XML_Files/samples/Counters/BinCountSR.xml"])
 
     # Sample General systems
     sys15 = nonDetGen.genQuadIndexStates(81)
-    SaveFile.main(sys15, ["XML Files/samples/IndexStates/IndexStatesND.xml"])
+    SaveFile.main(sys15, ["XML_Files/samples/IndexStates/IndexStatesND.xml"])
 
     num = ""
 
@@ -103,10 +103,10 @@ def genSamples():
         num += "101"
 
     sys16 = nonDetGen.genQuadBinString(num)
-    SaveFile.main(sys16, ["XML Files/samples/Strings/BinStringND.xml"])
+    SaveFile.main(sys16, ["XML_Files/samples/Strings/BinStringND.xml"])
 
     sys16 = nonDetGen.quadBinCount(1500)
-    SaveFile.main(sys16, ["XML Files/samples/Counters/BinCountND.xml"])
+    SaveFile.main(sys16, ["XML_Files/samples/Counters/BinCountND.xml"])
 
 if __name__ == "__main__":
     genSamples()
