@@ -16,11 +16,11 @@ class State:
 
     def returnColor(self):
         return self.color
-    
+
     def __eq__(self, other):
         if isinstance(other, State):
             return self.label == other.label and self.color == other.color
-        
+
 
     def get_color(self):      # for editor window
         return self.color
@@ -272,7 +272,7 @@ class Assembly:
                         move["state1"] = iTile.get_state()
                         move["state2"] = neighborS.get_state()
 
-                   
+
                         move["state1Final"] = sy.get_state(
                             rules[i])  # .returnLabel1Final()
                         move["state2Final"] = sy.get_state(
@@ -296,7 +296,7 @@ class Assembly:
                         move["state1"] = iTile.get_state()
                         move["state2"] = neighborE.get_state()
 
-                    
+
                         move["state1Final"] = sy.get_state(
                             rules[i])  # .returnLabel1Final()
                         move["state2Final"] = sy.get_state(
@@ -434,7 +434,7 @@ class Assembly:
         sys_v_tr = sy.returnVerticalTransitionDict()
 
         iTile = self.coords.get(toCoords(x, y))
-        
+
         if iTile == None:
             return transitions_list
 
@@ -450,14 +450,14 @@ class Assembly:
                         (iTile.get_label(), neighborS.get_label()))
                     # rules.append(iVTranRules)
                     if rules != None:
-                        for i in range(0, len(rules), 2):     
+                        for i in range(0, len(rules), 2):
                             move = {"type": "t"}
                             move["x"] = iTile.x
                             move["y"] = iTile.y
                             move["dir"] = "v"
                             move["state1"] = iTile.get_state()
                             move["state2"] = neighborS.get_state()
-                          
+
                             move["state1Final"] = sy.get_state(
                                 rules[i])  # .returnLabel1Final()
                             move["state2Final"] = sy.get_state(
@@ -473,14 +473,14 @@ class Assembly:
                         (iTile.get_label(), neighborE.get_label()))
                     # rules.append(iVTranRules)
                     if rules != None:
-                        for i in range(0, len(rules), 2): 
+                        for i in range(0, len(rules), 2):
                             move = {"type": "t"}
                             move["x"] = iTile.x
                             move["y"] = iTile.y
                             move["dir"] = "h"
                             move["state1"] = iTile.get_state()
                             move["state2"] = neighborE.get_state()
-  
+
                             move["state1Final"] = sy.get_state(
                                 rules[i])  # .returnLabel1Final()
                             move["state2Final"] = sy.get_state(
@@ -492,8 +492,8 @@ class Assembly:
 
 
 
-                    
-            
+
+
 
 # Not in use right now.
 
@@ -710,6 +710,8 @@ class System:
     def displayHorizontalTransitionDict(self):
         print(self.horizontal_transitions_dict)
 
+    def displayHorizontalTransitionList(self):
+        print(self.horizontal_transitions_list)
     # Clearers
     def clearVerticalAffinityList(self):
         self.vertical_affinities_list.clear()
@@ -751,6 +753,12 @@ class System:
         self.horizontal_transitions_dict[label1, label2] = (
             label1Final, label2Final)
 
+    # Checkers
+    def checkHorizontalTransitionsList(self, tr):
+        if tr in self.horizontal_transitions_list:
+            return True
+        return False
+
     # TO DO Update these to write to a dictionary, and to use lists of objects from universalClasses.py
 
     def set_tile_vertical_transitions(self, tile_vt):
@@ -767,15 +775,15 @@ class System:
             self.states.append(state)
         else:
             print("Attempted to add a state that is not a state object")
-            
+
     def return_list_of_state_labels(self):
         st = []
         cst = self.returnStates()
         for s in cst:
             st.append(s.get_label())
-            
-        return st    
-        
+
+        return st
+
     def add_Initial_State(self, state):
         self.initial_states.append(state)
 
@@ -784,14 +792,14 @@ class System:
         self.seed_states.append(state)
 
     def remove_state(self, state):
-        # if 
+        # if
         if isinstance(state, list):
             for s in state:
                 self.states.remove(s)
         elif isinstance(state, State):
             self.states.remove(state)
 
-    # start here 
+    # start here
     def add_transition_rule(self, tr):
         label1 = tr.returnLabel1()
         label2 = tr.returnLabel2()
@@ -822,7 +830,7 @@ class System:
                 oldList.append(label1Final)
                 oldList.append(label2Final)
 
-            
+
 
             self.horizontal_transitions_dict[label1, label2] = oldList
 
