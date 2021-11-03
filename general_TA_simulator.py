@@ -98,10 +98,11 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.Menu_button.setIcon(QtGui.QIcon('Icons/menu_icon.png'))
 
         # "New" on the File menu
-
+        self.New_button.setIcon(QtGui.QIcon('Icons/tabler-icon-file.png'))
 
         # this is "Load" on the "File" menu
         self.Load_button.clicked.connect(self.Click_FileSearch)
+        self.Load_button.setIcon(QtGui.QIcon('Icons/tabler-icon-folder.png'))
 
         # "Save" from the "File" menu
         self.SaveAs_button.clicked.connect(self.Click_SaveFile)
