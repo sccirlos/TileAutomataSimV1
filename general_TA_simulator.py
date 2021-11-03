@@ -19,6 +19,7 @@ import QuickRotate
 import QuickCombine
 import QuickReflect
 import math
+import FreezingCheck
 
 import sys
 
@@ -786,6 +787,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.draw_assembly(self.Engine.getCurrentAssembly())
             self.Update_available_moves()
 
+
+    
     def Click_QuickCombine(self):
         if(self.SysLoaded == True):
             global currentSystem
@@ -971,10 +974,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.e.show()
         else: 
             print("Please load a file to edit.")
-# add self, engine - then fill the table 
-# engine has the system 
-
-
 
 class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
     def __init__(self, engine, mainGUI):
@@ -1147,8 +1146,7 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
         self.pushButton_5.clicked.connect(self.Click_AddRowTrans)
          # user deletes state - currently only deletes state from 
          # state table. 
-         # need to delete from aff rules and trans rules too and 
-         # add the pop up message "are you sure delete state and its rules?"
+        
         self.pushButton_11.clicked.connect(self.click_removeRowState)
         self.pushButton_10.clicked.connect(self.click_removeRowAff)
         self.pushButton_9.clicked.connect(self.click_removeRowTran)
@@ -1156,6 +1154,23 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
 
         # duplicate row
         self.pushButton_6.clicked.connect(self.click_duplicateRowState)
+        self.pushButton_7.clicked.connect(self.click_duplicateRowAff)
+        self.pushButton_8.clicked.connect(self.click_duplicateRowTrans)
+
+        self.pushButton_12.clicked.connect(self.Click_freezingCheck)
+
+
+    # just need to fix this function 
+    def Click_freezingCheck(self):
+
+        #if(self.SysLoaded == True):
+        global currentSystem
+        FreezingCheck.main(currentSystem)
+        currentSystem = FreezingCheck.tempSystem
+        self.time = 0
+        self.Engine = Engine(currentSystem)
+        self.draw_assembly(self.Engine.getCurrentAssembly())
+        self.Update_available_moves()
 
     # for 'add state'
     def cellchanged(self, row, col):
@@ -1249,17 +1264,10 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
     # remove/delete rows from state table
     def click_removeRowState(self):
 
-        # debug print the selected rows and columns
-        # for i in self.tableWidget.selectedIndexes():
-        #     print("row", i.row(), "col", i.column())
-
         # only delete if there is something in the table, and if there is something selected
         if self.tableWidget.rowCount() > 0 and len(self.tableWidget.selectedIndexes()) > 0:
             self.tableWidget.removeRow(self.tableWidget.selectedIndexes()[0].row())
 
-        # want to delete state and associated aff/trans rules
-        # search through affinity and transitions rules & delete 
-        # the rows that contain that deleted state label.
     def click_removeRowAff(self):
         if self.tableWidget_2.rowCount() > 0 and len(self.tableWidget_2.selectedIndexes()) > 0:
             self.tableWidget_2.removeRow(self.tableWidget_2.selectedIndexes()[0].row())
@@ -1269,16 +1277,18 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
             self.tableWidget_3.removeRow(self.tableWidget_3.selectedIndexes()[0].row())
 
 
+    # new_w is not copying checked state if w is checked 
+    # new_w not aligned in cells
     def copy_widget(self, w):
         if isinstance(w, QtWidgets.QWidget):
             new_w = QCheckBox()
             #copy values
+            
             if QCheckBox(w).isChecked():
                 new_w.setChecked(True)
-            else:
-                new_w.setChecked(False)
-
-            return new_w
+            #else:
+             #   new_w.setChecked(False)
+        return new_w
 
     def copy(self, cells, r):
         self.tableWidget.insertRow(r)
@@ -1286,12 +1296,20 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
             self.tableWidget.setItem(r, i, it)
         for i, w in cells["widgets"]:
             self.tableWidget.setCellWidget(r, i, w)
-                
+    
+    def copy_2(self, cells, r):
+        self.tableWidget_2.insertRow(r)
+        for i, it in cells["items"]:
+            self.tableWidget_2.setItem(r, i, it)
+
+    def copy_3(self, cells, r):
+        self.tableWidget_3.insertRow(r)
+        for i, it in cells["items"]:
+            self.tableWidget_3.setItem(r, i, it)
 
     def click_duplicateRowState(self):
         
         currentRow = self.tableWidget.currentRow()
-        #columnCount = self.tableWidget.columnCount()
 
         if self.tableWidget.rowCount() > 0 and len(self.tableWidget.selectedIndexes()) > 0:
             cells = {"items": [], "widgets": []}
@@ -1307,27 +1325,29 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
                     cells["widgets"].append((i, self.copy_widget(w)))
             self.copy(cells, currentRow+1)
 
-            # adding a new row below selected row - use insert row
-            # ok inserts row right below the selected one- thats good 
-            #currentRow = self.tableWidget.selectedIndexes()[0].row()
-            #newrow = self.tableWidget.insertRow(currentRow+1)
+    def click_duplicateRowAff(self):
+        currentRow = self.tableWidget_2.currentRow()
 
-         
+        if self.tableWidget_2.rowCount() > 0 and len(self.tableWidget_2.selectedIndexes()) > 0:
+            cells = {"items": []}
+            for i in range(self.tableWidget_2.columnCount()):
+
+                it = self.tableWidget_2.item(currentRow, i)
+                if it:
+                    cells["items"].append((i, it.clone())) 
+            self.copy_2(cells, currentRow+1)
     
+    def click_duplicateRowTrans(self):
+        currentRow = self.tableWidget_3.currentRow()
 
+        if self.tableWidget_3.rowCount() > 0 and len(self.tableWidget_3.selectedIndexes()) > 0:
+            cells = {"items": []}
+            for i in range(self.tableWidget_3.columnCount()):
 
-
-
-            #for j in range(columnCount):
-               #  self.tableWidget.setItem(newrow, j, QTableWidgetItem(self.tableWidget.item(currentRow, j).text()))
-
-            #for j in range(columnCount):
-             #   if not self.tableWidget(currentRow +1, j) is None:
-             #       self.setItem(currentRow +1, j, QTableWidgetItem(self.item.(currentRow+1, j).text()))
-
-
-
-
+                it = self.tableWidget_3.item(currentRow, i)
+                if it:
+                    cells["items"].append((i, it.clone())) 
+            self.copy_3(cells, currentRow+1)
 
 
     def Click_EditApply(self):
@@ -1348,7 +1368,7 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
             label = label_cell.text()
             
             #print(initialCheckbox)
-            # 'apply as' works now
+          
             initial = initialCheckbox.layout().itemAt(0).widget().isChecked()
             seed = seedCheckbox.layout().itemAt(0).widget().isChecked()
             s = State(label, color)
