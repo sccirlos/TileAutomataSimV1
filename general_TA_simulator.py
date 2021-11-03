@@ -1289,9 +1289,10 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
             newChkLayout.setContentsMargins(0,0,0,0)
             #copy values
 
-            #print(QCheckBox(w).isChecked())
-            if QCheckBox(w).isChecked():
-                new_w.setChecked(True)
+            for widget in w.children():
+                if isinstance(widget, QCheckBox):
+                    if widget.isChecked():
+                        new_w.setChecked(True)
             #else:
              #   new_w.setChecked(False)
         return newWidget
