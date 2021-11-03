@@ -22,6 +22,7 @@ Section 1 - Application
   Required:
     -Python 3+
     -PyQt5 (install using pip)
+	-networkx (install using pip)
   Optional:
 
 
