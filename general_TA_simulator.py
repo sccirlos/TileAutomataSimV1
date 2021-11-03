@@ -1282,13 +1282,19 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
     def copy_widget(self, w):
         if isinstance(w, QtWidgets.QWidget):
             new_w = QCheckBox()
+            newWidget = QtWidgets.QWidget()
+            newChkLayout = QtWidgets.QHBoxLayout(newWidget)
+            newChkLayout.addWidget(new_w)
+            newChkLayout.setAlignment(Qt.AlignCenter)
+            newChkLayout.setContentsMargins(0,0,0,0)
             #copy values
-            
+
+            #print(QCheckBox(w).isChecked())
             if QCheckBox(w).isChecked():
                 new_w.setChecked(True)
             #else:
              #   new_w.setChecked(False)
-        return new_w
+        return newWidget
 
     def copy(self, cells, r):
         self.tableWidget.insertRow(r)
