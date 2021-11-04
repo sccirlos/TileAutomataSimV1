@@ -1493,7 +1493,7 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
             self.copy_3(cells, currentRow+1)
 
     def Click_EditApply(self):
-
+        global currentSystem
         newtemp = self.spinBox.value()
 
         newsys = System(newtemp, [], [], [], [], [], [], [], [], [], True)
@@ -1561,6 +1561,7 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
         self.Engine.reset_engine(self.system)
 
         self.mainGUI.SysLoaded = True
+        currentSystem = self.system
 
         self.mainGUI.draw_assembly(self.Engine.getCurrentAssembly())
         self.mainGUI.Update_available_moves()
