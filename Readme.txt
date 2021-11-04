@@ -4,7 +4,7 @@
 # Author: ASARG
 # Description: Implements the tile automata model as designed by Chalk et al.
 #################################################################################################################################
-# Unnamed TASimulator Manual
+# AutoTile Manual
 
 Table of Contents
 Sections
@@ -28,7 +28,7 @@ Section 1 - Application
 
 ## 1.2 Usage
   Running:
-    >python3 general_TA_simulator.py
+    >python3 AutoTile.py
 
 ## 1.3 Menu Overview
 Main Menu
