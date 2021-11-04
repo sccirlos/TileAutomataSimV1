@@ -1567,13 +1567,11 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
 
     def Click_EditSaveAs(self):
         print("Save As button clicked")
-
-        if(self.SysLoaded == True):
-            fileName = QFileDialog.getSaveFileName(
+        fileName = QFileDialog.getSaveFileName(
                 self, "QFileDialog.getSaveFileName()", "", "XML Files (*.xml)")
 
-            if(fileName[0] != ''):
-                SaveFile.main(currentSystem, fileName)
+        if(fileName[0] != ''):
+            SaveFile.main(currentSystem, fileName)
 
 
 class Move(QWidget):
