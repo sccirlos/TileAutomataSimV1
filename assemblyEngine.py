@@ -22,6 +22,9 @@ def printMove(move):
 ########
 class Engine:
     def __init__(self, currentSystem):
+        self.reset_engine(currentSystem)
+    
+    def reset_engine(self, currentSystem):
         self.system = currentSystem
         #self.assemblyList = []
         self.moveList = []
