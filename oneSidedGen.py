@@ -478,6 +478,12 @@ def cbrtBinCount(value):
     return genSys
     
 
+def genString(value):
+    return cbrtBinString(value)
+
+def genRect(length):
+    return cbrtBinCount(length)
+
 if __name__ == "__main__":
     #sys = genTripleIndexStates(27)
     #SaveFile.main(sys, ["tripleTest2.xml"])

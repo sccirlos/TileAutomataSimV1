@@ -494,7 +494,13 @@ def genSqrtBaseBCount(value, base=None):
     return genSys
 
 
-    
+def genString(value, base=None):
+    if base == None:
+        return genSqrtBinString(value)
+
+def genRect(length, base=None):
+    if base == None:
+        return genSqrtBinCount(length)
 
 
 

@@ -590,7 +590,11 @@ def quadBinCount(value):
     return genSys          
 
                     
+def genString(value):
+    return genQuadBinString(value)
 
+def genRect(length):
+    return quadBinCount(length)
 
 
 if __name__ == "__main__":

@@ -7,6 +7,13 @@ from UniversalClasses import System, AffinityRule, TransitionRule
 
 def main(currentSystem):
     global tempSystem
+
+    tempSystem = rotate(currentSystem)
+
+
+
+
+def rotate(currentSystem):
     tempSystem = copy.deepcopy(currentSystem)
 
     # Reset tempSystem's dictionaries
@@ -79,3 +86,5 @@ def main(currentSystem):
 
     # Translate tempSystem's lists into dictionaries
     tempSystem.translateListsToDicts()
+
+    return tempSystem

@@ -19,6 +19,8 @@ def main(currentSystem, secondSystem, symbol=None):
     current_VerticalTransitionRules = currentSystem.returnVerticalTransitionList()
     current_HorizontalTransitionRules = currentSystem.returnHorizontalTransitionList()
 
+    current_temp = currentSystem.returnTemp()
+
     # Gather secondSystem's lists
     second_CompleteStateSet = secondSystem.returnStates()
     second_InitialStateSet = secondSystem.returnInitialStates()
@@ -122,3 +124,5 @@ def main(currentSystem, secondSystem, symbol=None):
             tempRule = AffinityRule(
                 second_label1, second_label2, "h", second_strength)
             current_HorizontalAffinityRules.append(tempRule)
+
+    return System(current_temp, current_CompleteStateSet, current_InitialStateSet, current_SeedStateSet, current_VerticalAffinityRules, current_HorizontalAffinityRules, current_VerticalTransitionRules, current_HorizontalTransitionRules)

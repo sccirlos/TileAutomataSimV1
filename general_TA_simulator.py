@@ -20,6 +20,7 @@ import QuickCombine
 import QuickReflect
 import math
 import FreezingCheck
+import sampleGen
 
 import sys
 
@@ -70,8 +71,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.centralwidget.setGraphicsEffect(self.shadow)
 
         ###Set window title and Icon####
-        #self.setWindowIcon(QtGui.QIcon("path goes here"))
-        self.setWindowTitle("TA Simulator")
+        # self.setWindowIcon(QtGui.QIcon('Icons/Logo.png'))
+        self.setWindowTitle("AutoTile")
 
         ### Minimize window ######
         self.minimize_button.clicked.connect(lambda: self.showMinimized())
@@ -80,7 +81,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         ### Close window ####
         self.close_button.clicked.connect(lambda: self.close())
-        self.close_button.setIcon(QtGui.QIcon('Icons/X-icon.png'))
+        self.close_button.setIcon(QtGui.QIcon('Icons/X-icon.jpg'))
 
         ### Restore/Maximize window ####
         self.maximize_button.clicked.connect(
@@ -98,8 +99,12 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.Menu_button.setIcon(QtGui.QIcon('Icons/menu_icon.png'))
         self.New_button.clicked.connect(self.Click_newButton)
 
+        # "New" on the File menu
+        self.New_button.setIcon(QtGui.QIcon('Icons/tabler-icon-file.png'))
+
         # this is "Load" on the "File" menu
         self.Load_button.clicked.connect(self.Click_FileSearch)
+        self.Load_button.setIcon(QtGui.QIcon('Icons/tabler-icon-folder.png'))
 
         # "Save" from the "File" menu
         self.SaveAs_button.clicked.connect(self.Click_SaveFile)
@@ -149,6 +154,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         # Assembly History
         self.historian = Historian()
         self.historian.set_ui_parent(self)
+        font = QtGui.QFont()
+        font.setPointSize(10)
 
         self.SaveHistory_Button.clicked.connect(self.historian.dump)
         self.LoadHistory_Button.clicked.connect(self.historian.load)
@@ -158,13 +165,24 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.next_moves_button = QPushButton()
         self.next_moves_button.setText("Next")
         self.next_moves_button.clicked.connect(self.next_set_of_moves)
+        self.next_moves_button.setFont(font)
+        self.next_moves_button.setStyleSheet("QPushButton::hover"
+                                             "{"
+                                             "background-color : lightblue;"
+                                             "}")
         self.prev_moves_button = QPushButton()
         self.prev_moves_button.setText("Prev")
         self.prev_moves_button.clicked.connect(self.prev_set_of_moves)
+        self.prev_moves_button.setFont(font)
+        self.prev_moves_button.setStyleSheet("QPushButton::hover"
+                                             "{"
+                                             "background-color : lightblue;"
+                                             "}")
 
         self.moves_page = 0
         self.moves_per_page = 8
 
+        # updating combobox
         self.movesLayout.addWidget(self.next_moves_button)
         self.movesLayout.addWidget(self.prev_moves_button)
 
@@ -174,6 +192,18 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             mGUI.setFixedHeight(40)
             self.moveWidgets.append(mGUI)
             self.movesLayout.addWidget(mGUI)
+
+        shape_options = ["Strings", "Thin Rectangle", "Squares"]
+        self.GenShape_Box.addItems(shape_options)
+
+        model_options = ["Deterministic", "Non-Deterministic", "One-Sided"]
+        self.GenModel_Box.addItems(model_options)
+
+        self.InputLabel.setText("Enter a binary string.")
+
+        self.GenShape_Box.currentIndexChanged.connect(self.exampleTextChange)
+
+        self.ExampleButton.clicked.connect(self.Begin_example)
 
         # Function to Move window on mouse drag event on the title bar
         def moveWindow(e):
@@ -216,6 +246,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.label.setPixmap(canvas)
 
         self.label_2.setText("")
+
+        self.frame_6.setGeometry(0, 0, 164, 463)
 
         self.thread = QThread()
         self.threadlast = QThread()
@@ -404,6 +436,28 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         elif event.key() == Qt.Key_Semicolon:
             self.last_step()
+
+        # "Scroll" in and out functionality for + and - keys
+        elif event.key() == Qt.Key_Plus or event.key() == Qt.Key_Equal:
+            if self.Engine != None:
+                self.tileSize = self.tileSize + 10
+                self.textX = self.textX + 2
+                self.textY = self.textY + 6
+
+                self.textSize = int(self.tileSize / 3)
+
+                self.draw_assembly(self.Engine.getCurrentAssembly())
+
+        elif event.key() == Qt.Key_Minus or event.key() == Qt.Key_Underscore:
+            if self.Engine != None:
+                if self.tileSize > 10:
+                    self.tileSize = self.tileSize - 10
+                    self.textX = self.textX - 2
+                    self.textY = self.textY - 6
+
+                    self.textSize = int(self.tileSize / 3)
+
+                    self.draw_assembly(self.Engine.getCurrentAssembly())
 
     def wheelEvent(self, event):
         if self.play:
@@ -866,6 +920,46 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         else:
             self.delay = 0
 
+    def exampleTextChange(self):
+        if self.GenShape_Box.currentText() == "Strings":
+            self.InputLabel.setText("Enter a binary string.")
+        elif self.GenShape_Box.currentText() == "Thin Rectangle" or self.GenShape_Box.currentText() == "Squares":
+            self.InputLabel.setText("Enter an integer.")
+
+    def Begin_example(self):
+        self.stop_sequence()
+        if self.GenShape_Box.currentText() == "Strings":
+            print("Strings " + self.lineEdit.text())
+        elif self.GenShape_Box.currentText() == "Thin Rectangle":
+            print("Thin Rectangle " + self.lineEdit.text())
+        elif self.GenShape_Box.currentText() == "Squares":
+            print("Squares " + self.lineEdit.text())
+        self.GenShape_Box.currentText()
+
+        shape = self.GenShape_Box.currentText()
+        model = self.GenModel_Box.currentText()
+        value = self.lineEdit.text()
+
+        genSystem = sampleGen.generator(shape, value, model)
+
+        if type(genSystem) == System:
+            self.SysLoaded = True
+            # the -150 is to account for the slide menu
+            self.seedX = (self.geometry().width() - 150) / 2
+            self.seedY = self.geometry().height() / 2
+            self.textX = self.seedX + 10
+            self.textY = self.seedY + 25
+
+            self.tileSize = 40
+            self.textSize = int(self.tileSize / 3)
+
+            self.time = 0
+            self.Engine = Engine(genSystem)
+            self.historian.set_engine(self.Engine)
+
+            self.draw_assembly(self.Engine.getCurrentAssembly())
+            self.Update_available_moves()
+
     def do_move(self, move):
         if not self.play:
             # Shouldn't need all this code but copying from next_step() anyways
@@ -905,11 +999,10 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                     prev_move = self.Engine.getLastMove()
                     self.draw_move(prev_move, 0, "black")
 
-                self.Engine.back()
-                self.draw_move(self.Engine.getLastMove(), 0, "red")
-
-                # Might need to go below
                 self.time = self.time - (self.Engine.timeTaken())
+                self.Engine.back()
+
+                self.draw_move(self.Engine.getLastMove(), 0, "red")
 
     def next_step(self):
         if self.play:
@@ -1003,6 +1096,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
     # opens editor window
 
+    # opens editor window
     def Click_EditFile(self):
         # if system loaded, open editorwindow
         if self.SysLoaded == True:
@@ -1010,6 +1104,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.e.show()
         else:
             print("Please load a file to edit.")
+# add self, engine - then fill the table
+# engine has the system
 
 
 class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
@@ -1290,8 +1386,13 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
         self.tableWidget_3.setItem(newrow, 5, tDirec)
 
     # remove/delete rows from state table
-
     def click_removeRowState(self):
+
+        print("remove row button clicked")
+
+        if self.tableWidget_2.rowCount() > 0:
+            currentRow = self.tableWidget_2.currentRow()
+            self.tableWidget_2.removeRow(currentRow)
 
         # only delete if there is something in the table, and if there is something selected
         if self.tableWidget.rowCount() > 0 and len(self.tableWidget.selectedIndexes()) > 0:
@@ -1406,7 +1507,7 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
             label = label_cell.text()
 
             # print(initialCheckbox)
-
+            # 'apply as' works now
             initial = initialCheckbox.layout().itemAt(0).widget().isChecked()
             seed = seedCheckbox.layout().itemAt(0).widget().isChecked()
             s = State(label, color)
@@ -1436,7 +1537,7 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
             self.system.add_affinity(afRule)
 
         # transitions
-        for row in range(0, self.tableWidget_3.rowCount()):
+        for row in range(self.newTransitionIndex, self.tableWidget_3.rowCount()):
             tLabel1 = self.tableWidget_3.item(row, 0)
             tLabel2 = self.tableWidget_3.item(row, 1)
             tFinal1 = self.tableWidget_3.item(row, 3)
