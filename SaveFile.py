@@ -1,7 +1,7 @@
 from LoadFile import InitialStateSet
 import xml.etree.ElementTree as ET
 
-from general_TA_simulator import System
+from AutoTile import System
 from UniversalClasses import State
 from UniversalClasses import SeedAssemblyTile
 from UniversalClasses import AffinityRule

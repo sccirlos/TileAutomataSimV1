@@ -71,8 +71,11 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.centralwidget.setGraphicsEffect(self.shadow)
 
         ###Set window title and Icon####
-        # self.setWindowIcon(QtGui.QIcon('Icons/Logo.png'))
+        self.setWindowIcon(QtGui.QIcon('Icons/Logo.png'))
         self.setWindowTitle("AutoTile")
+        pixmap = QtGui.QPixmap('Icons/Logo.png')
+
+        self.Logo_label.setPixmap(pixmap)
 
         ### Minimize window ######
         self.minimize_button.clicked.connect(lambda: self.showMinimized())
