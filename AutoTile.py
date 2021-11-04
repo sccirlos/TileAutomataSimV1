@@ -1123,8 +1123,7 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
         self.tableWidget.setRowCount(len(self.system.states))
         print(len(self.system.states))
         # set row count affinity table
-        self.newAffinityIndex = (len(self.system.vertical_affinities_list)) + \
-            (len(self.system.horizontal_affinities_list))
+        self.newAffinityIndex = (len(self.system.vertical_affinities_list)) + (len(self.system.horizontal_affinities_list))
         self.tableWidget_2.setRowCount(len(
             self.system.vertical_affinities_list) + len(self.system.horizontal_affinities_list))
         print(len(self.system.vertical_affinities_list) +
@@ -1479,7 +1478,7 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
                 if it:
                     cells["items"].append((i, it.clone()))
             self.copy_2(cells, currentRow+1)
-
+            
     def click_duplicateRowTrans(self):
         currentRow = self.tableWidget_3.currentRow()
 
@@ -1540,7 +1539,7 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
             self.system.add_affinity(afRule)
 
         # transitions
-        for row in range(self.newTransitionIndex, self.tableWidget_3.rowCount()):
+        for row in range(0, self.tableWidget_3.rowCount()):
             tLabel1 = self.tableWidget_3.item(row, 0)
             tLabel2 = self.tableWidget_3.item(row, 1)
             tFinal1 = self.tableWidget_3.item(row, 3)
