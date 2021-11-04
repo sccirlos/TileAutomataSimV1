@@ -57,21 +57,3 @@ def main(system):
     nx.draw_shell(system_graph, with_labels=True)
     plt.savefig("freezing_check.svg")
     return is_system_freezing
-
-
-# Driver Code
-file = "./XML Files/generatedFiles/genTest.xml"
-LoadFile.readxml(file)
-
-temp = LoadFile.Temp
-states = LoadFile.CompleteStateSet
-inital_states = LoadFile.InitialStateSet
-seed_states = LoadFile.SeedStateSet
-vertical_affinities = LoadFile.VerticalAffinityRules
-horizontal_affinities = LoadFile.HorizontalAffinityRules
-vertical_transitions = LoadFile.VerticalTransitionRules
-horizontal_transitions = LoadFile.HorizontalTransitionRules
-
-currentSystem = System(temp, states, inital_states, seed_states, vertical_affinities,
-                       horizontal_affinities, vertical_transitions, horizontal_transitions)
-main(currentSystem)
