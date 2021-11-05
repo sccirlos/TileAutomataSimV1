@@ -1086,6 +1086,7 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
     def __init__(self, engine, mainGUI):
         super().__init__()
         self.setupUi(self)
+        self.setWindowIcon(QtGui.QIcon('Icons/Logo.png'))
         self.mainGUI = mainGUI
         self.Engine = engine
         self.system = engine.system
