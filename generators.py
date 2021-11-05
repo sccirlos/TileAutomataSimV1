@@ -1,6 +1,6 @@
 import UniversalClasses as uc
 import SaveFile
-from components import increment_string, make_prime, states_test_14, states_test_27, affinities_test_14, split_nonprime_label, split_prime_label, affinities_test_17, affinities_test_9, check_is_prime, split_label_pnp, transition_to_forward, check_nums_same, check_A_greater, check_A_less, transition_to_backward, transition_rules_check_14, make_not_prime
+from components import increment_string, make_prime,  split_nonprime_label, split_prime_label,  check_is_prime, split_label_pnp, transition_to_forward, check_nums_same, check_A_greater, check_A_less, transition_to_backward,  make_not_prime
 
 import math
 
@@ -767,7 +767,7 @@ class NonFreezing_Lines_Generator:
         self.digits_number = digits_number
 
     def add_seed(self, base_number):
-        label = str(base_number) + "'0"
+        label = str(base_number) + "i0"
         seed = uc.State(label, light_blue)
         return seed
 
@@ -794,17 +794,22 @@ class NonFreezing_Lines_Generator:
         #Add r State
 
         for i in range(1, self.digits_number):
-            label = str(self.base_number) + "'" + str(i)
+            label = str(self.base_number) + "i" + str(i)
             self.genSys.add_State(label)
             self.genSys.add_Initial_State(label)
 
         for i in range(self.base_number):
             label = str(i)
-            just_carried_label = str(i) + "+"
             rest_label = str(i) + "r"
             self.genSys.add_State(label)
-            self.genSys.add_State(just_carried_label)
             self.genSys.add_State(rest_label)
+
+            if not(i == 0):
+                just_carried_label = str(i) + "+"
+                self.genSys.add_State(just_carried_label)
+
+    def add_affinities(self):
+        inital_states = self.genSys.returnInitialStates()
 
 
 
