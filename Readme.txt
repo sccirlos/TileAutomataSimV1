@@ -148,7 +148,28 @@ Windows users, we are aware of a bug that does not let you interact with the sim
   -; -Last
 
 ## 1.6 Editor Menu
+1.6.1 General Settings
+1.6.1.1 System Temperature
+1.6.1.2 Freezing Check
 
+1.6.2 Add State
+1.6.2.1 Color
+1.6.2.2 Label
+1.6.2.3 Seed
+1.6.2.4 Initial
+
+1.6.3 Add Affinity Rule
+1.6.3.1 State1
+1.6.3.2 State2
+1.6.3.3 Direction
+1.6.3.4 Glue Strength
+
+1.6.4 Add Transition Rule
+1.6.4.1 State 1
+1.6.4.2 State 2
+1.6.4.3 State 1 Final
+1.6.4.4 State 2 Final
+1.6.4.5 Direction
 #############################
 Section 2 - Models Overview
 
