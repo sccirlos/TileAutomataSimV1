@@ -14,7 +14,6 @@ import TAMainWindow
 import EditorWindow16
 import LoadFile
 import SaveFile
-import Assembler_Proto
 import QuickRotate
 import QuickCombine
 import QuickReflect
@@ -256,7 +255,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.threadlast = QThread()
 
     # Slide left menu function
-    def slideLeftMenu(self):  
+    def slideLeftMenu(self):
         # Get current left menu width
         width = self.slide_menu_container.width()
 
@@ -274,14 +273,13 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         else:
             # Restore menu
             newWidth = 0
-            
+
             self.slide_menu_container.setMaximumWidth(newWidth)
 
             canvas = QtGui.QPixmap(
                 self.geometry().width(), self.geometry().height() - 45)
             canvas.fill(Qt.white)
             self.label.setPixmap(canvas)
-
 
         if self.Engine != None:
             self.draw_assembly(self.Engine.getCurrentAssembly())
@@ -820,7 +818,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.time = 0
             self.Engine = Engine(currentSystem)
             self.historian.set_engine(self.Engine)
-            
+
             self.draw_assembly(self.Engine.getCurrentAssembly())
             self.Update_available_moves()
 
@@ -883,7 +881,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.draw_assembly(self.Engine.getCurrentAssembly())
             self.Update_available_moves()
 
-    #starting assembly goes here
+    # starting assembly goes here
     def slowMode_toggle(self):
         if self.SlowMode_button.isChecked():
             self.delay = 1000
@@ -944,7 +942,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                     self.color_flag = 1
                     if self.Engine.currentIndex > 1:
                         self.draw_move(prev_move, 1, "black")
-                    
+
                     self.time = self.time + (self.Engine.timeTaken())
                     self.draw_move(move, 1, "blue")
                 else:
@@ -988,7 +986,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 self.color_flag = 1
                 if self.Engine.currentIndex > 1:
                     self.draw_move(prev_move, 1, "black")
-                
+
                 self.time = self.time + (self.Engine.timeTaken())
                 self.draw_move(self.Engine.getCurrentMove(), 1, "blue")
 
@@ -1095,7 +1093,8 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
         self.tableWidget.setRowCount(len(self.system.states))
         print(len(self.system.states))
         # set row count affinity table
-        self.newAffinityIndex = (len(self.system.vertical_affinities_list)) + (len(self.system.horizontal_affinities_list))
+        self.newAffinityIndex = (len(self.system.vertical_affinities_list)) + \
+            (len(self.system.horizontal_affinities_list))
         self.tableWidget_2.setRowCount(len(
             self.system.vertical_affinities_list) + len(self.system.horizontal_affinities_list))
         print(len(self.system.vertical_affinities_list) +
@@ -1132,7 +1131,7 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
             direc.setTextAlignment(Qt.AlignCenter)
             self.tableWidget_2.setItem(r, 2, direc)
             glue = QTableWidgetItem()
-            
+
             glue.setText(str(af.returnStr()))
             glue.setTextAlignment(Qt.AlignCenter)
             self.tableWidget_2.setItem(r, 3, glue)
@@ -1451,7 +1450,7 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
                 if it:
                     cells["items"].append((i, it.clone()))
             self.copy_2(cells, currentRow+1)
-            
+
     def click_duplicateRowTrans(self):
         currentRow = self.tableWidget_3.currentRow()
 
@@ -1541,7 +1540,7 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
     def Click_EditSaveAs(self):
         print("Save As button clicked")
         fileName = QFileDialog.getSaveFileName(
-                self, "QFileDialog.getSaveFileName()", "", "XML Files (*.xml)")
+            self, "QFileDialog.getSaveFileName()", "", "XML Files (*.xml)")
 
         if(fileName[0] != ''):
             SaveFile.main(currentSystem, fileName)

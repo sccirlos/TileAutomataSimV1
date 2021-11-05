@@ -1,7 +1,6 @@
 import xml.etree.ElementTree as ET
 
 from UniversalClasses import State
-from UniversalClasses import SeedAssemblyTile
 from UniversalClasses import AffinityRule
 from UniversalClasses import TransitionRule
 
