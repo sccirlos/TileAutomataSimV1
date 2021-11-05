@@ -1127,7 +1127,8 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
             direc.setTextAlignment(Qt.AlignCenter)
             self.tableWidget_2.setItem(r, 2, direc)
             glue = QTableWidgetItem()
-            glue.setText(af.returnStr())
+            
+            glue.setText(str(af.returnStr()))
             glue.setTextAlignment(Qt.AlignCenter)
             self.tableWidget_2.setItem(r, 3, glue)
             r += 1
@@ -1147,7 +1148,7 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
             direcHR.setTextAlignment(Qt.AlignCenter)
             self.tableWidget_2.setItem(r, 2, direcHR)
             glueHR = QTableWidgetItem()
-            glueHR.setText(afH.returnStr())
+            glueHR.setText(str(afH.returnStr()))
             glueHR.setTextAlignment(Qt.AlignCenter)
             self.tableWidget_2.setItem(r, 3, glueHR)
             r += 1
