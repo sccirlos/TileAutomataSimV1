@@ -898,6 +898,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
     def Begin_example(self):
         self.stop_sequence()
+        global currentSystem
+
         if self.GenShape_Box.currentText() == "Strings":
             print("Strings " + self.lineEdit.text())
         elif self.GenShape_Box.currentText() == "Thin Rectangle":
@@ -926,6 +928,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.time = 0
             self.Engine = Engine(genSystem)
             self.historian.set_engine(self.Engine)
+
+            currentSystem = genSystem
 
             self.draw_assembly(self.Engine.getCurrentAssembly())
             self.Update_available_moves()
