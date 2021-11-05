@@ -602,53 +602,6 @@ class Freezing_NLength_LineGenerator(LinesGenerator):
         r_pair = (next_r_num, remain_len, next_r_state)
         return r_pair
 
-
-    def add_reseed_transitions(self, labelA, labelB):
-        # R' Transitions
-        if "R'" in labelA:
-            ## Split the R' label to get num and split B label to get num
-            labelA_r_split = split_label_pnp(labelA)
-            labelB_split = split_label_pnp(labelB)
-            next_r = self.check_next_reseed(labelA)
-            ## If the B label is a B check if the number is in reseed numbers
-            if labelB_split[0] == "B":
-                if labelB_split[1] in self.reseed_state_nums:
-                    ## If it is not the smallest reseed number
-                    if not(labelA == self.smallest_reseed):
-                        ## Check if the index in reseed state nums for the reseed equals the index in the b label number - 1
-                        if self.reseed_state_nums.index(labelA_r_split[1]) == (self.reseed_state_nums.index(labelB_split[1]) - 1):
-                            # If it is the index of the Reseed prime number is the reseed
-                            labelA_index = self.reseed_states.index(labelA)
-                            if len(self.reseed_states) > (labelA_index + 1):
-                                labelB_Final = self.reseed_states[labelA_index + 1]
-
-                                tr = uc.TransitionRule(labelA, labelB, labelA, labelB_Final, "h")
-                                if not (self.genSys.checkHorizontalTransitionsList(tr)):
-                                    self.genSys.add_transition_rule(tr)
-
-                elif labelB_split[1] < labelA_r_split[1]:
-                    rindex = self.reseed_state_nums.index(labelA_r_split[1])
-                    if not(labelA == self.smallest_reseed):
-                        if labelB_split[1] <= self.reseed_state_nums[rindex + 1]:
-                            labelB_Final = transition_to_forward(labelB)
-                            tr = uc.TransitionRule(labelA, labelB, labelA, labelB_Final, "h")
-                            if not (self.genSys.checkHorizontalTransitionsList(tr)):
-                                self.genSys.add_transition_rule(tr)
-                            ## add the transition forward for B0
-                            tr = uc.TransitionRule(labelA, "B0", labelA, "F0", "h")
-                            if not (self.genSys.checkHorizontalTransitionsList(tr)):
-                                self.genSys.add_transition_rule(tr)
-
-        elif "R" in labelA and not("R" in labelB):
-            if "B'" in labelB:
-                labelB_Final = make_prime(labelA)
-            else:
-                labelB_Final = labelA
-            tr = uc.TransitionRule(labelA, labelB, labelA, labelB_Final, "h")
-            if not (self.genSys.checkHorizontalTransitionsList(tr)):
-                self.genSys.add_transition_rule(tr)
-
-
     def add_reseed_transitions_v2(self, labelA, labelB):
         if "R'" in labelA:
             ## Split the R' label to get num and split B label to get num
