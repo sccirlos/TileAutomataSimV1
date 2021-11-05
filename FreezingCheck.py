@@ -3,7 +3,6 @@ from networkx.drawing.layout import spring_layout
 from UniversalClasses import System, State, TransitionRule
 import networkx as nx
 import matplotlib.pyplot as plt
-import LoadFile
 
 
 def main(system):

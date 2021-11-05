@@ -1,7 +1,6 @@
 import copy
 
 from UniversalClasses import System, AffinityRule, TransitionRule
-import SaveFile
 
 
 def reflect_across_x(currentSystem):

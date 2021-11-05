@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Assembly>
-    <Seed>
-        <Tile Label="A" x="0" y="0"></Tile>
-        <Tile Label="B" x="1" y="0"></Tile>
-        <Tile Label="C" x="2" y="0"></Tile>
-    </Seed>
-</Assembly>
