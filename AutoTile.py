@@ -256,7 +256,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.threadlast = QThread()
 
     # Slide left menu function
-    def slideLeftMenu(self):  # ANIMATION NEEDS TO BE WORKED ON SO ITS BEEN TURNED OFF
+    def slideLeftMenu(self):  
         # Get current left menu width
         width = self.slide_menu_container.width()
 
@@ -269,15 +269,12 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             canvas.fill(Qt.white)
 
             self.slide_menu_container.setMaximumWidth(newWidth)
-            #self.menu_animation(width, newWidth)
             self.label.setPixmap(canvas)
-            # self.open_close_side_bar_btn.setIcon(QtGui.QIcon(u":/icons/icons/chevron-left.svg"))
         # If maximized
         else:
             # Restore menu
             newWidth = 0
-            #self.setGeometry(self.x(), self.y(), self.geometry().width() - 100, self.geometry().height())
-            #self.menu_animation(width, newWidth)
+            
             self.slide_menu_container.setMaximumWidth(newWidth)
 
             canvas = QtGui.QPixmap(
@@ -285,26 +282,13 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             canvas.fill(Qt.white)
             self.label.setPixmap(canvas)
 
-            # self.open_close_side_bar_btn.setIcon(QtGui.QIcon(u":/icons/icons/align-left.svg"))
 
         if self.Engine != None:
             self.draw_assembly(self.Engine.getCurrentAssembly())
 
-    def menu_animation(self, width, newWidth):
-        # Animate the transition
-        self.animation = QtCore.QPropertyAnimation(
-            self.slide_menu_container, b"maximumWidth")  # Animate minimumWidht
-        self.animation.setDuration(250)
-        # Start value is the current menu width
-        self.animation.setStartValue(width)
-        self.animation.setEndValue(newWidth)  # end value is the new menu width
-        self.animation.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
-        self.animation.start()
-
     # Add mouse events to the window
     def mousePressEvent(self, event):
         # Get the current position of the mouse
-        # print(event.globalPos())
         super().mousePressEvent(event)
         self.clickPosition = event.globalPos()
         # We will use this value to move the window
@@ -336,7 +320,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
     def keyPressEvent(self, event):
         #### Moving tiles across screen functions #####
-        #modifiers = QtWidgets.QApplication.keyboardModifiers()
 
         # "up" arrow key is pressed
         if event.key() == Qt.Key_W and not self.play and event.modifiers() == Qt.ShiftModifier:
@@ -614,8 +597,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         painter.end()
 
-        # self.Update_time_onScreen()
-        # self.Update_available_moves()
         self.update()
 
     def Update_time_onScreen(self):
@@ -773,16 +754,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.e = Ui_EditorWindow(self.Engine, self)
         self.e.show()
 
-    def Click_Run_Simulation(self):  # Run application if everythings good
-        err_flag = False
-
-        if(err_flag == False):
-            self.step = 0
-            self.time = 0
-            # Assembler_Proto.Main()
-            self.draw_assembly(
-                Assembler_Proto.CompleteAssemblyHistory[self.step])
-
     def Click_FileSearch(self, id):
         self.stop_sequence()
         self.SysLoaded = False
@@ -849,11 +820,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.time = 0
             self.Engine = Engine(currentSystem)
             self.historian.set_engine(self.Engine)
-            #a = Assembly()
-            #t = Tile(currentSystem.returnSeedStates(), 0, 0)
-            # a.tiles.append(t)
-            # currentAssemblyHistory.append(a)
-            # Assembler_Proto.Main()
+            
             self.draw_assembly(self.Engine.getCurrentAssembly())
             self.Update_available_moves()
 
@@ -916,7 +883,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.draw_assembly(self.Engine.getCurrentAssembly())
             self.Update_available_moves()
 
-    # self.draw_assembly(LoadFile.) #starting assembly goes here
+    #starting assembly goes here
     def slowMode_toggle(self):
         if self.SlowMode_button.isChecked():
             self.delay = 1000
@@ -973,7 +940,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                     self.color_flag = 1
                     if self.Engine.currentIndex > 1:
                         self.draw_move(prev_move, 1, "black")
-                    # Might need to go above
+                    
                     self.time = self.time + (self.Engine.timeTaken())
                     self.draw_move(move, 1, "blue")
                 else:
@@ -1017,7 +984,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 self.color_flag = 1
                 if self.Engine.currentIndex > 1:
                     self.draw_move(prev_move, 1, "black")
-                # Might need to go above
+                
                 self.time = self.time + (self.Engine.timeTaken())
                 self.draw_move(self.Engine.getCurrentMove(), 1, "blue")
 
