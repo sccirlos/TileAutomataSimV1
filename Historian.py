@@ -4,6 +4,7 @@ from UniversalClasses import Assembly, State, Tile
 
 from PyQt5.QtWidgets import QFileDialog, QInputDialog
 
+
 class Historian:
 
     class Assemblies:
@@ -22,17 +23,19 @@ class Historian:
 
     def set_engine(self, engine):
         self.engine = engine
-    
+
     def dump(self):
         if self.engine == None:
             return
 
-        filename = QFileDialog.getSaveFileName(self.ui, "Assembly JSON File", "", "JSON Files (*.json)")
+        filename = QFileDialog.getSaveFileName(
+            self.ui, "Assembly JSON File", "", "JSON Files (*.json)")
 
         if filename[0] == '':
             return
 
-        steps, ok = QInputDialog().getInt(self.ui, "Assembly Steps", "Enter how steps before each snapshot (0 for final)", 0, 0, self.engine.currentIndex)
+        steps, ok = QInputDialog().getInt(self.ui, "Assembly Steps",
+                                          "Enter how steps before each snapshot (0 for final)", 0, 0, self.engine.currentIndex)
 
         if ok:
             if steps != 0:
@@ -49,35 +52,43 @@ class Historian:
 
                 # Bring assembly to starting position
                 while moves != step:
-                    stepassembly = stepassembly.undoMove(self.engine.moveList[moves - 1])
+                    stepassembly = stepassembly.undoMove(
+                        self.engine.moveList[moves - 1])
                     moves -= 1
 
                 while step != 0:
                     # dump to file
-                    current_file = filename[0][:filename[0].find(".json")] + "_step" + str(step) + ".json"
+                    current_file = filename[0][:filename[0].find(
+                        ".json")] + "_step" + str(step) + ".json"
                     fp = open(current_file, 'w')
-                    assemblies = self.Assemblies(self.engine.moveList, stepassembly, self.engine.TimeTaken, step)
-                    json.dump(assemblies, fp, sort_keys=False, default=self.encoder, indent=2)
+                    assemblies = self.Assemblies(
+                        self.engine.moveList, stepassembly, self.engine.TimeTaken, step)
+                    json.dump(assemblies, fp, sort_keys=False,
+                              default=self.encoder, indent=2)
 
                     # go to next assembly
                     nextstep = step - steps
                     while step != nextstep:
-                        stepassembly = stepassembly.undoMove(self.engine.moveList[step - 1])
+                        stepassembly = stepassembly.undoMove(
+                            self.engine.moveList[step - 1])
                         step -= 1
 
             # dump final assembly
             fp = open(filename[0], 'w')
-            assemblies = self.Assemblies(self.engine.moveList, self.engine.currentAssembly, self.engine.TimeTaken, self.engine.currentIndex)
+            assemblies = self.Assemblies(
+                self.engine.moveList, self.engine.currentAssembly, self.engine.TimeTaken, self.engine.currentIndex)
             # Dumping into one line saves a ton of space, but becomes completly unreadable, worse than it already is
             # json.dump(assemblies, fp, sort_keys=False, default=self.encoder)
             # Dumping with some indentation makes it nice-ish, but takes a large amount of space for \n and \t and ' '
-            json.dump(assemblies, fp, sort_keys=False, default=self.encoder, indent=2)
+            json.dump(assemblies, fp, sort_keys=False,
+                      default=self.encoder, indent=2)
 
     def load(self):
         if self.engine == None:
             return
 
-        filename = QFileDialog.getOpenFileName(self.ui, "Select JSON History", "", "JSON Files (*.json)")
+        filename = QFileDialog.getOpenFileName(
+            self.ui, "Select JSON History", "", "JSON Files (*.json)")
 
         if filename[0] != "":
             fp = open(filename[0], 'r')
@@ -123,7 +134,7 @@ class Historian:
                     newM["state2Final"] = s4
 
                     movelist.append(newM)
-            
+
             # update moveList in engine
             self.engine.moveList = movelist
             self.engine.lastIndex = len(movelist)
@@ -137,12 +148,12 @@ class Historian:
                 tile = self.get_tile(t)
 
                 tiles.append(tile)
-            
+
             coords = {}
             for c in assembly["coords"]:
                 tile = self.get_tile(assembly["coords"][c])
                 coords[c] = tile
-                
+
             # create the Assembly
             currentAssembly = Assembly()
             currentAssembly.label = assembly["label"]
@@ -155,7 +166,8 @@ class Historian:
 
             # update assembly in engine
             self.engine.currentAssembly = currentAssembly
-            self.engine.validMoves = currentAssembly.getMoves(self.engine.system)
+            self.engine.validMoves = currentAssembly.getMoves(
+                self.engine.system)
 
             # create timetaken list
             timetaken = assemblies["timetaken"]
@@ -163,21 +175,21 @@ class Historian:
             for tt in timetaken:
                 val = int(tt)
                 TimeTaken.append(val)
-            
+
             # update TimeTake in engine
             self.engine.TimeTaken = timetaken
 
             # draw to screen
             self.ui.draw_assembly(self.engine.getCurrentAssembly())
             self.ui.Update_available_moves()
-    
+
     def get_state(self, stateJSON):
         label = stateJSON["label"]
         color = stateJSON["color"]
         s = State(label, color)
 
         return s
-    
+
     def get_tile(self, t):
         s = self.get_state(t["state"])
         x = int(t["x"])

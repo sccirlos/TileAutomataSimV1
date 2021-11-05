@@ -4,7 +4,7 @@
 # Author: ASARG
 # Description: Implements the tile automata model as designed by Chalk et al.
 #################################################################################################################################
-# Unnamed TASimulator Manual
+# AutoTile Manual
 
 Table of Contents
 Sections
@@ -22,12 +22,13 @@ Section 1 - Application
   Required:
     -Python 3+
     -PyQt5 (install using pip)
+	-networkx (install using pip)
   Optional:
 
 
 ## 1.2 Usage
   Running:
-    >python3 general_TA_simulator.py
+    >python3 AutoTile.py
 
 ## 1.3 Menu Overview
 Main Menu
@@ -147,7 +148,43 @@ Windows users, we are aware of a bug that does not let you interact with the sim
   -; -Last
 
 ## 1.6 Editor Menu
+1.6.1 General Settings
+1.6.1.1 System Temperature
+Set the system temperature here.
+1.6.1.2 Freezing Check
+click this button to check if your current system is a freezing system. Output is on the GUI and a .svg file called freezingcheck shows a graph with the states.
 
+1.6.2 Add State
+1.6.2.1 Color
+Input a colors hexadecimal value here to set the states color
+1.6.2.2 Label
+Input a string here to be your states label. Note: on screen only the first 4 letters will appear from the states label
+1.6.2.3 Seed
+Check this box if this state can be a seed
+1.6.2.4 Initial
+Check this box if this state is an inital state or a state that can be used freely.
+
+1.6.3 Add Affinity Rule
+1.6.3.1 State1
+The left state if its h or the top state if its v
+1.6.3.2 State2
+The right state if its h or the bottom state if its v
+1.6.3.3 Direction
+Input the direction of the affinity rule here, use h for a horizontal rule and v for a vertical rule
+1.6.3.4 Glue Strength
+Set the glue strength of this bond
+
+1.6.4 Add Transition Rule
+1.6.4.1 State 1
+The left state if its h or the top state if its v
+1.6.4.2 State 2
+The right state if its h or the bottom state if its v
+1.6.4.3 State 1 Final
+What the left/top state transitions to if State1 and State2 are next to each other
+1.6.4.4 State 2 Final
+What the right/bottom state transitions to if State1 and State2 are next to each other
+1.6.4.5 Direction
+Input the direction of the transition rule here, use h for a horizontal rule and v for a vertical rule
 #############################
 Section 2 - Models Overview
 
