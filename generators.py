@@ -790,6 +790,9 @@ class NonFreezing_Lines_Generator:
         label = "B"
         self.genSys.add_State(label)
 
+        #Add + State
+        #Add r State
+
         for i in range(1, self.digits_number):
             label = str(self.base_number) + "'" + str(i)
             self.genSys.add_State(label)
@@ -797,7 +800,13 @@ class NonFreezing_Lines_Generator:
 
         for i in range(self.base_number):
             label = str(i)
+            just_carried_label = str(i) + "+"
+            rest_label = str(i) + "r"
             self.genSys.add_State(label)
+            self.genSys.add_State(just_carried_label)
+            self.genSys.add_State(rest_label)
+
+
 
 if __name__ == "__main__":
     #sys = genDoubleIndexStates(16)
