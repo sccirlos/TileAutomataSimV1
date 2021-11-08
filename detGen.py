@@ -19,6 +19,16 @@ def genDoubleIndexStates(vLen):
 
     sqrtLen = math.ceil(math.sqrt(vLen))
 
+    # Get starting points
+    offset = sqrtLen**2 - vLen
+
+    startA = math.floor(vLen / offset)
+    startB = (offset % vLen)
+
+    #print("A: ", startA)
+    #print("B: ", startB)
+
+
     # Create States and add to lists
 
     for i in range(sqrtLen):
@@ -54,7 +64,8 @@ def genDoubleIndexStates(vLen):
 
     # Adding Affinity Rules
     #       Seed Affinities to start building
-    affinityB0 = uc.AffinityRule("0B", "SB", "v", 1)
+    #       Getting offset of B for first B
+    affinityB0 = uc.AffinityRule(str(startB) + "B", "SB", "v", 1)
     genSys.add_affinity(affinityB0)
     affinitySeed = uc.AffinityRule("SA", "SB", "h", 1)
     genSys.add_affinity(affinitySeed)
@@ -81,9 +92,11 @@ def genDoubleIndexStates(vLen):
 
 
     # Rule for when A state reaches seed and marked as 0A
-    trAseed = uc.TransitionRule("A", "SA", "0A", "SA", "v")
+    trAseed = uc.TransitionRule("A", "SA", str(startA) + "A", "SA", "v")
     genSys.add_transition_rule(trAseed)
 
+    trAPrimeseed = uc.TransitionRule("A'", "SA", str(startA) + "A'", "SA", "v")
+    genSys.add_transition_rule(trAPrimeseed)
 
 
     for i in range(sqrtLen):
@@ -120,6 +133,19 @@ def genSqrtBinString(value):
     if isinstance(value, int):
         value = bin(value)[2:]
 
+    vLen = len(value)
+    sqrtLen = math.ceil(math.sqrt(vLen))
+
+    # Get starting points
+    offset = sqrtLen**2 - vLen
+
+    if offset == 0:
+        startA = 0
+    else:
+        startA = math.floor(math.sqrt(vLen / offset))
+
+    startB = (offset % vLen) - 1
+
 
     revValue = value[::-1]
     genSys = genDoubleIndexStates(len(value))
@@ -146,6 +172,10 @@ def genSqrtBinString(value):
 
     for i in range(sqrtLen):
         for j in range(sqrtLen):
+            index = (i * sqrtLen) + j
+            if index < offset:
+                continue
+
             if i == sqrtLen - 1:
                 labelB = str(j) + "B"
             elif j < sqrtLen - 1:
@@ -158,11 +188,8 @@ def genSqrtBinString(value):
             else:
                 labelA = str(i) + "A'"
 
-            index = (i * sqrtLen) + j
-            if index < len(value):
-                symbol = str(revValue[index]) + "i"
-            else:
-                symbol = "1i"
+
+            symbol = str(revValue[index - offset]) + "i"
 
             tr = uc.TransitionRule(labelA, labelB, labelA, symbol, "h")
             genSys.add_transition_rule(tr)
