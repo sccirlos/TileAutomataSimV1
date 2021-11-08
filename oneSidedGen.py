@@ -28,9 +28,11 @@ def genTripleIndexStates(vLen):
     # Get starting points
     offset = cbrtLen**3 - vLen
 
-    startA = math.floor(offset / (cbrtLen**2))
-    startB = math.floor(offset / cbrtLen)
     startC = offset % cbrtLen
+    tempOffset = math.floor(offset / cbrtLen)
+    startB = tempOffset % cbrtLen
+    tempOffset = math.floor(tempOffset / cbrtLen)
+    startA = tempOffset % cbrtLen
 
 
     for i in range(cbrtLen):
