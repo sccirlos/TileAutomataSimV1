@@ -22,8 +22,8 @@ def genDoubleIndexStates(vLen):
     # Get starting points
     offset = sqrtLen**2 - vLen
 
-    startA = math.floor(vLen / offset)
-    startB = (offset % vLen)
+    startA = math.floor(offset / sqrtLen)
+    startB = offset % sqrtLen
 
     #print("A: ", startA)
     #print("B: ", startB)

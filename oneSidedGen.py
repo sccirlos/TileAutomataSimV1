@@ -25,6 +25,13 @@ def genTripleIndexStates(vLen):
 
     cbrtLen = math.ceil(vLen**(1.0/3.0))
 
+    # Get starting points
+    offset = cbrtLen**3 - vLen
+
+    startA = math.floor(offset / (cbrtLen**2))
+    startB = math.floor(offset / cbrtLen)
+    startC = offset % cbrtLen
+
 
     for i in range(cbrtLen):
         # Big A states
@@ -96,7 +103,7 @@ def genTripleIndexStates(vLen):
 
     # Adding Affinity Rules
     #       Seed Affinities to start building
-    affinityB0 = uc.AffinityRule("0Cs", "SC", "v", 1)
+    affinityB0 = uc.AffinityRule(str(startC) + "Cs", "SC", "v", 1)
     genSys.add_affinity(affinityB0)
     affinitySeed = uc.AffinityRule("SA", "SB", "h", 1)
     genSys.add_affinity(affinitySeed)
@@ -125,9 +132,9 @@ def genTripleIndexStates(vLen):
 
 
     # Rule for when A/B state reaches seed or last B' and marked as 0As/0Bs
-    trAseed = uc.TransitionRule("A", "SA", "0As", "SA", "v")
+    trAseed = uc.TransitionRule("A", "SA", str(startA) + "As", "SA", "v")
     genSys.add_transition_rule(trAseed)
-    trBseed = uc.TransitionRule("B", "SB", "0Bs", "SB", "v")
+    trBseed = uc.TransitionRule("B", "SB", str(startB) + "Bs", "SB", "v")
     genSys.add_transition_rule(trBseed)
     trBreset = uc.TransitionRule("B", str(cbrtLen - 1) + "B''", "0Bs", str(cbrtLen - 1) + "B''", "v")
     genSys.add_transition_rule(trBreset)
@@ -219,6 +226,7 @@ def cbrtBinString(value):
 
     cbrtLen = math.ceil(vLen**(1.0/3.0))
 
+    offset = cbrtLen**3 - vLen
 
     # We must add TRs to reset the special cases
     #trGrowC = uc.TransitionRule(str(cbrtLen - 1) + "B''", str(cbrtLen - 1) + "C", str(cbrtLen - 1) + "B''", str(cbrtLen - 1) + "C'", "h")
@@ -258,11 +266,11 @@ def cbrtBinString(value):
                 bitIndex += j * cbrtLen
                 bitIndex += k
 
+                if bitIndex < offset:
+                    continue
+
                 # Get the current bit
-                if bitIndex < len(value):
-                    bit = revValue[bitIndex]
-                else:
-                    bit = "1"
+                bit = revValue[bitIndex - offset]
 
                 # The current bit and the k index are used to indicate the final state
                 labelTempC = str(k) + "C" + bit
