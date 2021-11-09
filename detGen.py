@@ -530,6 +530,8 @@ def genRect(length, base=None):
         return genSqrtBinCount(length)
 
 def genNFLine(value, base=10):
+    value = str(int(value) - len(value))
+
     seedLabel = value[0] + "_0"
 
     inpStates = [seedLabel]
@@ -553,29 +555,117 @@ def genNFLine(value, base=10):
         #sys.add_State(bigB) 
         #sys.add_Initial_State(bigB)
         
+        # Blue States is the 'top of the loop', we always return to an assembly with all the blue tiles and it grows 1
         blueI = uc.State(str(i), blue)
         sys.add_State(blueI)
 
+        # Red states are waiting states
         redR = uc.State(str(i) + "r", red)
         sys.add_State(redR)
 
+    # decrement is the 'fuel' of the systems. 
+    # attach on the right and lets everything move forward but decrements the number
     decr = uc.State("-", orange)
     sys.add_State(decr)
     sys.add_Initial_State(decr)
 
+    # State when needing to borrow
     borrow = uc.State("br", green)
     sys.add_State(borrow)
 
+    # State to copy digit
     copy = uc.State("cp", orange)
     sys.add_State(copy)
 
+    # State to copy digit
+    xState = uc.State("X", white)
+    sys.add_State(xState)
+
 
     ## Affinity Rules
+
+    # TEMP Build our starting assembly
     for i in range(len(inpStates) - 1):
         inpAff = uc.AffinityRule(inpStates[i], inpStates[i + 1], "h", 1)
         sys.add_affinity(inpAff)
 
+    # Aff to attach first decrement
+    lastInp = inpStates[len(inpStates) - 1]
+    inpDecAff = uc.AffinityRule(lastInp, "-", "h", 1)
+    sys.add_affinity(inpDecAff)
 
+    # Aff to attach decr
+    for i in range(base):
+        decAff = uc.AffinityRule(str(i), "-", "h", 1)
+        sys.add_affinity(decAff)
+
+
+    ## Transition Rules
+
+    # TEMP first decrement
+    intLast = int(lastInp[0])
+    if intLast == 0:
+        fstDec = uc.TransitionRule(lastInp, "-", "cp", "br", "h")
+        sys.add_transition_rule(fstDec)
+    else:
+        fstDecLabel2 = str(intLast - 1) + "r"
+        fstDec = uc.TransitionRule(lastInp, "-", "cp", fstDecLabel2, "h")
+        sys.add_transition_rule(fstDec)
+
+    # TEMP First copy step
+    for i in range(1, len(inpStates) - 1):
+        fstCopyTR = uc.TransitionRule(inpStates[i], "cp", "cp", inpStates[i][0] + "r", "h")
+        sys.add_transition_rule(fstCopyTR)
+
+    fstBitCP = uc.TransitionRule(inpStates[0], "cp", "X", inpStates[0][0], "h")
+    sys.add_transition_rule(fstBitCP)
+        
+    # Flip red state to blue state
+    for i in range(base):
+        for j in range(base):
+            blueRed = uc.TransitionRule(str(i), str(j) + "r", str(i), str(j), "h")
+            sys.add_transition_rule(blueRed)
+
+    
+    for i in range(base):
+        if i > 0:
+            # Decrement blue states
+            blueDec = uc.TransitionRule(str(i), "-", "cp", str(i - 1) + "r", "h")
+            sys.add_transition_rule(blueDec)
+
+            # Borrow from blue states
+            blueBr = uc.TransitionRule(str(i), "br", str(i - 1), str(base - 1), "h")
+            sys.add_transition_rule(blueBr)
+
+            # X turns red states into blue states
+            redX = uc.TransitionRule("X", str(i) + "r", "X", str(i), "h")
+            sys.add_transition_rule(redX)
+
+        # Copy blue states
+        blueCP = uc.TransitionRule(str(i), "cp", "cp", str(i) + "r", "h")
+        sys.add_transition_rule(blueCP)
+
+
+
+        
+
+    # Dec 0 goes to borrow
+    dec0 = uc.TransitionRule("0", "-", "cp", "br", "h")
+    sys.add_transition_rule(dec0)
+
+    # Borrow from blue 0
+    br0 = uc.TransitionRule("0", "br", "br", str(base - 1) + "r", "h")
+    sys.add_transition_rule(br0)
+
+    # X turns 0r to X
+    x0 = uc.TransitionRule("X", "0r", "X", "X", "h")
+    sys.add_transition_rule(x0)
+
+    # Copy hits X it goes to X
+    copyX = uc.TransitionRule("X", "cp", "X", "X", "h")
+    sys.add_transition_rule(copyX)
+
+    
 
     return sys
 
