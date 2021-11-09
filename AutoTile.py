@@ -755,10 +755,10 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
     def Click_FileSearch(self, id):
         self.stop_sequence()
-        self.SysLoaded = False
         file = QFileDialog.getOpenFileName(
             self, "Select XML Document", "", "XML Files (*.xml)")
         if file[0] != '':
+            self.SysLoaded = False
             self.Load_File(file[0])
 
     def Load_File(self, filename):
