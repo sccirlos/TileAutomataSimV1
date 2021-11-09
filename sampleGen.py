@@ -44,6 +44,9 @@ def generator(shape, value, model):
         value = int(value)
         return squareGen.genSquare(value, model)
 
+    if shape == "Lines":
+        return detGen.genNFLine(value)
+
 
 
 
