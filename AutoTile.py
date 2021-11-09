@@ -240,7 +240,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         self.Engine = None
         self.SysLoaded = False
-        self.play = True
+        self.play = False
 
         canvas = QtGui.QPixmap(self.geometry().width(),
                                self.geometry().height())
@@ -253,6 +253,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         self.thread = QThread()
         self.threadlast = QThread()
+        self.Load_File("XML Files/LineExample.xml")
 
     # Slide left menu function
     def slideLeftMenu(self):
@@ -794,6 +795,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             horizontal_transitions = LoadFile.HorizontalTransitionRules
 
             self.SysLoaded = True
+            self.stop_sequence()
 
             # Establish the current system we're working with
             global currentSystem
@@ -899,6 +901,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
     def Begin_example(self):
         self.stop_sequence()
+        self.play = False
         global currentSystem
 
         if self.GenShape_Box.currentText() == "Strings":
