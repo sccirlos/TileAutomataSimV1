@@ -758,7 +758,10 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         file = QFileDialog.getOpenFileName(
             self, "Select XML Document", "", "XML Files (*.xml)")
         if file[0] != '':
-            # Simulator must clear all of LoadFile's global variables when the user attempts to load something.
+            self.Load_File(file[0])
+
+    def Load_File(self, filename):
+        # Simulator must clear all of LoadFile's global variables when the user attempts to load something.
             LoadFile.HorizontalAffinityRules.clear()
             LoadFile.VerticalAffinityRules.clear()
             LoadFile.HorizontalTransitionRules.clear()
@@ -767,7 +770,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             LoadFile.InitialStateSet.clear()
             LoadFile.CompleteStateSet.clear()
 
-            LoadFile.readxml(file[0])
+            LoadFile.readxml(filename)
 
             # Creating global variables
             global temp
