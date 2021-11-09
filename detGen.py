@@ -529,7 +529,55 @@ def genRect(length, base=None):
     if base == None:
         return genSqrtBinCount(length)
 
+def genNFLine(value, base=10):
+    seedLabel = value[0] + "_0"
 
+    inpStates = [seedLabel]
+
+    seed = uc.State(seedLabel, blue)
+    sys = uc.System(1, [seed], [], [seed])
+
+    for i in range(1, len(value)):
+        iLabel = value[i] + "_" + str(i)
+        inpStates.append(iLabel)
+        iState = uc.State(iLabel, blue)
+        sys.add_Initial_State(iState)
+        sys.add_State(iState)
+
+    for i in range(base):
+        #littleA = uc.State(str(i) + "a", red)
+        #sys.add_State(littleA)
+        #sys.add_Initial_State(littleA)
+
+        #bigB = uc.State(str(i) + "B", blue)
+        #sys.add_State(bigB) 
+        #sys.add_Initial_State(bigB)
+        
+        blueI = uc.State(str(i), blue)
+        sys.add_State(blueI)
+
+        redR = uc.State(str(i) + "r", red)
+        sys.add_State(redR)
+
+    decr = uc.State("-", orange)
+    sys.add_State(decr)
+    sys.add_Initial_State(decr)
+
+    borrow = uc.State("br", green)
+    sys.add_State(borrow)
+
+    copy = uc.State("cp", orange)
+    sys.add_State(copy)
+
+
+    ## Affinity Rules
+    for i in range(len(inpStates) - 1):
+        inpAff = uc.AffinityRule(inpStates[i], inpStates[i + 1], "h", 1)
+        sys.add_affinity(inpAff)
+
+
+
+    return sys
 
 if __name__ == "__main__":
     sys = genSqrtBaseBCount("956217662", 10)
