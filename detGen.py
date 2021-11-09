@@ -530,7 +530,7 @@ def genRect(length, base=None):
         return genSqrtBinCount(length)
 
 def genNFLine(value, base=10):
-    value = str(int(value) - len(value))
+    value = str(int(value) - len(value) - 1)
 
     seedLabel = value[0] + "_0"
 
@@ -563,11 +563,17 @@ def genNFLine(value, base=10):
         redR = uc.State(str(i) + "r", red)
         sys.add_State(redR)
 
-    # decrement is the 'fuel' of the systems. 
-    # attach on the right and lets everything move forward but decrements the number
+    # decrement attaches on the right and decrements the number
     decr = uc.State("-", orange)
     sys.add_State(decr)
-    sys.add_Initial_State(decr)
+
+    # State to copy digit
+    Buffer = uc.State("B", white)
+    sys.add_State(Buffer)
+    sys.add_Initial_State(Buffer)
+
+    BufferP = uc.State("B'", white)
+    sys.add_State(BufferP)
 
     # State when needing to borrow
     borrow = uc.State("br", green)
@@ -589,9 +595,9 @@ def genNFLine(value, base=10):
         inpAff = uc.AffinityRule(inpStates[i], inpStates[i + 1], "h", 1)
         sys.add_affinity(inpAff)
 
-    # Aff to attach first decrement
+    # Aff to attach first buffer
     lastInp = inpStates[len(inpStates) - 1]
-    inpDecAff = uc.AffinityRule(lastInp, "-", "h", 1)
+    inpDecAff = uc.AffinityRule(lastInp, "B", "h", 1)
     sys.add_affinity(inpDecAff)
 
     # Aff to attach decr
@@ -599,8 +605,15 @@ def genNFLine(value, base=10):
         decAff = uc.AffinityRule(str(i), "-", "h", 1)
         sys.add_affinity(decAff)
 
+    # Aff for buffer to attach
+    bufferAff = uc.AffinityRule("B'", "B", "h", 1)
+    sys.add_affinity(bufferAff)
 
     ## Transition Rules
+
+    # TEMP first buffer
+    bufferInp = uc.TransitionRule(lastInp, "B", lastInp, "B'", "h")
+    sys.add_transition_rule(bufferInp)
 
     # TEMP first decrement
     intLast = int(lastInp[0])
@@ -619,6 +632,10 @@ def genNFLine(value, base=10):
 
     fstBitCP = uc.TransitionRule(inpStates[0], "cp", "X", inpStates[0][0], "h")
     sys.add_transition_rule(fstBitCP)
+
+    # Change Buffer to dec
+    bufDec = uc.TransitionRule("B'", "B", "-", "B", "h")
+    sys.add_transition_rule(bufDec)
         
     # Flip red state to blue state
     for i in range(base):
@@ -640,6 +657,10 @@ def genNFLine(value, base=10):
             # X turns red states into blue states
             redX = uc.TransitionRule("X", str(i) + "r", "X", str(i), "h")
             sys.add_transition_rule(redX)
+
+        # Blue states turn buffers into buffer primes
+        blueBuffer = uc.TransitionRule(str(i), "B", str(i), "B'", "h")
+        sys.add_transition_rule(blueBuffer)
 
         # Copy blue states
         blueCP = uc.TransitionRule(str(i), "cp", "cp", str(i) + "r", "h")
