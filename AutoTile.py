@@ -253,7 +253,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         self.thread = QThread()
         self.threadlast = QThread()
-        self.Load_File("XML Files/LineExample.xml")
+        self.Load_File("XML Files/SquareExample.xml")
 
     # Slide left menu function
     def slideLeftMenu(self):
