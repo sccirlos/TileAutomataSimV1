@@ -1,7 +1,6 @@
 import xml.etree.ElementTree as ET
 
 from UniversalClasses import State
-from UniversalClasses import SeedAssemblyTile
 from UniversalClasses import AffinityRule
 from UniversalClasses import TransitionRule
 
@@ -11,10 +10,6 @@ HorizontalAffinityRules = []
 # System's Transition Rules
 VerticalTransitionRules = []
 HorizontalTransitionRules = []
-# Note: Assembly mode is when the system is seeded by an assembly, while SingleTile mode is when it's seeded by a single tile.
-# Note2: SeedAssembly is a basic representation of the assembly; it's not actually built.
-# The assembler will build the real seed assembly after the XML is loaded.
-SeedAssembly = []  # Used in Assembly mode; the assembly used as a seed.
 SeedStateSet = []  # Used in SingleTile mode; States that were marked as potential seeds
 # States marked as initial states; states that float around the system looking to attach to something.
 InitialStateSet = []

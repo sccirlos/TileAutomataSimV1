@@ -14,7 +14,6 @@ import TAMainWindow
 import EditorWindow16
 import LoadFile
 import SaveFile
-import Assembler_Proto
 import QuickRotate
 import QuickCombine
 import QuickReflect
@@ -196,7 +195,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.moveWidgets.append(mGUI)
             self.movesLayout.addWidget(mGUI)
 
-        shape_options = ["Strings", "Thin Rectangle", "Squares"]
+        shape_options = ["Strings", "Thin Rectangle", "Squares", "Lines"]
         self.GenShape_Box.addItems(shape_options)
 
         model_options = ["Deterministic", "Non-Deterministic", "One-Sided"]
@@ -281,7 +280,6 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                 self.geometry().width(), self.geometry().height() - 45)
             canvas.fill(Qt.white)
             self.label.setPixmap(canvas)
-
 
         if self.Engine != None:
             self.draw_assembly(self.Engine.getCurrentAssembly())
@@ -883,7 +881,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.draw_assembly(self.Engine.getCurrentAssembly())
             self.Update_available_moves()
 
-    #starting assembly goes here
+    # starting assembly goes here
     def slowMode_toggle(self):
         if self.SlowMode_button.isChecked():
             self.delay = 1000
@@ -893,7 +891,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def exampleTextChange(self):
         if self.GenShape_Box.currentText() == "Strings":
             self.InputLabel.setText("Enter a binary string.")
-        elif self.GenShape_Box.currentText() == "Thin Rectangle" or self.GenShape_Box.currentText() == "Squares":
+        elif self.GenShape_Box.currentText() == "Thin Rectangle" or self.GenShape_Box.currentText() == "Squares" or self.GenShape_Box.currentText() == "Lines":
             self.InputLabel.setText("Enter an integer.")
 
     def Begin_example(self):
@@ -906,6 +904,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             print("Thin Rectangle " + self.lineEdit.text())
         elif self.GenShape_Box.currentText() == "Squares":
             print("Squares " + self.lineEdit.text())
+        elif self.GenShape_Box.currentText() == "Lines":
+            print("Lines " + self.lineEdit.text())
         self.GenShape_Box.currentText()
 
         shape = self.GenShape_Box.currentText()
@@ -1086,6 +1086,7 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
     def __init__(self, engine, mainGUI):
         super().__init__()
         self.setupUi(self)
+        self.setWindowIcon(QtGui.QIcon('Icons/Logo.png'))
         self.mainGUI = mainGUI
         self.Engine = engine
         self.system = engine.system
@@ -1094,7 +1095,8 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
         self.tableWidget.setRowCount(len(self.system.states))
         print(len(self.system.states))
         # set row count affinity table
-        self.newAffinityIndex = (len(self.system.vertical_affinities_list)) + (len(self.system.horizontal_affinities_list))
+        self.newAffinityIndex = (len(self.system.vertical_affinities_list)) + \
+            (len(self.system.horizontal_affinities_list))
         self.tableWidget_2.setRowCount(len(
             self.system.vertical_affinities_list) + len(self.system.horizontal_affinities_list))
         print(len(self.system.vertical_affinities_list) +
@@ -1540,7 +1542,7 @@ class Ui_EditorWindow(QMainWindow, EditorWindow16.Ui_EditorWindow):
     def Click_EditSaveAs(self):
         print("Save As button clicked")
         fileName = QFileDialog.getSaveFileName(
-                self, "QFileDialog.getSaveFileName()", "", "XML Files (*.xml)")
+            self, "QFileDialog.getSaveFileName()", "", "XML Files (*.xml)")
 
         if(fileName[0] != ''):
             SaveFile.main(currentSystem, fileName)
