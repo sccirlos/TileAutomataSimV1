@@ -774,9 +774,7 @@ class NonFreezing_Lines_Generator:
     def add_states(self):
         # Add states
         #Add empty State
-        label = "-"
-        self.genSys.add_State(label)
-        self.genSys.add_Initial_State(label)
+
 
         #Add X State
         label = "X"
@@ -798,6 +796,11 @@ class NonFreezing_Lines_Generator:
             self.genSys.add_State(label)
             self.genSys.add_Initial_State(label)
 
+        #Here so that the dash is the last initial state
+        label = "-"
+        self.genSys.add_State(label)
+        self.genSys.add_Initial_State(label)
+
         for i in range(self.base_number):
             label = str(i)
             rest_label = str(i) + "r"
@@ -808,8 +811,35 @@ class NonFreezing_Lines_Generator:
                 just_carried_label = str(i) + "+"
                 self.genSys.add_State(just_carried_label)
 
+
     def add_affinities(self):
-        inital_states = self.genSys.returnInitialStates()
+        initial_states = self.genSys.returnInitialStates()
+        states = self.genSys.returnStates()
+        states_labels = self.genSys.return_list_of_state_labels()
+
+        for i in range(len(initial_states) - 2):
+
+            #Add Affinities between initial states
+            labelA = initial_states[i].returnLabel()
+            labelB = initial_states[i + 1].returnLabel()
+
+            Aff = uc.AffinityRule(labelA, labelB, "h")
+            self.genSys.add_affinity(Aff)
+
+            #Add Affinities between copy and initial states
+            copy_label = "C"
+            Aff = uc.AffinityRule(labelA, copy_label, "h")
+            self.genSys.add_affinity(Aff)
+
+        for i in range(len(states) - 1):
+            if states[i] in initial_states:
+                continue
+            else:
+                #where I left off
+                pass
+
+
+
 
 
 
