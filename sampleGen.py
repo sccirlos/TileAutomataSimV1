@@ -26,7 +26,7 @@ def generator(shape, value, model):
             return detGen.genRect(value - 1)
 
 
-    if model == "One-Sided":
+    if model == "Single-Transition":
         if shape == "Strings":
             return oneSidedGen.genString(value)
         if shape == "Thin Rectangle":

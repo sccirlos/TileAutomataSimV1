@@ -198,7 +198,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         shape_options = ["Strings", "Thin Rectangle", "Squares", "Lines"]
         self.GenShape_Box.addItems(shape_options)
 
-        model_options = ["Deterministic", "Non-Deterministic", "One-Sided"]
+        model_options = ["Deterministic", "Non-Deterministic", "Single-Transition"]
         self.GenModel_Box.addItems(model_options)
 
         self.InputLabel.setText("Enter a binary string.")
