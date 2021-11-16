@@ -167,7 +167,10 @@ def genSqrtBinString(value):
     genSys.add_State(state0)
     genSys.add_State(state1)
 
-
+    trBPrime0 = uc.TransitionRule("0s", str(sqrtLen - 1) + "B'", "0s", str(sqrtLen - 1) + "B''", "v")
+    genSys.add_transition_rule(trBPrime0)
+    trBPrime1 = uc.TransitionRule("1s", str(sqrtLen - 1) + "B'", "1s", str(sqrtLen - 1) + "B''", "v")
+    genSys.add_transition_rule(trBPrime1)
 
     for i in range(sqrtLen):
         for j in range(sqrtLen):
@@ -216,6 +219,9 @@ def genSqrtBaseBString(value, base):
 
         trBPrimeI = uc.TransitionRule(
             str(i) + "s", str(sqrtLen - 1) + "B'", str(i) + "s", str(sqrtLen - 1) + "B''", "v")
+        genSys.add_transition_rule(trBPrimeI)
+
+        trBPrimeI = uc.TransitionRule(str(i) + "s", str(sqrtLen - 1) + "B'", str(i) + "s", str(sqrtLen - 1) + "B''", "v")
         genSys.add_transition_rule(trBPrimeI)
 
     trBPrime = uc.TransitionRule(
@@ -454,9 +460,6 @@ def genSqrtBaseBCount(value, base=None):
     zeroCarry = uc.State("0c", orange)
     genSys.add_State(zeroCarry)
 
-    #<Rule Label1="N" Label2="2A'" Dir="v" Strength="1"></Rule>
-    northAff = uc.AffinityRule("N", str(sqrtLen - 1) + "A'", "v")
-    genSys.add_affinity(northAff)
     # <Rule Label1="SB" Label2="+" Dir="h" Strength="1"></Rule>
     incSeed = uc.AffinityRule("SB", "+", "h")
     genSys.add_affinity(incSeed)
