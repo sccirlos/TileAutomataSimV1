@@ -46,6 +46,23 @@ def genQuadIndexStates(vLen):
     genSys.add_Initial_State(seedD)
     genSys.add_State(seedD)
 
+    #     seedA is an Initial State
+    northA = uc.State("NA", black)
+    genSys.add_State(northA)
+    genSys.add_Initial_State(northA)
+    #     seedB is an Initial State
+    northB = uc.State("NB", black)
+    genSys.add_Initial_State(northB)
+    genSys.add_State(northB)
+    #     seedC is an Initial State
+    northC = uc.State("NC", black)
+    genSys.add_Initial_State(northC)
+    genSys.add_State(northC)
+    #     seedD is an Initial State
+    northD = uc.State("ND", black)
+    genSys.add_Initial_State(northD)
+    genSys.add_State(northD)
+
     # Blank A and A' states
     singleA = uc.State("A", red)
     genSys.add_State(singleA)
@@ -169,6 +186,15 @@ def genQuadIndexStates(vLen):
     # Affinity for D column to grow
     affDgrow = uc.AffinityRule("0D", str(rt4Len - 1) + "Dn'", "v", 1)
     genSys.add_affinity(affDgrow)
+
+    northAaff = uc.AffinityRule("NA", str(rt4Len - 1) + "An'", "v")
+    genSys.add_affinity(northAaff)
+    northBaff = uc.AffinityRule("NA", "NB", "h")
+    genSys.add_affinity(northBaff)
+    northCaff = uc.AffinityRule("NB", "NC", "h")
+    genSys.add_affinity(northCaff)
+    northCaff = uc.AffinityRule("NC", "ND", "h")
+    genSys.add_affinity(northCaff)
 
     ### Transitions
     # Rule for when A/B/C state reaches seed and marked as 0As/0Bs
@@ -505,15 +531,6 @@ def quadBinCount(value):
     genSys.add_State(northWall)
     genSys.add_Initial_State(northWall)
 
-    northWall = uc.State("N1", black)
-    genSys.add_State(northWall)
-    genSys.add_Initial_State(northWall)
-    northWall = uc.State("N2", black)
-    genSys.add_State(northWall)
-    genSys.add_Initial_State(northWall)
-    northWall = uc.State("N3", black)
-    genSys.add_State(northWall)
-    genSys.add_Initial_State(northWall)
 
     # Other States
 
@@ -599,6 +616,8 @@ def quadBinCount(value):
     CarryReset = uc.TransitionRule("0n", "0c", "0n", "0", "v")
     genSys.add_transition_rule(CarryReset)  
 
+    nPropD = uc.TransitionRule("ND", "nc", "ND", "N", "h")
+    genSys.add_transition_rule(nPropD)  
     nProp1 = uc.TransitionRule("N", "nc", "N", "N", "h")
     genSys.add_transition_rule(nProp1)  
 
