@@ -240,7 +240,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         self.Engine = None
         self.SysLoaded = False
-        self.play = True
+        self.play = False
 
         canvas = QtGui.QPixmap(self.geometry().width(),
                                self.geometry().height())
@@ -253,6 +253,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         self.thread = QThread()
         self.threadlast = QThread()
+        self.Load_File("XML Files/SquareExample.xml")
 
     # Slide left menu function
     def slideLeftMenu(self):
@@ -754,11 +755,14 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
     def Click_FileSearch(self, id):
         self.stop_sequence()
-        self.SysLoaded = False
         file = QFileDialog.getOpenFileName(
             self, "Select XML Document", "", "XML Files (*.xml)")
         if file[0] != '':
-            # Simulator must clear all of LoadFile's global variables when the user attempts to load something.
+            self.SysLoaded = False
+            self.Load_File(file[0])
+
+    def Load_File(self, filename):
+        # Simulator must clear all of LoadFile's global variables when the user attempts to load something.
             LoadFile.HorizontalAffinityRules.clear()
             LoadFile.VerticalAffinityRules.clear()
             LoadFile.HorizontalTransitionRules.clear()
@@ -767,7 +771,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             LoadFile.InitialStateSet.clear()
             LoadFile.CompleteStateSet.clear()
 
-            LoadFile.readxml(file[0])
+            LoadFile.readxml(filename)
 
             # Creating global variables
             global temp
@@ -791,6 +795,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             horizontal_transitions = LoadFile.HorizontalTransitionRules
 
             self.SysLoaded = True
+            self.stop_sequence()
 
             # Establish the current system we're working with
             global currentSystem
@@ -896,6 +901,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
     def Begin_example(self):
         self.stop_sequence()
+        self.play = False
         global currentSystem
 
         if self.GenShape_Box.currentText() == "Strings":
@@ -974,6 +980,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                     self.draw_move(prev_move, 0, "black")
 
                 self.time = self.time - (self.Engine.timeTaken())
+                if self.Engine.currentIndex == 0:
+                    self.time = 0
                 self.Engine.back()
 
                 self.draw_move(self.Engine.getLastMove(), 0, "red")
