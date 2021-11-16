@@ -100,7 +100,15 @@ def genTripleIndexStates(vLen):
     genSys.add_Initial_State(seedC)
     genSys.add_State(seedC)
 
-
+    northA = uc.State("NA", black)
+    genSys.add_State(northA)
+    genSys.add_Initial_State(northA)
+    northB = uc.State("NB", black)
+    genSys.add_State(northB)
+    genSys.add_Initial_State(northB)
+    northC = uc.State("NC", black)
+    genSys.add_State(northC)
+    genSys.add_Initial_State(northC)
  
 
     # Adding Affinity Rules
@@ -129,7 +137,12 @@ def genTripleIndexStates(vLen):
     genSys.add_affinity(affGrowC)
 
 
-
+    northAaff = uc.AffinityRule("NA", str(cbrtLen - 1) + "An'", "v")
+    genSys.add_affinity(northAaff)
+    northBaff = uc.AffinityRule("NA", "NB", "h")
+    genSys.add_affinity(northBaff)
+    northCaff = uc.AffinityRule("NB", "NC", "h")
+    genSys.add_affinity(northCaff)
  
 
 
@@ -321,6 +334,10 @@ def cbrtBinString(value):
     resetBtrPrime2 = uc.TransitionRule(labelBprime2, "Bx", labelBprime2, labelBs, "v")
     genSys.add_transition_rule(resetBtrPrime2)
 
+    # Transition to north wall
+    northTR = uc.TransitionRule("NC", "nc", "NC", "N", "h")
+    genSys.add_transition_rule(northTR)
+
     return genSys
 
 
@@ -392,12 +409,6 @@ def cbrtBinCount(value):
     northWall = uc.State("N", black)
     genSys.add_State(northWall)
     genSys.add_Initial_State(northWall)
-    northWall = uc.State("N1", black)
-    genSys.add_State(northWall)
-    genSys.add_Initial_State(northWall)
-    northWall = uc.State("N2", black)
-    genSys.add_State(northWall)
-    genSys.add_Initial_State(northWall)
 
     # Other States
 
@@ -436,13 +447,6 @@ def cbrtBinCount(value):
     north0carry = uc.AffinityRule("0cn", "0c", "v")
     genSys.add_affinity(north0carry)
 
-    # Affinity to attach north bit state
-    nWall1 = uc.AffinityRule("N1", str(cbrtLen - 1) + "A'", "v")
-    genSys.add_affinity(nWall1)
-    nWall2 = uc.AffinityRule("N1", "N2", "h")
-    genSys.add_affinity(nWall2)
-    nWall3 = uc.AffinityRule("N2", "N", "h")
-    genSys.add_affinity(nWall3)
 
     ###### Transitions
     ### Carry state transitions
