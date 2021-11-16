@@ -980,6 +980,8 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
                     self.draw_move(prev_move, 0, "black")
 
                 self.time = self.time - (self.Engine.timeTaken())
+                if self.Engine.currentIndex == 0:
+                    self.time = 0
                 self.Engine.back()
 
                 self.draw_move(self.Engine.getLastMove(), 0, "red")
