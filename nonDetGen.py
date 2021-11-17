@@ -18,6 +18,19 @@ def genQuadIndexStates(vLen):
     seedA = uc.State("SA", black)
     genSys = uc.System(1, [], [], [seedA], [], [], [], [])
 
+    # Get starting points
+    offset = rt4Len**4 - vLen
+
+    startD = offset % rt4Len
+    tempOffset = math.floor(offset / rt4Len)
+    startC = tempOffset % rt4Len
+    tempOffset = math.floor(tempOffset / rt4Len)
+    startB = tempOffset % rt4Len
+    tempOffset = math.floor(tempOffset / rt4Len)
+    startA = tempOffset % rt4Len
+    
+    
+
     # Seed States
     genSys.add_State(seedA)
     #     seedB is an Initial State
@@ -107,7 +120,7 @@ def genQuadIndexStates(vLen):
 
     ### Affinity Rules
     #       Seed Affinities to start building seed row and attach first tile of D column
-    affinityD0 = uc.AffinityRule("0D", "SD", "v", 1)
+    affinityD0 = uc.AffinityRule(str(startD) + "D", "SD", "v", 1)
     genSys.add_affinity(affinityD0)
     affinitySeed = uc.AffinityRule("SA", "SB", "h", 1)
     genSys.add_affinity(affinitySeed)
@@ -159,11 +172,11 @@ def genQuadIndexStates(vLen):
 
     ### Transitions
     # Rule for when A/B/C state reaches seed and marked as 0As/0Bs
-    trAseed = uc.TransitionRule("A", "SA", "0A", "SA", "v")
+    trAseed = uc.TransitionRule("A", "SA", str(startA) + "A", "SA", "v")
     genSys.add_transition_rule(trAseed)
-    trBseed = uc.TransitionRule("B", "SB", "0B", "SB", "v")
+    trBseed = uc.TransitionRule("B", "SB", str(startB) + "B", "SB", "v")
     genSys.add_transition_rule(trBseed)
-    trCseed = uc.TransitionRule("C", "SC", "0C", "SC", "v")
+    trCseed = uc.TransitionRule("C", "SC", str(startC) + "C", "SC", "v")
     genSys.add_transition_rule(trCseed)
 
     for i in range(rt4Len):
@@ -254,6 +267,8 @@ def genQuadBinString(value):
 
     rt4Len = math.ceil(vLen**(1.0/4.0))
 
+    offset = rt4Len**4 - vLen
+
     # Add Binary Symbol states
     state0 = uc.State("0i", black)
     state1 = uc.State("1i", white)
@@ -318,11 +333,11 @@ def genQuadBinString(value):
                     bitI += c * rt4Len
                     bitI += d
 
+                    if bitI < offset:
+                        continue
+
                     # Get the current bit
-                    if bitI < vLen:
-                        bit = revValue[bitI]
-                    else:
-                        bit = "1"
+                    bit = revValue[bitI - offset]
 
                     # The B and C state are the first pair in the rule
                     bB = str(b) + "B'"
