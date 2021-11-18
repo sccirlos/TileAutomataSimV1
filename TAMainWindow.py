@@ -232,6 +232,15 @@ class Ui_MainWindow(object):
         self.SlowMode_button.setFont(font)
         self.SlowMode_button.setObjectName("SlowMode_button")
         self.verticalLayout_8.addWidget(self.SlowMode_button, 0, QtCore.Qt.AlignHCenter)
+
+        self.fastEngine_button = QtWidgets.QRadioButton(self.frame_7)
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.fastEngine_button.setFont(font)
+        self.fastEngine_button.setObjectName("fastEngine_button")
+        self.verticalLayout_8.addWidget(self.fastEngine_button, 0, QtCore.Qt.AlignHCenter)
+
+
         self.label_2 = QtWidgets.QLabel(self.frame_7)
         self.label_2.setMaximumSize(QtCore.QSize(16777215, 75))
         self.label_2.setText("")
@@ -498,6 +507,7 @@ class Ui_MainWindow(object):
         self.X_reflect_button.setText(_translate("MainWindow", "X-Reflect"))
         self.Y_reflect_button.setText(_translate("MainWindow", "Y-Reflect"))
         self.SlowMode_button.setText(_translate("MainWindow", "Slow mode"))
+        self.fastEngine_button.setText(_translate("MainWindow", "Fast Engine"))
         self.toolBox.setItemText(self.toolBox.indexOf(self.page_2), _translate("MainWindow", "Tools"))
         self.toolBox.setItemText(self.toolBox.indexOf(self.page_3), _translate("MainWindow", "Available Moves"))
         self.ExampleButton.setText(_translate("MainWindow", "Enter"))

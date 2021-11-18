@@ -147,6 +147,9 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
         self.SlowMode_button.clicked.connect(self.slowMode_toggle)
 
+        #fast engine toggle
+     #   self.fastEngine_button.clicked.connect(self.fastEngine_toggle)
+
         # Available moves layout to place available moves
         self.movesLayout = QVBoxLayout(self.page_3)
         self.movesLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
@@ -887,6 +890,11 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.delay = 1000
         else:
             self.delay = 0
+
+   # def fastEngine_toggle(self):
+       # if self.fastEngine_button.isChecked():
+            # switch to the fast engine
+            
 
     def exampleTextChange(self):
         if self.GenShape_Box.currentText() == "Strings":
