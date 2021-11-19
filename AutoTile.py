@@ -195,7 +195,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.moveWidgets.append(mGUI)
             self.movesLayout.addWidget(mGUI)
 
-        shape_options = ["Strings", "Rectangle", "Squares"]
+        shape_options = ["Strings", "Rectangle", "Squares", "Fractal"]
         self.GenShape_Box.addItems(shape_options)
 
         model_options = ["Deterministic", "Non-Deterministic", "Single-Transition"]

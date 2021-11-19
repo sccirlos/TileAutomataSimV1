@@ -4,6 +4,7 @@ import detGen
 import oneSidedGen
 import nonDetGen
 import squareGen
+import fractalsGen
 
 
 red = "f03a47"
@@ -46,6 +47,10 @@ def generator(shape, value, model):
 
     if shape == "Lines":
         return detGen.genNFLine(value)
+
+    if shape == "Fractal":
+        gen = fractalsGen.fracGen()
+        return gen.getSys()
 
 
 

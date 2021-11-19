@@ -60,9 +60,13 @@ class fracGen:
             for prin in self.printLabels:
                 tailPState = uc.State(prin + "t_" + label, red)
                 self.system.add_State(tailPState)
+                printState = uc.State(prin + "_" + label, light_blue)
+                self.system.add_State(printState)
             
             messStates = uc.State("m_" + label, blue)
             self.system.add_State(messStates)
+            messRStates = uc.State("rm_" + label, blue)
+            self.system.add_State(messRStates)
 
             # crumbs
             for crumb in self.crumbLabels:
@@ -71,9 +75,6 @@ class fracGen:
                 crumbPState = uc.State(crumb + "'_" + label, green)
                 self.system.add_State(crumbPState)
 
-            for prin in self.printLabels:
-                printState = uc.State(prin + "_" + label, light_blue)
-                self.system.add_Seed_State(printState)
 
         # Initial Tiles
         self.system.add_Initial_State(uc.State("n", white))
@@ -83,22 +84,24 @@ class fracGen:
 
         # add affinities
         for sLabel in self.southGlues:
-            sStates = [sLabel, "t_" + sLabel, "m_" + sLabel]
+            sStates = [sLabel, "t_" + sLabel, "rm_" + sLabel, "m_" + sLabel]
             for crumb in self.crumbLabels:
                 sStates.append(crumb + "_" + sLabel)
                 sStates.append(crumb + "'_" + sLabel)
 
             for prin in self.printLabels:
                 sStates.append(prin + "_" + sLabel)
+                sStates.append(prin + "t_" + sLabel)
             
             for nLabel in self.northGlues:
-                nStates = [nLabel, "t_" + nLabel, "m_" + nLabel]
+                nStates = [nLabel, "t_" + nLabel, "rm_" + nLabel, "m_" + nLabel]
                 for crumb in self.crumbLabels:
                     nStates.append(crumb + "_" + nLabel)
                     nStates.append(crumb + "'_" + nLabel)
 
                 for prin in self.printLabels:
                     nStates.append(prin + "_" + nLabel)
+                    nStates.append(prin + "t_" + nLabel)
 
                 for sST in sStates:
                     for nST in nStates:
@@ -106,22 +109,24 @@ class fracGen:
                         self.system.add_affinity(aff)
 
         for eLabel in self.eastGlues:
-            eStates = [eLabel, "t_" + eLabel, "m_" + eLabel]
+            eStates = [eLabel, "t_" + eLabel, "rm_" + eLabel, "m_" + eLabel]
             for crumb in self.crumbLabels:
                 eStates.append(crumb + "_" + eLabel)
                 eStates.append(crumb + "'_" + eLabel)
 
             for prin in self.printLabels:
                 eStates.append(prin + "_" + eLabel)
+                eStates.append(prin + "t_" + eLabel)
 
             for wLabel in self.westGlues:
-                wStates = [wLabel, "t_" + wLabel, "m_" + wLabel]
+                wStates = [wLabel, "t_" + wLabel, "rm_" + wLabel, "m_" + wLabel]
                 for crumb in self.crumbLabels:
                     wStates.append(crumb + "_" + wLabel)
                     wStates.append(crumb + "'_" + wLabel)
 
                 for prin in self.printLabels:
                     wStates.append(prin + "_" + wLabel)
+                    wStates.append(prin + "t_" + wLabel)
 
                 for eST in eStates:
                     for wST in wStates:
@@ -131,9 +136,14 @@ class fracGen:
 
         # Search Transitions
         # Printing states
-        for label1 in self.affLabels:
-            for label2 in self.affLabels:
-                prinTR = uc.TransitionRule("")
+        # East
+        for label1 in self.eastGlues:
+            prinTR = uc.TransitionRule("Et_" + label1, "e", "rm_" + label1, "t_e", "h")
+            self.system.add_transition_rule(prinTR)
+
+            aPrimeTR = uc.TransitionRule("a'_" + label1, )
+        
+
 
 
 
@@ -171,6 +181,10 @@ class fracGen:
 
     def getSys(self):
         return self.system
+
+
+def fractalGen():
+    return fracGen().getSys()
 
 if __name__ == "__main__":
     gen = fracGen()
