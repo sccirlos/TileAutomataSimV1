@@ -66,3 +66,22 @@ class ComputeLast(QObject):
         self.finished.emit()
 
         self.ui.stop_sequence()
+
+
+class ComputeFastLast(QObject):
+    # Signals
+
+    # A signal that will 'emit' once the work is done (or whenever you call the emit() function)
+    finished = pyqtSignal()
+
+    # default __init__ requires some fancy parameters that I didn't feel like learning about
+    # must call this and give it the UiWindow
+    def give_ui(self, ui):
+        self.ui = ui
+
+    def run(self):
+        self.ui.Engine.fastLast()
+        
+        self.finished.emit()
+
+        self.ui.stop_sequence()

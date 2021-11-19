@@ -3,28 +3,53 @@
 # Sonya Cirlos
 # Timothy Gomez
 
-from PyQt5.QtCore import QRunnable
+from PyQt5.QtCore import QRunnable, QThreadPool
+from UniversalClasses import toCoords
 from assemblyEngine import Engine
 
+import random
+
 class FastEngine(Engine):
-    def last(self):
+    def fastLast(self):
         self.locks = {}
         # While available move list is empty and number of threads is 0
-        
+        print("In fast Engine")
+        while len(self.validMoves) > 0:
             # grab random move from avaible moves
-
+            move = random.choice(self.validMoves)
 
             # if move neighborhood is not locked 
+            moveX = move["x"]
+            moveY = move["y"]
 
+
+            locked = self.locks.get(toCoords(moveX, moveY))
+            if locked != 1:
                 
+                self.locks[toCoords(moveX, moveY)] = 1
                 # Give move and to worker from thread pool 
+                worker = MoveWorker()
+                worker.give(move, self)
+                QThreadPool.globalInstance().start(worker)
+                #print("made a thread")
 
 
 class MoveWorker(QRunnable):
-    def run(self, move):
-        # Worker Function to update move list
-        # Copy from engine class
+    # def __init__(self, move, engine):
+    #     super()
+    #     self.move = move
+    #     self.engine = engine
 
+    def give(self, move, engine):
+        self.move = move
+        self.engine = engine
+
+    def run(self):
+        # Worker Function to update move list
+        self.engine.build(self.move)
+
+        moveX = self.move["x"]
+        moveY = self.move["y"]
 
         # Unlock locks 
-        pass
+        self.engine.locks[toCoords(moveX, moveY)] = 0

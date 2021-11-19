@@ -5,7 +5,7 @@ from PyQt5.QtCore import QObject, QThread, pyqtSignal
 
 from PyQt5.QtCore import Qt
 from random import randrange
-from Player import ComputeLast, Player
+from Player import ComputeLast, Player, ComputeFastLast
 from Historian import Historian
 
 from assemblyEngine import Engine
@@ -20,6 +20,7 @@ import QuickReflect
 import math
 import FreezingCheck
 import sampleGen
+from fastEngine import FastEngine
 
 import sys
 
@@ -934,7 +935,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.textSize = int(self.tileSize / 3)
 
             self.time = 0
-            self.Engine = Engine(genSystem)
+            self.Engine = FastEngine(genSystem)
             self.historian.set_engine(self.Engine)
 
             currentSystem = genSystem
@@ -1013,7 +1014,10 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
 
                 self.threadlast.deleteLater()
                 self.threadlast = QThread()
-                self.workerlast = ComputeLast()
+                if type(self.Engine) == Engine:
+                    self.workerlast = ComputeLast()
+                else:
+                    self.workerlast = ComputeFastLast()
                 self.workerlast.give_ui(self)
 
                 self.workerlast.moveToThread(self.threadlast)
