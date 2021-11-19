@@ -149,7 +149,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         self.SlowMode_button.clicked.connect(self.slowMode_toggle)
 
         #fast engine toggle
-     #   self.fastEngine_button.clicked.connect(self.fastEngine_toggle)
+        self.fastEngine_button.clicked.connect(self.fastEngine_toggle)
 
         # Available moves layout to place available moves
         self.movesLayout = QVBoxLayout(self.page_3)
@@ -892,9 +892,11 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         else:
             self.delay = 0
 
-   # def fastEngine_toggle(self):
-       # if self.fastEngine_button.isChecked():
+    def fastEngine_toggle(self):
+       if self.fastEngine_button.isChecked():
             # switch to the fast engine
+            sys = self.Engine.system
+            self.Engine = FastEngine(sys)
             
 
     def exampleTextChange(self):
@@ -935,7 +937,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.textSize = int(self.tileSize / 3)
 
             self.time = 0
-            self.Engine = FastEngine(genSystem)
+            self.Engine = Engine(genSystem)
             self.historian.set_engine(self.Engine)
 
             currentSystem = genSystem

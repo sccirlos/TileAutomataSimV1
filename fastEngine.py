@@ -14,9 +14,12 @@ class FastEngine(Engine):
         self.locks = {}
         # While available move list is empty and number of threads is 0
         print("In fast Engine")
-        while len(self.validMoves) > 0:
+        while len(self.validMoves) > 0 and QThreadPool.activeThreadCount() > 0:
             # grab random move from avaible moves
-            move = random.choice(self.validMoves)
+            try:
+                move = random.choice(self.validMoves)
+            except:
+                continue
 
             # if move neighborhood is not locked 
             moveX = move["x"]
