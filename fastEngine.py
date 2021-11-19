@@ -5,7 +5,7 @@
 
 from PyQt5.QtCore import QRunnable, QThreadPool
 from UniversalClasses import toCoords
-from assemblyEngine import Engine
+from assemblyEngine import Engine, printMove
 
 import random
 
@@ -14,39 +14,67 @@ class FastEngine(Engine):
         self.locks = {}
         # While available move list is empty and number of threads is 0
         print("In fast Engine")
-        while len(self.validMoves) > 0 and QThreadPool.activeThreadCount() > 0:
+        while len(self.validMoves) > 0 or QThreadPool.globalInstance().activeThreadCount() > 0:
             # grab random move from avaible moves
             try:
                 move = random.choice(self.validMoves)
             except:
-                continue
+                pass
+            else:
+                # if move neighborhood is not locked 
+                moveX = move["x"]
+                moveY = move["y"]
 
-            # if move neighborhood is not locked 
-            moveX = move["x"]
-            moveY = move["y"]
 
+                if self.checkLocks(moveX, moveY):
+                    
+                    self.locks[toCoords(moveX, moveY)] = 1
+                    self.locks[toCoords(moveX + 1, moveY)] = 1
+                    self.locks[toCoords(moveX, moveY + 1)] = 1
+                    self.locks[toCoords(moveX - 1, moveY)] = 1
+                    self.locks[toCoords(moveX, moveY - 1)] = 1
+                    self.locks[toCoords(moveX + 1, moveY + 1)] = 1
+                    self.locks[toCoords(moveX - 1, moveY + 1)] = 1
+                    self.locks[toCoords(moveX + 1, moveY - 1)] = 1
+                    self.locks[toCoords(moveX - 1, moveY - 1)] = 1
+                    self.locks[toCoords(moveX + 2, moveY)] = 1
+                    self.locks[toCoords(moveX, moveY - 2)] = 1
 
-            locked = self.locks.get(toCoords(moveX, moveY))
-            if locked != 1:
+                    # Give move and to worker from thread pool 
+                    worker = MoveWorker()
+                    worker.give(move, self)
+                    QThreadPool.globalInstance().start(worker)
+                    #print("made a thread")
+        print("Done with Fast Engine")
                 
-                self.locks[toCoords(moveX, moveY)] = 1
-                self.locks[toCoords(moveX + 1, moveY)] = 1
-                self.locks[toCoords(moveX, moveY + 1)] = 1
-                self.locks[toCoords(moveX - 1, moveY)] = 1
-                self.locks[toCoords(moveX, moveY - 1)] = 1
-                self.locks[toCoords(moveX + 1, moveY + 1)] = 1
-                self.locks[toCoords(moveX - 1, moveY + 1)] = 1
-                self.locks[toCoords(moveX + 1, moveY - 1)] = 1
-                self.locks[toCoords(moveX - 1, moveY - 1)] = 1
-                self.locks[toCoords(moveX + 2, moveY)] = 1
-                self.locks[toCoords(moveX, moveY - 2)] = 1
 
-                # Give move and to worker from thread pool 
-                worker = MoveWorker()
-                worker.give(move, self)
-                QThreadPool.globalInstance().start(worker)
-                #print("made a thread")
+    def checkLocks(self, moveX, moveY):
+        if self.locks.get(toCoords(moveX, moveY)) == 1:
+            return False
+        if self.locks.get(toCoords(moveX + 1, moveY)) == 1:
+            return False
+        if self.locks.get(toCoords(moveX, moveY + 1)) == 1:
+            return False
+        if self.locks.get(toCoords(moveX - 1, moveY)) == 1:
+            return False
+        if self.locks.get(toCoords(moveX, moveY - 1)) == 1:
+            return False
+        if self.locks.get(toCoords(moveX + 1, moveY + 1)) == 1:
+            return False
+        if self.locks.get(toCoords(moveX - 1, moveY + 1)) == 1:
+            return False
+        if self.locks.get(toCoords(moveX + 1, moveY - 1)) == 1:
+            return False
+        if self.locks.get(toCoords(moveX - 1, moveY - 1)) == 1:
+            return False
+        if self.locks.get(toCoords(moveX + 2, moveY)) == 1:
+            return False
+        if self.locks.get(toCoords(moveX, moveY - 2)) == 1:
+            return False
+        
+        return True
 
+    
 
 class MoveWorker(QRunnable):
     # def __init__(self, move, engine):
