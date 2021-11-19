@@ -27,6 +27,17 @@ class FastEngine(Engine):
             if locked != 1:
                 
                 self.locks[toCoords(moveX, moveY)] = 1
+                self.locks[toCoords(moveX + 1, moveY)] = 1
+                self.locks[toCoords(moveX, moveY + 1)] = 1
+                self.locks[toCoords(moveX - 1, moveY)] = 1
+                self.locks[toCoords(moveX, moveY - 1)] = 1
+                self.locks[toCoords(moveX + 1, moveY + 1)] = 1
+                self.locks[toCoords(moveX - 1, moveY + 1)] = 1
+                self.locks[toCoords(moveX + 1, moveY - 1)] = 1
+                self.locks[toCoords(moveX - 1, moveY - 1)] = 1
+                self.locks[toCoords(moveX + 2, moveY)] = 1
+                self.locks[toCoords(moveX, moveY - 2)] = 1
+
                 # Give move and to worker from thread pool 
                 worker = MoveWorker()
                 worker.give(move, self)
@@ -53,3 +64,13 @@ class MoveWorker(QRunnable):
 
         # Unlock locks 
         self.engine.locks[toCoords(moveX, moveY)] = 0
+        self.engine.locks[toCoords(moveX + 1, moveY)] = 0
+        self.engine.locks[toCoords(moveX, moveY + 1)] = 0
+        self.engine.locks[toCoords(moveX - 1, moveY)] = 0
+        self.engine.locks[toCoords(moveX, moveY - 1)] = 0
+        self.engine.locks[toCoords(moveX + 1, moveY + 1)] = 0
+        self.engine.locks[toCoords(moveX - 1, moveY + 1)] = 0
+        self.engine.locks[toCoords(moveX + 1, moveY - 1)] = 0
+        self.engine.locks[toCoords(moveX - 1, moveY - 1)] = 0
+        self.engine.locks[toCoords(moveX + 2, moveY)] = 0
+        self.engine.locks[toCoords(moveX, moveY - 2)] = 0
