@@ -1,6 +1,7 @@
 import UniversalClasses as uc
 import SaveFile
 import detGen
+from fastEngine import FastEngine, paraSquareGen
 import oneSidedGen
 import nonDetGen
 import squareGen
@@ -46,6 +47,10 @@ def generator(shape, value, model):
 
     if shape == "Lines":
         return detGen.genNFLine(value)
+
+    if shape == "Fast Squares":
+        value = int(value)
+        return paraSquareGen(value)
 
 
 
