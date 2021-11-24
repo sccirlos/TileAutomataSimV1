@@ -159,6 +159,8 @@ class FastEngine(Engine):
                                 self.system, moveX + 1, moveY - 1)
                             self.removeMoves(seAtts)
 
+                    self.currentAssembly.performMove(self.move)
+                    self.moveList.append(self.move)
 
                     # Give move and to worker from thread pool 
                     worker = MoveWorker()
@@ -332,9 +334,6 @@ class MoveWorker(QRunnable):
         self.engine = engine
 
     def run(self):
-        # Worker Function to update current assembly, update move list, and valid moves
-        self.engine.currentAssembly.performMove(self.move)
-        self.engine.moveList.append(self.move)
         # this function is the majority of the work done by this thread
         self.engine.fastAddNewMoves(self.move)
 
