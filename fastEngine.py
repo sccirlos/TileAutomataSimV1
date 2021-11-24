@@ -159,8 +159,8 @@ class FastEngine(Engine):
                                 self.system, moveX + 1, moveY - 1)
                             self.removeMoves(seAtts)
 
-                    self.currentAssembly.performMove(self.move)
-                    self.moveList.append(self.move)
+                    self.currentAssembly.performMove(move)
+                    self.moveList.append(move)
 
                     # Give move and to worker from thread pool 
                     worker = MoveWorker()
