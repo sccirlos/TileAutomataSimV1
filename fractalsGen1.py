@@ -48,7 +48,7 @@ class fracGen:
         self.westGlues = ["e", "ne", "se", "wne", "nes", "esw", "nesw", "we"]
         self.eastGlues  = ["w", "nw", "sw", "wne", "esw", "swn", "nesw", "we" ]
         self.crumbLabels = ["n", "s", "e", "w", "h"]
-        self.printLabels = ["N", "S", "E", "W", "H"]
+        self.printLabels = ["N", "S", "E", "W",]
 
         for label in self.affLabels:
             affState = uc.State(label, white)
