@@ -200,12 +200,14 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
             self.movesLayout.addWidget(mGUI)
 
         shape_options = ["Strings", "Thin Rectangle", "Squares", "Lines", "Fast Squares"]
-        self.GenShape_Box.addItems(shape_options)
+        self.GenShape_Box.addItems(shape_options)  
 
         model_options = ["Deterministic", "Non-Deterministic", "One-Sided"]
         self.GenModel_Box.addItems(model_options)
 
-        self.InputLabel.setText("Enter a binary string.")
+        self.InputLabel.setText("Enter a binary string:") 
+
+
 
         self.GenShape_Box.currentIndexChanged.connect(self.exampleTextChange)
 
@@ -904,7 +906,7 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
     def exampleTextChange(self):
         if self.GenShape_Box.currentText() == "Strings":
             self.InputLabel.setText("Enter a binary string.")
-        elif self.GenShape_Box.currentText() == "Thin Rectangle" or self.GenShape_Box.currentText() == "Squares" or self.GenShape_Box.currentText() == "Lines":
+        elif self.GenShape_Box.currentText() == "Thin Rectangle" or self.GenShape_Box.currentText() == "Squares" or self.GenShape_Box.currentText() == "Fast Squares" or self.GenShape_Box.currentText() == "Lines":
             self.InputLabel.setText("Enter an integer.")
 
     def Begin_example(self):
