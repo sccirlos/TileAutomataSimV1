@@ -226,14 +226,16 @@ class Ui_MainWindow(object):
 "   }")
         self.Y_reflect_button.setObjectName("Y_reflect_button")
         self.verticalLayout_8.addWidget(self.Y_reflect_button)
-        self.SlowMode_button = QtWidgets.QRadioButton(self.frame_7)
+
+ 
+        self.SlowMode_button = QtWidgets.QCheckBox(self.frame_7)
         font = QtGui.QFont()
         font.setPointSize(10)
         self.SlowMode_button.setFont(font)
         self.SlowMode_button.setObjectName("SlowMode_button")
         self.verticalLayout_8.addWidget(self.SlowMode_button, 0, QtCore.Qt.AlignHCenter)
 
-        self.fastEngine_button = QtWidgets.QRadioButton(self.frame_7)
+        self.fastEngine_button = QtWidgets.QCheckBox(self.frame_7)
         font = QtGui.QFont()
         font.setPointSize(10)
         self.fastEngine_button.setFont(font)

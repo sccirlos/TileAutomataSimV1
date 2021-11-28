@@ -892,11 +892,13 @@ class Ui_MainWindow(QMainWindow, TAMainWindow.Ui_MainWindow):
         else:
             self.delay = 0
 
+    # must have a system loaded before checking fast engine or will crash
     def fastEngine_toggle(self):
        if self.fastEngine_button.isChecked():
             # switch to the fast engine
             sys = self.Engine.system
             self.Engine = FastEngine(sys)
+      
             
 
     def exampleTextChange(self):
