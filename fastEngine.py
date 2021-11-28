@@ -9,6 +9,7 @@ from assemblyEngine import Engine, printMove
 import UniversalClasses as uc
 
 import random
+import time
 
 class FastEngine(Engine):
     def fastLast(self):
@@ -379,3 +380,29 @@ def paraSquareGen(value):
         sys.add_affinity(iAff)
     
     return sys
+
+
+def test(value):
+    sys = paraSquareGen(value)
+
+    seq = Engine(sys)
+    para = FastEngine(sys)
+
+    seq_start = time.time()
+    while(seq.step() != -1): pass
+    seq_end = time.time()
+    seq_time = seq_end - seq_start
+
+    print("Seq Time: ", seq_time)
+
+    par_start = time.time()
+    para.fastLast()
+    par_end = time.time()
+    par_time = par_end - par_start
+
+    
+    print("Para Time: ", par_time)
+    print("Ratio: ", seq_time / par_time)
+
+if __name__ == "__main__":
+    test(200)
