@@ -1,0 +1,3 @@
+Sequential Time, 
+Parallel Time, 
+Ratio, 

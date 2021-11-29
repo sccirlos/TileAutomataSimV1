@@ -8,6 +8,7 @@ from UniversalClasses import toCoords
 from assemblyEngine import Engine, printMove
 import UniversalClasses as uc
 
+
 import random
 import time
 
@@ -382,6 +383,7 @@ def paraSquareGen(value):
     return sys
 
 
+
 def test(value):
     sys = paraSquareGen(value)
 
@@ -393,16 +395,28 @@ def test(value):
     seq_end = time.time()
     seq_time = seq_end - seq_start
 
-    print("Seq Time: ", seq_time)
+
+    with open ("demoFastEngine.txt", "a") as f:
+        f.write("Sequential Time: " + str(seq_time) + "\n")
 
     par_start = time.time()
     para.fastLast()
     par_end = time.time()
     par_time = par_end - par_start
 
+    with open ("demoFastEngine.txt", "a") as f:
+        f.write("Parallel time: " + str(par_time) + "\n")
+        f.write("Ratio: " + str(seq_time / par_time) + "\n")
     
-    print("Para Time: ", par_time)
-    print("Ratio: ", seq_time / par_time)
+        f.write("\n")
+    
 
 if __name__ == "__main__":
+    test(10)
+    test(25)
+    test(50)
+    test(100)
     test(200)
+    test(300)
+
+    
