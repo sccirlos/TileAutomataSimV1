@@ -1,6 +1,7 @@
 from generators import genSqrtBinCount
 import UniversalClasses as uc
 import SaveFile
+import QuickRotate
 
 import math
 
@@ -623,12 +624,146 @@ def quadBinCount(value):
 
     return genSys          
 
+def conHeiRect(value):
+    if isinstance(value, int):
+        # Since the system has one column that is behind the start of the counter 
+        # we subtract one to 
+
+
+        # get the cieling of the log of the number
+        # This tells us how long the string will be
+        bits = math.ceil(math.log(value, 2))
+
+        # Get the number we're counting up to 
+        # The assembly stops at after overflow so we add one to the max count
+        startBin = bin(value - (2*bits))[2:]
+
+        # Need to add leading 0s
+        count0 = bits - len(startBin)
+        lead0 = ""
+        for i in range(count0):
+            lead0 = lead0 + "0"
+
+
+        value = lead0 + startBin
+
+    rt4Len = math.ceil(len(value)**(1.0/4.0))
+
+    genSys = genQuadBinString(value)
+
+    genSys = QuickRotate.rotate(genSys)
+    genSys = QuickRotate.rotate(genSys)
+    genSys = QuickRotate.rotate(genSys)
+
+    # States
+    littleX = uc.State("x", white)
+    genSys.add_State(littleX)
+    genSys.add_Initial_State(littleX)
+
+    bigX = uc.State("X", white)
+    genSys.add_State(bigX)
+
+    starX = uc.State("X*", white)
+    genSys.add_State(starX)
+
+    stickySeed = uc.State("SD'", black)
+    genSys.add_State(stickySeed)
+
+    signalSeed = uc.State("SD*", black)
+    genSys.add_State(signalSeed)
+
+    borrow = uc.State("b", blue)
+    genSys.add_State(borrow)
+
+    borrowN = uc.State("bn", blue)
+    genSys.add_State(borrowN)
+
+    greenN = uc.State("Dn", green)
+    genSys.add_State(greenN)
+
+    greenSig = uc.State("Dn*", green)
+    genSys.add_State(greenSig)
+
+    zeroStar = uc.State("0*", black)
+    genSys.add_State(zeroStar)
+
+    oneStar = uc.State("1*", white)
+    genSys.add_State(oneStar)
+
+    # Affinities
+    startX = uc.AffinityRule("SD'", "x", "h", 1)
+    genSys.add_affinity(startX)
+
+    affX = uc.AffinityRule("X", "x", "h", 1)
+    genSys.add_affinity(affX)
+
+    affSX = uc.AffinityRule("X*", "x", "h", 1)
+    genSys.add_affinity(affSX)
+
+    # Transitions
+    start0 = uc.TransitionRule("0i", "SD", "b", "SD", "h")
+    genSys.add_transition_rule(start0)
+
+    start1 = uc.TransitionRule("1i", "SD", "0i", "SD'", "h")
+    genSys.add_transition_rule(start1)
+    start1s = uc.TransitionRule("1*", "SD", "1i", "SD'", "h")
+    genSys.add_transition_rule(start1s)
+
+    borrowS = uc.TransitionRule("0i", "SD'", "b", "SD'", "h")
+    genSys.add_transition_rule(borrowS)
+
+    countS = uc.TransitionRule("1i", "SD'", "0i", "SD*", "h")
+    genSys.add_transition_rule(countS)
+    countSt = uc.TransitionRule("1*", "SD'", "1i", "SD*", "h")
+    genSys.add_transition_rule(countSt)
+
+    # Borrow transitions
+    for i in range(rt4Len):
+        borrowNTR = uc.TransitionRule(str(i) + "Dn", "b", "bn", "b", "h")
+        genSys.add_transition_rule(borrowNTR)
+        borrowNTRp = uc.TransitionRule(str(i) + "Dn'", "b", "bn", "b", "h")
+        genSys.add_transition_rule(borrowNTRp)
+
+    borrowNTR = uc.TransitionRule("Dn", "b", "bn", "b", "h")
+    genSys.add_transition_rule(borrowNTR)
+
+    borrow1 = uc.TransitionRule("1i", "bn", "0i", "Dn*", "h")
+    genSys.add_transition_rule(borrow1)
+
+    borrow0 = uc.TransitionRule("0i", "bn", "b", "bn", "h")
+    genSys.add_transition_rule(borrow0)
+
+    zeroStarTR = uc.TransitionRule("0*", "bn", "0i", "Dn*", "h")
+    genSys.add_transition_rule(zeroStarTR)
+
+    incTR = uc.TransitionRule("Dn*", "b", "Dn", "1*", "h")
+    genSys.add_transition_rule(incTR)
+
+    oneStarTR = uc.TransitionRule("1*", "bn", "1i", "Dn*", "h")
+    genSys.add_transition_rule(oneStarTR)
+
+    # Line building rules
+    firstXTR = uc.TransitionRule("SD*", "x", "SD'", "X", "h")
+    genSys.add_transition_rule(firstXTR)
+
+    sendTR = uc.TransitionRule("SD*", "X", "SD'", "X*", "h")
+    genSys.add_transition_rule(sendTR)
+
+    addXTR = uc.TransitionRule("X*", "x", "X", "X", "h")
+    genSys.add_transition_rule(addXTR)
+
+    propXTR = uc.TransitionRule("X*", "X", "X", "X*", "h")
+    genSys.add_transition_rule(propXTR)
+
+    return genSys
+
+
                     
 def genString(value):
     return genQuadBinString(value)
 
 def genRect(length):
-    return quadBinCount(length)
+    return conHeiRect(length)
 
 
 if __name__ == "__main__":
